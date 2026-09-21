@@ -3,13 +3,13 @@
 from __future__ import annotations
 
 from optumapisdk import OptumAPI
-from .conftest import BASE_URL
+from .conftest import CLAIMS_BASE_URL as BASE_URL
 
 
 def test_get_action_sends_expected_headers(requests_mock, client: OptumAPI):
     requests_mock.get(f"{BASE_URL}/api/claim/action/v2.0", json={"actions": []})
 
-    result = client.claim_action.get_action("tx-1", tin="12345678")
+    result = client.claims.claim_action.get_action("tx-1", tin="12345678")
 
     assert result == {"actions": []}
     headers = requests_mock.last_request.headers

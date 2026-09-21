@@ -3,8 +3,8 @@
 from typing import Any, Dict, Optional
 import logging
 
-from .enums import DocumentKeyType
-from .models import (
+from ..enums import DocumentKeyType
+from ..models import (
     DocumentDownloadRequest,
     DocumentMetaDataRequest,
     BulkDocumentDownloadRequest,

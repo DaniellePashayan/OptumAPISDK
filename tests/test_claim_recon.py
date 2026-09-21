@@ -7,13 +7,13 @@ import pytest
 from optumapisdk import OptumAPI
 from optumapisdk.enums import ReconSearchType
 from optumapisdk.models import ReconRequest, ReconUpdateRequest
-from .conftest import BASE_URL
+from .conftest import CLAIMS_BASE_URL as BASE_URL
 
 
 def test_get_recon_by_ticket_number(requests_mock, client: OptumAPI):
     requests_mock.get(f"{BASE_URL}/api/claim/recon/v2.0", json={"ticketNumber": "T1"})
 
-    result = client.claim_recon.get_recon(
+    result = client.claims.claim_recon.get_recon(
         tin="12345678", search_type=ReconSearchType.TICKET_NUMBER, ticket_number="T1"
     )
 
@@ -26,7 +26,7 @@ def test_get_recon_by_ticket_number(requests_mock, client: OptumAPI):
 def test_get_recon_by_date_range(requests_mock, client: OptumAPI):
     requests_mock.get(f"{BASE_URL}/api/claim/recon/v2.0", json={"results": []})
 
-    client.claim_recon.get_recon(
+    client.claims.claim_recon.get_recon(
         tin="12345678",
         search_type=ReconSearchType.DATE_RANGE,
         first_subm_dt="01/01/2026",
@@ -41,19 +41,19 @@ def test_get_recon_by_date_range(requests_mock, client: OptumAPI):
 
 def test_get_recon_missing_ticket_number_raises(client: OptumAPI):
     with pytest.raises(ValueError, match="ticket_number is required"):
-        client.claim_recon.get_recon(tin="12345678", search_type=ReconSearchType.TICKET_NUMBER)
+        client.claims.claim_recon.get_recon(tin="12345678", search_type=ReconSearchType.TICKET_NUMBER)
 
 
 def test_get_recon_missing_date_range_raises(client: OptumAPI):
     with pytest.raises(ValueError, match="first_subm_dt and last_subm_dt are required"):
-        client.claim_recon.get_recon(tin="12345678", search_type=ReconSearchType.DATE_RANGE)
+        client.claims.claim_recon.get_recon(tin="12345678", search_type=ReconSearchType.DATE_RANGE)
 
 
 def test_post_recon_sends_json_body(requests_mock, client: OptumAPI):
     requests_mock.post(f"{BASE_URL}/api/claim/recon/v2.0", json={"ticketNumber": "T2"})
 
     body = ReconRequest(transactionId="tx-1", reqReason="R01", provComments="please review")
-    result = client.claim_recon.post_recon(body, tin="12345678")
+    result = client.claims.claim_recon.post_recon(body, tin="12345678")
 
     assert result == {"ticketNumber": "T2"}
     sent_json = requests_mock.last_request.json()
@@ -64,7 +64,7 @@ def test_put_recon_sends_json_body(requests_mock, client: OptumAPI):
     requests_mock.put(f"{BASE_URL}/api/claim/recon/v2.0", json={"ticketNumber": "T2"})
 
     body = ReconUpdateRequest(transactionId="tx-1", ticketNumber="T2", hasAttachment=True)
-    result = client.claim_recon.put_recon(body, tin="12345678")
+    result = client.claims.claim_recon.put_recon(body, tin="12345678")
 
     assert result == {"ticketNumber": "T2"}
     sent_json = requests_mock.last_request.json()
@@ -74,7 +74,7 @@ def test_put_recon_sends_json_body(requests_mock, client: OptumAPI):
 def test_get_reasons(requests_mock, client: OptumAPI):
     requests_mock.get(f"{BASE_URL}/api/recon/reasons/v2.0", json={"reasons": ["R01"]})
 
-    result = client.claim_recon.get_reasons(tin="12345678")
+    result = client.claims.claim_recon.get_reasons(tin="12345678")
 
     assert result == {"reasons": ["R01"]}
     assert requests_mock.last_request.headers["tin"] == "12345678"

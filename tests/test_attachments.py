@@ -2,43 +2,42 @@
 
 from __future__ import annotations
 
-import os
 
 from optumapisdk import OptumAPI
 from optumapisdk.enums import TicketType
-from .conftest import BASE_URL
+from .conftest import CLAIMS_BASE_URL as BASE_URL
 
 
 def test_get_attachment_doc_types_v2_accepts_enum(requests_mock, client: OptumAPI):
-    requests_mock.get(f"{BASE_URL}/Claims/api/doctypes/v2.0", json={"docTypes": []})
+    requests_mock.get(f"{BASE_URL}/api/doctypes/v2.0", json={"docTypes": []})
 
-    result = client.attachments.get_attachment_doc_types_v2(TicketType.RECON, tin="12345678")
+    result = client.claims.attachments.get_attachment_doc_types_v2(TicketType.RECON, tin="12345678")
 
     assert result == {"docTypes": []}
     assert requests_mock.last_request.headers["ticketType"] == "RECON"
 
 
 def test_get_attachment_doc_types_v2_accepts_raw_string(requests_mock, client: OptumAPI):
-    requests_mock.get(f"{BASE_URL}/Claims/api/doctypes/v2.0", json={"docTypes": []})
+    requests_mock.get(f"{BASE_URL}/api/doctypes/v2.0", json={"docTypes": []})
 
-    client.attachments.get_attachment_doc_types_v2(TicketType.APPEAL, tin="12345678")
+    client.claims.attachments.get_attachment_doc_types_v2(TicketType.APPEAL, tin="12345678")
 
     assert requests_mock.last_request.headers["ticketType"] == "APPEAL"
 
 
 def test_get_attachments_list(requests_mock, client: OptumAPI):
-    requests_mock.get(f"{BASE_URL}/Claims/api/attachment/list/v2.0", json={"attachments": []})
+    requests_mock.get(f"{BASE_URL}/api/attachment/list/v2.0", json={"attachments": []})
 
-    result = client.attachments.get_attachments_list("T1", tin="12345678")
+    result = client.claims.attachments.get_attachments_list("T1", tin="12345678")
 
     assert result == {"attachments": []}
     assert requests_mock.last_request.headers["ticketNumber"] == "T1"
 
 
 def test_get_attachment_returns_binary_content(requests_mock, client: OptumAPI):
-    requests_mock.get(f"{BASE_URL}/Claims/api/attachment/v2.0", content=b"binary-bytes")
+    requests_mock.get(f"{BASE_URL}/api/attachment/v2.0", content=b"binary-bytes")
 
-    result = client.attachments.get_attachment("ATT-1", tin="12345678")
+    result = client.claims.attachments.get_attachment("ATT-1", tin="12345678")
 
     assert result == b"binary-bytes"
 
@@ -49,7 +48,7 @@ def test_post_attachment_uploads_single_file(tmp_path, requests_mock, client: Op
     file_path = tmp_path / "file.pdf"
     file_path.write_bytes(b"%PDF-1.4")
 
-    result = client.attachments.post_attachment(
+    result = client.claims.attachments.post_attachment(
         tin="12345678",
         transactionId="tx-1",
         record_path_to_upload=str(file_path),
@@ -65,7 +64,8 @@ def test_post_attachment_uploads_folder_of_files(tmp_path, requests_mock, client
     (tmp_path / "a.pdf").write_bytes(b"a")
     (tmp_path / "b.pdf").write_bytes(b"b")
 
-    result = client.attachments.post_attachment(
+    result = client.claims.attachments.post_attachment(
+        transactionId="tx-1",
         tin="12345678",
         folder_to_upload=str(tmp_path),
     )
@@ -82,7 +82,8 @@ def test_post_attachment_captures_per_file_errors(tmp_path, requests_mock, clien
     good_file.write_bytes(b"good")
     missing_file = str(tmp_path / "does_not_exist.pdf")
 
-    result = client.attachments.post_attachment(
+    result = client.claims.attachments.post_attachment(
+        transactionId="tx-1",
         tin="12345678",
         record_path_to_upload=missing_file,
     )

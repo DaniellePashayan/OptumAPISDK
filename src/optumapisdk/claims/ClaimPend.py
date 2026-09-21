@@ -3,8 +3,8 @@
 from typing import Any, Dict, Optional
 import logging
 
-from .enums import ReconSearchType
-from .models import CreatePendTicketRequest, UpdatePendTicketRequest
+from ..enums import ReconSearchType
+from ..models import CreatePendTicketRequest, UpdatePendTicketRequest
 
 
 class ClaimPend:

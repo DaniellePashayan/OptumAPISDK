@@ -3,7 +3,7 @@
 from typing import Any, Dict, Optional
 import logging
 
-from .models import DetailByMemberRequest
+from ..models import DetailByMemberRequest
 
 
 class ClaimDetails:
@@ -54,7 +54,12 @@ class ClaimDetails:
         """
         
         # validations
-        if not (body.memberId and (body.patientDob or (body.patientFn and body.patientLn))) or not (body.patientFn and body.patientLn and body.patientDob):
+        valid_search_combination = (
+            (body.memberId and body.patientDob)
+            or (body.memberId and body.patientFn and body.patientLn)
+            or (body.patientFn and body.patientLn and body.patientDob)
+        )
+        if not valid_search_combination:
             raise ValueError("Invalid search combination. Please provide either Member ID and Patient DOB, Member ID and Patient First Name and Last Name, or Patient First Name, Last Name and Patient DOB.")
         
         if payerId not in {"06111", "74227", "25463", "LIFE1", "WELM2"}:

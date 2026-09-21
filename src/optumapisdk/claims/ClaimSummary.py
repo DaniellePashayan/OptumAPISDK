@@ -3,7 +3,7 @@
 from typing import Any, Dict, Optional
 import logging
 
-from .models import SummaryByMemberRequest
+from ..models import SummaryByMemberRequest
 
 
 class ClaimSummary:

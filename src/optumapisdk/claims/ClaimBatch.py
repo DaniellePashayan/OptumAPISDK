@@ -3,7 +3,7 @@
 from typing import Any, Dict, Optional
 import logging
 
-from .models import BatchClaimSummaryRequest, BatchClaimRequest
+from ..models import BatchClaimSummaryRequest, BatchClaimRequest
 
 
 class ClaimBatch:

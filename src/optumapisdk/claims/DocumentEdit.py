@@ -3,7 +3,7 @@
 from typing import Any, Dict, Optional
 import logging
 
-from .models import DocumentEditRequest
+from ..models import DocumentEditRequest
 
 
 class DocumentEdit:

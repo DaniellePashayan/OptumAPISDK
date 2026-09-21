@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import time
 from typing import Any, Dict
 
 import pytest
@@ -11,7 +10,8 @@ import requests_mock as _requests_mock  # noqa: F401  (ensures plugin is loaded)
 from optumapisdk import OptumAPI
 from optumapisdk.Auth import OAuth
 
-BASE_URL = "https://apimarketplace.uhc.com/Claims"
+BASE_URL = "https://apimarketplace.uhc.com"
+CLAIMS_BASE_URL = f"{BASE_URL}/Claims"
 TOKEN_URL = f"{BASE_URL}/oauth/token"
 
 

@@ -4,7 +4,7 @@ from typing import Any, Dict, Optional
 import logging
 import os
 
-from .enums import TicketType
+from ..enums import TicketType
 
 
 class Attachments:
@@ -32,7 +32,7 @@ class Attachments:
         """       
         if not isinstance(ticket_type, TicketType):
             ticket_type = TicketType(ticket_type)
-        url = "/Claims/api/doctypes/v2.0"
+        url = "/api/doctypes/v2.0"
         headers: Dict[str, Any] = {"ticketType": ticket_type.value, "tin": tin}
         response = self.client.request("GET", url, headers=headers)
         return response.json()
@@ -52,7 +52,7 @@ class Attachments:
         
         For more information, see: https://apimarketplace.uhcprovider.com/#/documentation/claims/get-claim-attachmentlist-v-2
         """
-        url = "/Claims/api/attachment/list/v2.0"
+        url = "/api/attachment/list/v2.0"
         headers: Dict[str, Any] = {"ticketNumber": ticket_number, "tin": tin}
         response = self.client.request("GET", url, headers=headers)
         return response.json()
@@ -72,7 +72,7 @@ class Attachments:
         
         For more information, see: https://apimarketplace.uhcprovider.com/#/documentation/claims/get-claim-attachment-v-2
         """
-        url = "/Claims/api/attachment/v2.0"
+        url = "/api/attachment/v2.0"
         headers: Dict[str, Any] = {"attachmentId": attachment_id, "tin": tin}
         response = self.client.request("GET", url, headers=headers)
         return response.content

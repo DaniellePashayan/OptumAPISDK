@@ -5,18 +5,8 @@ from typing import Any, Dict, Optional
 
 from .exceptions import APIError
 from .Auth import OAuth
-from .Attachments import Attachments
-from .ClaimAction import ClaimAction
-from .ClaimAppeals import ClaimAppeals
-from .ClaimDetails import ClaimDetails
-from .ClaimSummary import ClaimSummary
-from .ClaimPayment import ClaimPayment
-from .ClaimRecon import ClaimRecon
-from .Documents import Documents
-from .ClaimBatch import ClaimBatch
-from .ClaimPend import ClaimPend
-from .ClaimSubmission import ClaimSubmission
-from .DocumentEdit import DocumentEdit
+
+from .claims.ClaimsResource import ClaimsResource
 
 # Default network resilience settings. These are deliberately conservative:
 # a handful of retries with exponential backoff for transient failures, and
@@ -85,18 +75,7 @@ class OptumAPI:
             token_url=token_url,
         )
 
-        self.attachments = Attachments(self)
-        self.claim_action = ClaimAction(self)
-        self.claim_appeals = ClaimAppeals(self)
-        self.claim_details = ClaimDetails(self)
-        self.claim_summary = ClaimSummary(self)
-        self.claim_payment = ClaimPayment(self)
-        self.claim_recon = ClaimRecon(self)
-        self.documents = Documents(self)
-        self.claim_batch = ClaimBatch(self)
-        self.claim_pend = ClaimPend(self)
-        self.claim_submission = ClaimSubmission(self)
-        self.document_edit = DocumentEdit(self)
+        self.claims = ClaimsResource(self)
 
         # Optionally prefetch a token during initialization. Useful to
         # surface credential errors early and populate in-memory token.
