@@ -57,6 +57,24 @@ client = OptumAPI(..., prefetch_token=True)
 
 This surfaces credential errors immediately at construction time instead of on the first API call.
 
+### Timeouts & Retries
+
+Every request has a default timeout and is automatically retried (with exponential backoff) on transient failures — connection errors and `429`/`500`/`502`/`503`/`504` responses. Both are configurable:
+
+```python
+client = OptumAPI(
+    ...,
+    timeout=30,          # seconds; applied to every request unless overridden per-call
+    max_retries=3,       # total retry attempts for retryable status codes
+    backoff_factor=0.5,  # exponential backoff multiplier between retries
+)
+
+# Override the timeout for a single call:
+client.request("GET", "/api/claim/detail/v2.0", timeout=10)
+```
+
+If all retries are exhausted, the final response still flows through normal `APIError` handling.
+
 ## Error Handling
 
 All non-2xx responses raise `optumapisdk.APIError`:

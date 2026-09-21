@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
+from typing import cast
+
 import pytest
+from requests.adapters import HTTPAdapter
 
 from optumapisdk import OptumAPI, APIError
 from .conftest import BASE_URL, TOKEN_URL, make_token_payload
@@ -98,3 +101,71 @@ def test_prefetch_token_failure_does_not_raise(requests_mock):
     )
 
     assert api is not None
+
+
+def test_default_timeout_is_applied(requests_mock, client: OptumAPI):
+    requests_mock.get(f"{BASE_URL}/api/claim/detail/v2.0", json={"ok": True})
+
+    client.request("GET", "/api/claim/detail/v2.0")
+
+    assert requests_mock.last_request.timeout == client.timeout
+
+
+def test_per_request_timeout_overrides_default(requests_mock, client: OptumAPI):
+    requests_mock.get(f"{BASE_URL}/api/claim/detail/v2.0", json={"ok": True})
+
+    client.request("GET", "/api/claim/detail/v2.0", timeout=5)
+
+    assert requests_mock.last_request.timeout == 5
+
+
+def test_custom_default_timeout_from_constructor(requests_mock):
+    requests_mock.post(TOKEN_URL, json=make_token_payload())
+    requests_mock.get(f"{BASE_URL}/api/claim/detail/v2.0", json={"ok": True})
+
+    api = OptumAPI(
+        base_url=BASE_URL,
+        env="test",
+        client_id="cid",
+        client_secret="secret",
+        timeout=10,
+    )
+
+    api.request("GET", "/api/claim/detail/v2.0")
+
+    assert requests_mock.last_request.timeout == 10
+
+
+def test_session_has_retrying_adapter_mounted(client: OptumAPI):
+    https_adapter = cast(HTTPAdapter, client.session.get_adapter("https://example.com"))
+    assert isinstance(https_adapter, HTTPAdapter)
+    assert https_adapter.max_retries.total == 3
+    assert 429 in https_adapter.max_retries.status_forcelist
+    assert 503 in https_adapter.max_retries.status_forcelist
+
+
+def test_max_retries_is_configurable(requests_mock):
+    requests_mock.post(TOKEN_URL, json=make_token_payload())
+
+    api = OptumAPI(
+        base_url=BASE_URL,
+        env="test",
+        client_id="cid",
+        client_secret="secret",
+        max_retries=7,
+    )
+
+    adapter = cast(HTTPAdapter, api.session.get_adapter("https://example.com"))
+    assert adapter.max_retries.total == 7
+
+
+# Note: requests_mock installs its own transport adapter, which bypasses the
+# retry/backoff machinery of our mounted HTTPAdapter entirely (retries happen
+# at the urllib3 connection-pool level, which requests_mock never touches).
+# So retry *behavior* (e.g. "does a 503 actually get retried and eventually
+# succeed") can't be meaningfully asserted here -- we only verify the Retry
+# configuration itself is wired up correctly (tests above) and trust
+# urllib3's well-tested Retry/HTTPAdapter implementation for the rest.
+# An end-to-end retry behavior test would require a real HTTP server (or a
+# lower-level mock such as responses/urllib3-mock) and is left for
+# integration testing.

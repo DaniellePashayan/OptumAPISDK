@@ -1,5 +1,7 @@
 import requests
-from typing import Any, Dict
+from requests.adapters import HTTPAdapter
+from urllib3.util import Retry
+from typing import Any, Dict, Optional
 
 from .exceptions import APIError
 from .Auth import OAuth
@@ -16,6 +18,15 @@ from .ClaimPend import ClaimPend
 from .ClaimSubmission import ClaimSubmission
 from .DocumentEdit import DocumentEdit
 
+# Default network resilience settings. These are deliberately conservative:
+# a handful of retries with exponential backoff for transient failures, and
+# a sane timeout so a hung connection can't block a caller forever.
+DEFAULT_TIMEOUT = 30  # seconds, applied as (connect, read) via requests
+DEFAULT_MAX_RETRIES = 3
+DEFAULT_BACKOFF_FACTOR = 0.5
+RETRYABLE_STATUS_CODES = frozenset({429, 500, 502, 503, 504})
+RETRYABLE_METHODS = frozenset({"GET", "POST", "PUT", "DELETE", "PATCH"})
+
 
 class OptumAPI:
     """Main interface to interact with Optum API.
@@ -24,15 +35,46 @@ class OptumAPI:
     `self.auth.get_token()`. The `OAuth` implementation is thread-safe and will refresh tokens as needed. This avoids having a stale token in the session headers when a token expires (every 60 minutes).
     """
 
-    def __init__(self, base_url: str, env: str, client_secret: str, client_id: str, *, prefetch_token: bool = False):
+    def __init__(
+        self,
+        base_url: str,
+        env: str,
+        client_secret: str,
+        client_id: str,
+        *,
+        prefetch_token: bool = False,
+        timeout: float = DEFAULT_TIMEOUT,
+        max_retries: int = DEFAULT_MAX_RETRIES,
+        backoff_factor: float = DEFAULT_BACKOFF_FACTOR,
+    ):
         self.base_url = base_url.rstrip("/")
         self.env = env
         self.client_secret = client_secret
         self.client_id = client_id
+        self.timeout = timeout
 
         self.session = requests.Session()
         # Do not set Authorization here; we will inject per request
         self.session.headers.update({"Accept": "application/json"})
+
+        # Mount a retrying adapter so transient network/server errors
+        # (connection resets, 429/500/502/503/504) are retried with
+        # exponential backoff instead of failing the caller immediately.
+        # Note: the API returns 5xx/429 with response bodies our
+        # centralized error handling can parse, so status_forcelist
+        # retries happen at the transport layer *before* request()
+        # raises APIError -- only the final failing attempt's response
+        # reaches request()'s error-parsing logic.
+        retry = Retry(
+            total=max_retries,
+            backoff_factor=backoff_factor,
+            status_forcelist=RETRYABLE_STATUS_CODES,
+            allowed_methods=RETRYABLE_METHODS,
+            raise_on_status=False,
+        )
+        adapter = HTTPAdapter(max_retries=retry)
+        self.session.mount("https://", adapter)
+        self.session.mount("http://", adapter)
 
         self.auth = OAuth(self.env, self.base_url, self.client_id, self.client_secret)
 
@@ -73,8 +115,14 @@ class OptumAPI:
             return path
         return f"{self.base_url}/{path.lstrip('/')}"
 
-    def request(self, method: str, path: str, **kwargs) -> requests.Response:
+    def request(self, method: str, path: str, *, timeout: Optional[float] = None, **kwargs) -> requests.Response:
         """Perform an HTTP request with an up-to-date Authorization header.
+
+        Transient network errors and 429/5xx responses are automatically
+        retried (with exponential backoff) per the session's mounted
+        HTTPAdapter/Retry configuration. A request-level `timeout` (in
+        seconds) can be passed to override the client's default; otherwise
+        `self.timeout` is used so no request can hang indefinitely.
 
         Returns the requests.Response object. Callers can call .json() or .raise_for_status() as needed.
         """
@@ -88,7 +136,9 @@ class OptumAPI:
         token = self.auth.get_token()
         headers["Authorization"] = f"Bearer {token}"
 
-        resp = self.session.request(method, url, headers=headers, **kwargs)
+        resp = self.session.request(
+            method, url, headers=headers, timeout=timeout if timeout is not None else self.timeout, **kwargs
+        )
 
         # Centralized error parsing and raising
         if not resp.ok:
@@ -103,3 +153,4 @@ class OptumAPI:
             raise APIError(resp.status_code, err_text, response=resp)
 
         return resp
+
