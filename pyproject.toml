@@ -12,6 +12,8 @@ dependencies = [
 [dependency-groups]
 dev = [
     "autoflake>=2.4.0",
+    "dotenv>=0.9.9",
+    "ipykernel>=7.3.0",
     "pytest>=8.0.0",
     "pytest-mock>=3.14.0",
     "requests-mock>=1.12.0",
