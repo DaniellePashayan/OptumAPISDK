@@ -19,11 +19,20 @@ import requests
 class OAuth:
     LEEWAY_SECONDS = 60
 
-    def __init__(self, env: str, base_url: str, client_id: str, client_secret: str):
+    def __init__(
+        self,
+        env: str,
+        base_url: str,
+        client_id: str,
+        client_secret: str,
+        *,
+        token_url: Optional[str] = None,
+    ):
         self.env = env
         self.base_url = base_url.rstrip("/")
         self.client_id = client_id
         self.client_secret = client_secret
+        self.token_url = token_url or f"{self.base_url}/oauth/token"
 
         self._lock = threading.RLock()
         self._token: Optional[str] = None
@@ -56,9 +65,8 @@ class OAuth:
         if refresh_fn is not None:
             payload = refresh_fn()
         else:
-            token_url = f"{self.base_url}/oauth/token"
             resp = requests.post(
-                token_url,
+                self.token_url,
                 data={
                     "grant_type": "client_credentials",
                     "client_id": self.client_id,

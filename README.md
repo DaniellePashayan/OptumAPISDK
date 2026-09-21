@@ -57,6 +57,20 @@ client = OptumAPI(..., prefetch_token=True)
 
 This surfaces credential errors immediately at construction time instead of on the first API call.
 
+### Optional: explicit OAuth token URL
+
+By default, the SDK uses `base_url + "/oauth/token"` for client-credentials token fetches. If your auth endpoint is hosted separately (common in API gateways), pass an explicit `token_url`:
+
+```python
+client = OptumAPI(
+    base_url="https://apimarketplace.uhc.com/Claims",
+    env="prod",
+    client_id="<your-client-id>",
+    client_secret="<your-client-secret>",
+    token_url="https://auth.example.com/oauth2/token",
+)
+```
+
 ### Timeouts & Retries
 
 Every request has a default timeout and is automatically retried (with exponential backoff) on transient failures — connection errors and `429`/`500`/`502`/`503`/`504` responses. Both are configurable:

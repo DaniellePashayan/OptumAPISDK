@@ -42,6 +42,7 @@ class OptumAPI:
         client_secret: str,
         client_id: str,
         *,
+        token_url: Optional[str] = None,
         prefetch_token: bool = False,
         timeout: float = DEFAULT_TIMEOUT,
         max_retries: int = DEFAULT_MAX_RETRIES,
@@ -76,7 +77,13 @@ class OptumAPI:
         self.session.mount("https://", adapter)
         self.session.mount("http://", adapter)
 
-        self.auth = OAuth(self.env, self.base_url, self.client_id, self.client_secret)
+        self.auth = OAuth(
+            self.env,
+            self.base_url,
+            self.client_id,
+            self.client_secret,
+            token_url=token_url,
+        )
 
         self.attachments = Attachments(self)
         self.claim_action = ClaimAction(self)

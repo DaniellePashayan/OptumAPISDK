@@ -114,3 +114,22 @@ def test_get_token_is_thread_safe(requests_mock, oauth: OAuth):
 
     assert all(r == "racy" for r in results)
     assert requests_mock.call_count == 1
+
+
+def test_oauth_uses_explicit_token_url(requests_mock):
+    custom_token_url = "https://auth.example.com/oauth2/token"
+    requests_mock.post(custom_token_url, json=make_token_payload(token="custom-url-token"))
+
+    oauth = OAuth(
+        env="test",
+        base_url="https://apimarketplace.uhc.com/Claims",
+        client_id="cid",
+        client_secret="secret",
+        token_url=custom_token_url,
+    )
+
+    token = oauth.get_token()
+
+    assert token == "custom-url-token"
+    assert requests_mock.call_count == 1
+    assert requests_mock.last_request.url == custom_token_url
