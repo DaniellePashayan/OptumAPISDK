@@ -44,7 +44,7 @@ client = OptumAPI(
 )
 
 # GET a claim's details (transactionId is valid for 24 hours)
-detail = client.claim_details.get_detail(transaction_id="123456789", tin="12345678")
+detail = client.claims.claim_details.get_detail(transaction_id="123456789", tin="12345678")
 ```
 
 Credentials should be supplied via environment variables or a secrets manager — never hardcode them. See `main.py` for a minimal usage example.
@@ -84,7 +84,7 @@ client = OptumAPI(
 )
 
 # Override the timeout for a single call:
-client.request("GET", "/api/claim/detail/v2.0", timeout=10)
+client.claims.request("GET", "/api/claim/detail/v2.0", timeout=10)
 ```
 
 If all retries are exhausted, the final response still flows through normal `APIError` handling.
@@ -97,7 +97,7 @@ All non-2xx responses raise `optumapisdk.APIError`:
 from optumapisdk import OptumAPI, APIError
 
 try:
-    client.claim_details.get_detail(transaction_id="bad-id", tin="12345678")
+    client.claims.claim_details.get_detail(transaction_id="bad-id", tin="12345678")
 except APIError as e:
     print(e.status_code, e.message)
     # e.response holds the raw requests.Response, if you need more detail
@@ -109,18 +109,18 @@ The `OptumAPI` client exposes one attribute per resource area:
 
 | Attribute                 | Class             | Covers                                                                 |
 | ------------------------- | ----------------- | ---------------------------------------------------------------------- |
-| `client.claim_details`    | `ClaimDetails`    | Claim detail lookup (by transaction id or member)                      |
-| `client.claim_summary`    | `ClaimSummary`    | Claim summary (by claim #, provider TIN, PAN, or member)               |
-| `client.claim_payment`    | `ClaimPayment`    | Payment info for a claim                                               |
-| `client.claim_action`     | `ClaimAction`     | Allowed actions for a claim (RECON/APPEAL/PEND)                        |
-| `client.claim_appeals`    | `ClaimAppeals`    | Create/check status of an appeal                                       |
-| `client.claim_recon`      | `ClaimRecon`      | Create/update/search reconsiderations, list request reasons            |
-| `client.claim_pend`       | `ClaimPend`       | Create/update/search pended claims (incl. Medicare pend)               |
-| `client.claim_batch`      | `ClaimBatch`      | Batch claim summary/details submission, retrieval, and acknowledgement |
-| `client.claim_submission` | `ClaimSubmission` | 837 claim submission and 277CA acknowledgement                         |
-| `client.attachments`      | `Attachments`     | Upload/download attachments, list doc types                            |
-| `client.documents`        | `Documents`       | Document key lookup, metadata search, single & bulk document download  |
-| `client.document_edit`    | `DocumentEdit`    | Submit a "smart edit" / documentation edit                             |
+| `client.claims.claim_details`    | `ClaimDetails`    | Claim detail lookup (by transaction id or member)                      |
+| `client.claims.claim_summary`    | `ClaimSummary`    | Claim summary (by claim #, provider TIN, PAN, or member)               |
+| `client.claims.claim_payment`    | `ClaimPayment`    | Payment info for a claim                                               |
+| `client.claims.claim_action`     | `ClaimAction`     | Allowed actions for a claim (RECON/APPEAL/PEND)                        |
+| `client.claims.claim_appeals`    | `ClaimAppeals`    | Create/check status of an appeal                                       |
+| `client.claims.claim_recon`      | `ClaimRecon`      | Create/update/search reconsiderations, list request reasons            |
+| `client.claims.claim_pend`       | `ClaimPend`       | Create/update/search pended claims (incl. Medicare pend)               |
+| `client.claims.claim_batch`      | `ClaimBatch`      | Batch claim summary/details submission, retrieval, and acknowledgement |
+| `client.claims.claim_submission` | `ClaimSubmission` | 837 claim submission and 277CA acknowledgement                         |
+| `client.claims.attachments`      | `Attachments`     | Upload/download attachments, list doc types                            |
+| `client.claims.documents`        | `Documents`       | Document key lookup, metadata search, single & bulk document download  |
+| `client.claims.document_edit`    | `DocumentEdit`    | Submit a "smart edit" / documentation edit                             |
 
 Every method's docstring documents which swagger endpoint it maps to (method + path).
 
@@ -134,7 +134,7 @@ body = ReconRequest(
     provComments="Requesting reconsideration due to underpayment.",
     reqReason="R01",
 )
-result = client.claim_recon.post_recon(body, tin="12345678")
+result = client.claims.claim_recon.post_recon(body, tin="12345678")
 print(result["ticketNumber"])
 ```
 
@@ -143,9 +143,9 @@ print(result["ticketNumber"])
 ```python
 from optumapisdk.enums import TicketType
 
-doc_types = client.attachments.get_attachment_doc_types_v2(TicketType.RECON, tin="12345678")
+doc_types = client.claims.attachments.get_attachment_doc_types_v2(TicketType.RECON, tin="12345678")
 
-result = client.attachments.post_attachment(
+result = client.claims.attachments.post_attachment(
     tin="12345678",
     transactionId="123456789",
     doc_type_code="M1",
@@ -158,7 +158,7 @@ result = client.attachments.post_attachment(
 ```
 src/optumapisdk/
     __init__.py         # public re-exports: OptumAPI, APIError
-    Client.py           # OptumAPI client: session, auth injection, request(), get_json()
+    client.claims.py           # OptumAPI client: session, auth injection, request(), get_json()
     Auth.py             # OAuth: thread-safe in-memory token cache/refresh
     exceptions.py        # APIError
     enums.py             # TicketType, DocumentKeyType, ReconSearchType, NetworkStatus, ClaimType, CheckEftIndicator
