@@ -1,0 +1,57 @@
+"""Tests for the Documents endpoint class."""
+
+from __future__ import annotations
+
+from optumapisdk import OptumAPI
+from optumapisdk.enums import DocumentKeyType
+from optumapisdk.models import (
+    DocumentDownloadRequest,
+    DocumentMetaDataRequest,
+    BulkDocumentDownloadRequest,
+)
+from .conftest import BASE_URL
+
+
+def test_get_document_key_sends_expected_headers(requests_mock, client: OptumAPI):
+    requests_mock.get(f"{BASE_URL}/api/claim/document/key/v2.0", json={"documentId": "D1"})
+
+    result = client.documents.get_document_key("tx-1", tin="12345678", document_type=DocumentKeyType.PRA)
+
+    assert result == {"documentId": "D1"}
+    headers = requests_mock.last_request.headers
+    assert headers["documentType"] == "P"
+    assert headers["transactionId"] == "tx-1"
+
+
+def test_post_document_metadata_sends_json_body(requests_mock, client: OptumAPI):
+    requests_mock.post(f"{BASE_URL}/api/document/metadata/v2.0", json={"documents": []})
+
+    body = DocumentMetaDataRequest(toDt="01/31/2026 00:00:00", tin="12345678")
+    result = client.documents.post_document_metadata(body)
+
+    assert result == {"documents": []}
+    assert requests_mock.last_request.json()["toDt"] == "01/31/2026 00:00:00"
+
+
+def test_post_document_returns_binary_content(requests_mock, client: OptumAPI):
+    requests_mock.post(f"{BASE_URL}/api/document/v2.0", content=b"%PDF-1.4 fake bytes")
+
+    body = DocumentDownloadRequest(tin="12345678", documentId="D1")
+    result = client.documents.post_document(body)
+
+    assert result == b"%PDF-1.4 fake bytes"
+
+
+def test_post_bulk_download_returns_binary_content(requests_mock, client: OptumAPI):
+    requests_mock.post(f"{BASE_URL}/api/document/bulk/download", content=b"PK\x03\x04zipbytes")
+
+    body = BulkDocumentDownloadRequest(
+        fromDt="01/01/2026 00:00:00",
+        toDt="01/31/2026 00:00:00",
+        getPage="0",
+        tin="12345678",
+    )
+    result = client.documents.post_bulk_download(body)
+
+    assert result == b"PK\x03\x04zipbytes"
+    assert requests_mock.last_request.json()["getPage"] == "0"
