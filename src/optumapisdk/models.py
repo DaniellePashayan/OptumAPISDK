@@ -23,6 +23,8 @@ from typing import Any, List, Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from optumapisdk.enums import DocumentMetaDataCategories
+
 
 class OptumBaseModel(BaseModel):
     """Base model: forgiving of extra/undocumented fields from the API."""
@@ -146,12 +148,17 @@ class DocumentMetaDataRequest(OptumBaseModel):
     """Body for POST /api/document/metadata/v2.0."""
 
     toDt: str = Field(..., description="End date, MM/dd/yyyy HH:mm:ss (required)")
-    fromDt: Optional[str] = None
+    fromDt: str = Field(..., description="Start date, MM/dd/yyyy HH:mm:ss (required)")
     sourceCreatedDtFromDt: Optional[str] = None
     sourceCreatedDtToDt: Optional[str] = None
-    getPage: Optional[int] = 0
-    tin: Optional[str] = None
-    categories: Optional[List[str]] = None
+    getPage: int = Field(..., description="Page number, '0' for first page (required)")
+    tin: str = Field(..., description="Tax identification number (required)")
+    categories: Optional[DocumentMetaDataCategories] = None
+    patientAccountNumber: Optional[str] = None
+    claimNumber: Optional[str] = None
+    filePath: Optional[str] = None
+    checkId: Optional[str] = None
+    notificationId: Optional[str] = None    
 
 
 class DocumentDownloadRequest(OptumBaseModel):
