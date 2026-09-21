@@ -150,7 +150,14 @@ class OptumAPI:
                 err_text = f"{code}: {message}".strip(": ").strip()
             except Exception:
                 err_text = resp.text
-            raise APIError(resp.status_code, err_text, response=resp)
+            raise APIError(
+                resp.status_code,
+                err_text,
+                response=resp,
+                method=method,
+                url=url,
+                request_headers=headers,
+            )
 
         return resp
 
