@@ -70,5 +70,9 @@ class APIError(Exception):
             parts.append(f"request={method or '?'} {url or '?'}")
         if self.request_headers:
             parts.append(f"headers={self.request_headers}")
+            
+        # include error message
+        if self.response:
+            parts.append(f"response={self.response}")
 
         super().__init__(" | ".join(parts))
