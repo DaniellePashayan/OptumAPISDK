@@ -2,6 +2,7 @@ import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util import Retry
 from typing import Any, Dict, Optional
+import logging
 
 from .exceptions import APIError
 from .Auth import OAuth
@@ -34,6 +35,7 @@ class OptumAPI:
         *,
         token_url: Optional[str] = None,
         prefetch_token: bool = False,
+        logger: Optional[logging.Logger] = None,
         timeout: float = DEFAULT_TIMEOUT,
         max_retries: int = DEFAULT_MAX_RETRIES,
         backoff_factor: float = DEFAULT_BACKOFF_FACTOR,
@@ -43,6 +45,8 @@ class OptumAPI:
         self.client_secret = client_secret
         self.client_id = client_id
         self.timeout = timeout
+        
+        self.logger = logger or logging.getLogger(__name__)
 
         self.session = requests.Session()
         # Do not set Authorization here; we will inject per request
@@ -78,14 +82,11 @@ class OptumAPI:
         self.claims = ClaimsResource(self)
 
         # Optionally prefetch a token during initialization. Useful to
-        # surface credential errors early and populate in-memory token.
         if prefetch_token:
             try:
                 self.auth.get_token()
             except Exception:
-                import logging
-
-                logging.getLogger(__name__).exception("Initial token fetch failed")
+                self.logger.exception("Initial token fetch failed")
 
     def get_json(self, path: str, **kwargs) -> Any:
         """Convenience helper: perform a GET and return parsed JSON.
@@ -130,7 +131,7 @@ class OptumAPI:
         if not resp.ok:
             try:
                 payload = resp.json()
-                err = (payload.get("errors") or [{}])[0]
+                err = (payload.get("error") or {}).get("errors", [])[0]
                 code = err.get("code", "")
                 message = err.get("message", "")
                 err_text = f"{code}: {message}".strip(": ").strip()
