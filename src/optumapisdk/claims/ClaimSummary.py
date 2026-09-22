@@ -42,8 +42,8 @@ class ClaimSummary:
         self,
         tin: str,
         payer_id: str,
-        first_service_dt: str,
-        last_service_dt: str,
+        first_service_dt: Optional[str] = None,
+        last_service_dt: Optional[str] = None,
         *,
         transaction_id: Optional[str] = None,
     ) -> dict:
@@ -73,6 +73,10 @@ class ClaimSummary:
         # validations
         if payer_id not in {"87726", "03432", "96385", "95467", "86050", "86047", "95378", "37602"}:
             raise ValueError(f"Invalid payerId: {payer_id}")
+        
+        # can only search by either transactionId or date range, but not both
+        if transaction_id and (first_service_dt or last_service_dt):
+            raise ValueError("Cannot specify both transactionId and date range")
         
         url = "/api/claim/summary/byprovider/v2.0"
         headers: Dict[str, Any] = {
@@ -124,7 +128,7 @@ class ClaimSummary:
         response = self.client.request("GET", url, headers=headers)
         return response.json()
 
-    def get_summary_by_member(self, body: SummaryByMemberRequest, tin: str, payerId: str) -> dict:
+    def get_summary_info(self, body: SummaryByMemberRequest, tin: str, payerId: str) -> dict:
         """POST /api/claim/summary/bymember/v2.0.
         
         This API returns medical claim information based on member details.
