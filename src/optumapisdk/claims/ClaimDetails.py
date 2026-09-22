@@ -4,6 +4,7 @@ from typing import Any, Dict, Optional
 import logging
 
 from ..input_models import DetailByMemberRequest
+from ..output_models import ClaimsDetailResponse
 
 
 class ClaimDetails:
@@ -11,7 +12,7 @@ class ClaimDetails:
         self.client = client
         self.logger = logger or logging.getLogger(__name__)
 
-    def get_detail(self, transaction_id: str, tin: str, *, include_summary: bool = False) -> dict:
+    def get_detail(self, claim_number: str, tin: str, *, payer_id: str, include_summary: bool = True) -> ClaimsDetailResponse:
         """GET /api/claim/detail/v2.0 -- transaction is valid for 24 hours.
         
         Response Information:
@@ -22,16 +23,23 @@ class ClaimDetails:
         
         For more information, see: https://apimarketplace.uhcprovider.com/#/documentation/claims/get-claim-detail-v-2
         """
+        ALLOWED_PAYER_IDS = {'87726', '03432', ' 96385', '95467', '86050', '86047', '95378', '06111', '39026', '37602'}
+        
+        if payer_id not in ALLOWED_PAYER_IDS:
+            raise ValueError(f"Invalid payer_id. Allowed payer_ids are: {', '.join(ALLOWED_PAYER_IDS)}")
+        
         url = "/api/claim/detail/v2.0"
+        
         headers: Dict[str, Any] = {
-            "transactionId": transaction_id,
+            "claimNumber": claim_number,
+            "payerId": payer_id,
             "tin": tin,
             "includeSummary": str(include_summary).lower(),
         }
         response = self.client.request("GET", url, headers=headers)
-        return response.json()
+        return ClaimsDetailResponse(**response.json())
 
-    def get_detail_by_member(self, body: DetailByMemberRequest, tin: str, payerId: str) -> dict:
+    def get_detail_by_member(self, body: DetailByMemberRequest, tin: str, payerId: str) -> ClaimsDetailResponse:
         """POST /api/claim/details/bymember/v2.0.
         
         This API returns detailed medical claim information using member details.
@@ -76,4 +84,4 @@ class ClaimDetails:
         response = self.client.request(
             "POST", url, headers=headers, json=body.model_dump(exclude_none=True)
         )
-        return response.json()
+        return ClaimsDetailResponse(**response.json())
