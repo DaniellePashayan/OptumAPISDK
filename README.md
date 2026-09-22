@@ -64,10 +64,9 @@ By default, the SDK uses `base_url + "/oauth/token"` for client-credentials toke
 ```python
 client = OptumAPI(
     base_url="https://apimarketplace.uhc.com/Claims",
-    env="prod",
+    env="PROD",
     client_id="<your-client-id>",
-    client_secret="<your-client-secret>",
-    token_url="https://auth.example.com/oauth2/token",
+    client_secret="<your-client-secret>"
 )
 ```
 
@@ -158,14 +157,24 @@ result = client.claims.attachments.post_attachment(
 ```
 src/optumapisdk/
     __init__.py         # public re-exports: OptumAPI, APIError
-    client.claims.py           # OptumAPI client: session, auth injection, request(), get_json()
+    Client.py           # OptumAPI client: session, auth injection, request(), get_json()
     Auth.py             # OAuth: thread-safe in-memory token cache/refresh
-    exceptions.py        # APIError
-    enums.py             # TicketType, DocumentKeyType, ReconSearchType, NetworkStatus, ClaimType, CheckEftIndicator
-    models.py            # pydantic request models for all typed endpoints
-    ClaimDetails.py / ClaimSummary.py / ClaimPayment.py / ClaimAction.py
-    ClaimAppeals.py / ClaimRecon.py / ClaimPend.py / ClaimBatch.py
-    ClaimSubmission.py / Attachments.py / Documents.py / DocumentEdit.py
+    exceptions.py       # APIError
+    enums.py            # TicketType, DocumentKeyType, ReconSearchType, NetworkStatus, ClaimType, CheckEftIndicator
+    input_models.py     # pydantic request models for all typed endpoints
+    /Claims
+        Attachments.py
+        ClaimDetails.py
+        ClaimSummary.py
+        ClaimPayment.py
+        ClaimAction.py
+        ClaimAppeals.py
+        ClaimRecon.py
+        ClaimPend.py
+        ClaimBatch.py
+        ClaimSubmission.py
+        Documents.py
+        DocumentEdit.py
 resources/
     claims prod swagger.json   # source OpenAPI spec this SDK was generated from
 ```
@@ -176,8 +185,6 @@ resources/
 pip install -e .
 python -m py_compile src/optumapisdk/*.py   # quick syntax check
 ```
-
-No test suite exists yet — contributions adding `pytest`-based tests (especially around `OAuth` token refresh and each endpoint class) are welcome.
 
 ## Notes & Limitations
 
