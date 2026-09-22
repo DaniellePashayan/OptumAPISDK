@@ -12,7 +12,7 @@ from optumapisdk.Auth import OAuth
 
 BASE_URL = "https://apimarketplace.uhc.com"
 CLAIMS_BASE_URL = f"{BASE_URL}/Claims"
-TOKEN_URL = f"{BASE_URL}/oauth/token"
+TOKEN_URL = f"{BASE_URL}/v1/oauthtoken"
 
 
 def make_token_payload(token: str = "test-token", expires_in: int = 3600) -> Dict[str, Any]:
