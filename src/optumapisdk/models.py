@@ -21,7 +21,9 @@ from __future__ import annotations
 
 from typing import Any, List, Optional
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
+
+from datetime import datetime
 
 from optumapisdk.enums import DocumentMetaDataCategories
 
@@ -45,22 +47,40 @@ class DetailByMemberRequest(OptumBaseModel):
     patientDob: Optional[str] = None
     policy: Optional[str] = None
 
-
+    @field_validator('srvcDt', 'patientDob')  
+    @classmethod  
+    def check_date_format(cls, v: Optional[str]) -> Optional[str]:  
+        if v is None: # Allow None for Optional fields  
+            return v  
+        try:  
+            datetime.strptime(v, "%m/%d/%Y")  
+        except ValueError:  
+            raise ValueError(f"Date '{v}' must be in MM/DD/YYYY format.")  
+        return v
 # ---------------------------------------------------------------------------
 # Claim Summary
 # ---------------------------------------------------------------------------
 class SummaryByMemberRequest(OptumBaseModel):
     """Body for POST /api/claim/summary/bymember/v2.0."""
 
-    firstSrvcDt: str = Field(..., description="First date of service (required)")
-    lastSrvcDt: str = Field(..., description="Last date of service (required)")
+    firstSrvcDt: str = Field(..., description="First date of service in MM/DD/YYYY format (required)")
+    lastSrvcDt: str = Field(..., description="Last date of service in MM/DD/YYYY format (required)")
     memberId: Optional[str] = None
     patientFn: Optional[str] = None
     patientLn: Optional[str] = None
     patientDob: Optional[str] = None
     policy: Optional[str] = None
 
-
+    @field_validator('firstSrvcDt', 'lastSrvcDt', 'patientDob')  
+    @classmethod  
+    def check_date_format(cls, v: Optional[str]) -> Optional[str]:  
+        if v is None: # Allow None for Optional fields  
+            return v  
+        try:  
+            datetime.strptime(v, "%m/%d/%Y")  
+        except ValueError:  
+            raise ValueError(f"Date '{v}' must be in MM/DD/YYYY format.")  
+        return v
 # ---------------------------------------------------------------------------
 # Claim Batch Processing
 # ---------------------------------------------------------------------------
@@ -160,6 +180,16 @@ class DocumentMetaDataRequest(OptumBaseModel):
     checkId: Optional[str] = None
     notificationId: Optional[str] = None    
 
+    @field_validator('sourceCreatedDtFromDt', 'sourceCreatedDtToDt')  
+    @classmethod  
+    def check_date_format(cls, v: Optional[str]) -> Optional[str]:  
+        if v is None: # Allow None for Optional fields  
+            return v  
+        try:  
+            datetime.strptime(v, "%m/%d/%Y")  
+        except ValueError:  
+            raise ValueError(f"Date '{v}' must be in MM/DD/YYYY format.")  
+        return v
 
 class DocumentDownloadRequest(OptumBaseModel):
     """Body for POST /api/document/v2.0."""
@@ -179,6 +209,16 @@ class BulkDocumentDownloadRequest(OptumBaseModel):
     getPage: str = Field(..., description="Page number, '0' for first page (required)")
     tin: str = Field(..., description="Tax identification number (required)")
 
+    @field_validator('fromDt', 'toDt')  
+    @classmethod  
+    def check_date_format(cls, v: Optional[str]) -> Optional[str]:  
+        if v is None: # Allow None for Optional fields  
+            return v  
+        try:  
+            datetime.strptime(v, "%m/%d/%Y")  
+        except ValueError:  
+            raise ValueError(f"Date '{v}' must be in MM/DD/YYYY format.")  
+        return v
 
 # ---------------------------------------------------------------------------
 # Claim Submission (837/999) & Document Edit
