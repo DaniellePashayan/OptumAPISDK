@@ -215,9 +215,9 @@ class BulkDocumentDownloadRequest(OptumBaseModel):
         if v is None: # Allow None for Optional fields  
             return v  
         try:  
-            datetime.strptime(v, "%m/%d/%Y")  
+            datetime.strptime(v, "%m/%d/%Y %H:%M:%S")  
         except ValueError:  
-            raise ValueError(f"Date '{v}' must be in MM/DD/YYYY format.")  
+            raise ValueError(f"Date '{v}' must be in MM/DD/YYYY HH:MM:SS format.")  
         return v
 
 # ---------------------------------------------------------------------------
