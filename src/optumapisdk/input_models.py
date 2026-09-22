@@ -12,7 +12,7 @@ Notes on fidelity:
     fields while remaining forwards-compatible with the full API surface.
 
 Usage:
-    from optumapisdk.models import ReconRequest
+    from optumapisdk.input_models import ReconRequest
     body = ReconRequest(transactionId="123", provComments="please review")
     client.claim_recon.post_recon(body)
 """
