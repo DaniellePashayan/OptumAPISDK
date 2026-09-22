@@ -6,7 +6,7 @@ import pytest
 
 from optumapisdk import OptumAPI
 from optumapisdk.enums import ReconSearchType
-from optumapisdk.models import CreatePendTicketRequest, UpdatePendTicketRequest
+from optumapisdk.input_models import CreatePendTicketRequest, UpdatePendTicketRequest
 from .conftest import CLAIMS_BASE_URL as BASE_URL
 
 

@@ -4,7 +4,7 @@ from typing import Any, Dict, Optional
 import logging
 
 from ..enums import DocumentKeyType
-from ..models import (
+from ..input_models import (
     DocumentDownloadRequest,
     DocumentMetaDataRequest,
     BulkDocumentDownloadRequest,

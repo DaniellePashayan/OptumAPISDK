@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from optumapisdk import OptumAPI
-from optumapisdk.models import ClaimsRequest, ClaimDetailsRequest
+from optumapisdk.input_models import ClaimsRequest, ClaimDetailsRequest
 from .conftest import CLAIMS_BASE_URL as BASE_URL
 
 

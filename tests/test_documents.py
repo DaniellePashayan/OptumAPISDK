@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from optumapisdk import OptumAPI
 from optumapisdk.enums import DocumentKeyType
-from optumapisdk.models import (
+from optumapisdk.input_models import (
     DocumentDownloadRequest,
     DocumentMetaDataRequest,
     BulkDocumentDownloadRequest,

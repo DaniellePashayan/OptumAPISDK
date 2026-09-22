@@ -4,7 +4,7 @@ from typing import Any, Dict, Optional
 import logging
 
 from ..enums import ReconSearchType
-from ..models import ReconRequest, ReconUpdateRequest
+from ..input_models import ReconRequest, ReconUpdateRequest
 
 
 class ClaimRecon:

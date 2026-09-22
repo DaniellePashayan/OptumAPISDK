@@ -3,7 +3,7 @@
 from typing import Any, Dict, Optional
 import logging
 
-from ..models import AppealRequest
+from ..input_models import AppealRequest
 
 
 class ClaimAppeals:
