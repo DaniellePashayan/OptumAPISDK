@@ -12,7 +12,7 @@ def test_get_summary_sends_claim_number_header(requests_mock, client: OptumAPI):
 
     details = SummaryByMemberRequest(firstSrvcDt="01/01/2026", lastSrvcDt="01/31/2026", memberId="MEM-1", patientDob="01/01/2000")
     
-    result = client.claims.claim_summary.get_summary_info(details, tin="12345678", payerId="87726")
+    result = client.claims.claim_summary.get_summary_detail(details, tin="12345678", payerId="87726")
 
     assert result == {"claims": []}
     headers = requests_mock.last_request.headers
@@ -65,7 +65,7 @@ def test_get_summary_by_member_sends_json_body(requests_mock, client: OptumAPI):
     requests_mock.post(f"{BASE_URL}/api/claim/summary/bymember/v2.0", json={"claims": []})
 
     body = SummaryByMemberRequest(firstSrvcDt="01/01/2026", lastSrvcDt="01/31/2026", memberId="MEM-1", patientDob="01/01/2000")
-    client.claims.claim_summary.get_summary_info(body, tin="12345678", payerId="87726")
+    client.claims.claim_summary.get_summary_detail(body, tin="12345678", payerId="87726")
 
     sent_json = requests_mock.last_request.json()
     assert sent_json["firstSrvcDt"] == "01/01/2026"
