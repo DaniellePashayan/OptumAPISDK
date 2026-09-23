@@ -13,12 +13,13 @@ def test_get_detail_sends_expected_headers(requests_mock, client: OptumAPI):
         json={"transactionId": "tx-1"},
     )
 
-    result = client.claims.claim_details.get_detail("tx-1", tin="12345678", include_summary=True)
+    result = client.claims.claim_details.get_detail("tx-1", tin="12345678", payer_id='87726', include_summary=True)
 
-    assert result == {"transactionId": "tx-1"}
+    assert result.transaction_id == "tx-1"
     sent_headers = requests_mock.last_request.headers
-    assert sent_headers["transactionId"] == "tx-1"
+    assert sent_headers["claimNumber"] == "tx-1"
     assert sent_headers["tin"] == "12345678"
+    assert sent_headers["payerId"] == "87726"
     assert sent_headers["includeSummary"] == "true"
 
 
@@ -31,7 +32,7 @@ def test_get_detail_by_member_sends_json_body(requests_mock, client: OptumAPI):
     body = DetailByMemberRequest(srvcDt="01/01/2026", memberId="M123", patientDob="01/01/2000")
     result = client.claims.claim_details.get_detail_by_member(body, tin="12345678", payerId="06111")
 
-    assert result == {"claims": []}
+    assert result.claims_detail_info == []
     sent_json = requests_mock.last_request.json()
     assert sent_json["srvcDt"] == "01/01/2026"
     assert sent_json["memberId"] == "M123"

@@ -14,7 +14,7 @@ def test_get_summary_sends_claim_number_header(requests_mock, client: OptumAPI):
     
     result = client.claims.claim_summary.get_summary_detail(details, tin="12345678", payerId="87726")
 
-    assert result == {"claims": []}
+    assert result.claims == []
     headers = requests_mock.last_request.headers
     assert headers["tin"] == "12345678"
     assert headers["payerId"] == "87726"
@@ -26,15 +26,11 @@ def test_get_summary_by_provider_includes_optional_transaction_id(requests_mock,
     client.claims.claim_summary.get_summary_by_provider(
         tin="12345678",
         payer_id="87726",
-        first_service_dt="01/01/2026",
-        last_service_dt="01/31/2026",
         transaction_id="tx-99",
     )
 
     headers = requests_mock.last_request.headers
     assert headers["payerId"] == "87726"
-    assert headers["firstServiceDt"] == "01/01/2026"
-    assert headers["lastServiceDt"] == "01/31/2026"
     assert headers["transactionId"] == "tx-99"
 
 

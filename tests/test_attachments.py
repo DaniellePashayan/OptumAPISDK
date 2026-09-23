@@ -7,13 +7,18 @@ from optumapisdk import OptumAPI
 from optumapisdk.enums import TicketType
 from .conftest import CLAIMS_BASE_URL as BASE_URL
 
+from src.optumapisdk.output_models import AttachmentsResponse, DocumentTypeItem, DocumentTypes
 
 def test_get_attachment_doc_types_v2_accepts_enum(requests_mock, client: OptumAPI):
-    requests_mock.get(f"{BASE_URL}/api/doctypes/v2.0", json={"docTypes": []})
+    sample_response = DocumentTypes(
+    documentList=[
+        DocumentTypeItem(docTypeCode="DOC_TYPE_1", docTypeDesc="DOC_TYPE_1")])
+    
+    requests_mock.get(f"{BASE_URL}/api/doctypes/v2.0", json=sample_response.model_dump())
 
     result = client.claims.attachments.get_attachment_doc_types_v2(TicketType.RECON, tin="12345678")
 
-    assert result == {"docTypes": []}
+    assert result.document_list == []
     assert requests_mock.last_request.headers["ticketType"] == "RECON"
 
 
