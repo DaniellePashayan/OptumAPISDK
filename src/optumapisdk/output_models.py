@@ -137,9 +137,9 @@ class ClaimSummaryDetails(BaseModel):
     dcc_fln: Optional[str] = Field(None, alias="dccFln") # New field  
     smb_indicator: Optional[str] = Field(None, alias="smbIndicator") # New field  
     claim_flag_tag_cd: Optional[str] = Field(None, alias="claimFlagTagCd") # New field, optional  
-    clm_xwalk_data: List[ClaimXWalkDataItem] = Field([], alias="clmXWalkData") # Updated sub-model  
-    chk_info: List[CheckInfoItem] = Field([], alias="chkInfo") # Updated sub-model  
-    claim_codes: List[ClaimCode] = Field([], alias="claimCodes") # Reusing ClaimCode model
+    clm_xwalk_data: Optional[List[ClaimXWalkDataItem]] = Field([], alias="clmXWalkData") # Updated sub-model  
+    chk_info: Optional[List[CheckInfoItem]] = Field([], alias="chkInfo") # Updated sub-model  
+    claim_codes: Optional[List[ClaimCode]] = Field([], alias="claimCodes") # Reusing ClaimCode model
  
 class ClaimSummaryItemModel(BaseModel):  
     """  
@@ -159,7 +159,7 @@ class ClaimSummaryResponse(BaseModel):
     The top-level response model for the get claims summary APIs.
     It contains a list of individual claims.  
     """  
-    claims: List[ClaimSummaryItemModel]
+    claims: Optional[List[ClaimSummaryItemModel]] = Field(None, alias="claims")
 
 class CobInfo(BaseModel):  
     """  
@@ -257,7 +257,7 @@ class ClaimDetailInfoItem(BaseModel):
     cob_med_calc_type: Optional[str] = Field(None, alias="cobMedCalcType")  
     type_of_claim: Optional[str] = Field(None, alias="typeOfClaim")  
     smb_ind: Optional[str] = Field(None, alias="smbInd")  
-    lines: List[ClaimLineItem] = Field([], alias="lines")
+    lines: Optional[List[ClaimLineItem]] = Field(None, alias="lines")
 
 
 class ClaimsDetailResponse(BaseModel):  
@@ -267,8 +267,8 @@ class ClaimsDetailResponse(BaseModel):
     """  
     transaction_id: Optional[str] = Field(None, alias="transactionId")  
     invoke_actions: Optional[str] = Field(None, alias="invokeActions")  
-    claims_detail_info: List[ClaimDetailInfoItem] = Field([], alias="claimsDetailInfo")  
-    claim_summary_info: List[ClaimSummaryItemModel] = Field([], alias="claimSummaryInfo")
+    claims_detail_info: Optional[List[ClaimDetailInfoItem]] = Field(None, alias="claimsDetailInfo")  
+    claim_summary_info: Optional[List[ClaimSummaryItemModel]] = Field(None, alias="claimSummaryInfo")
 
 # -- ATTACHMENTS --
 class DocumentTypeItem(BaseModel):
@@ -276,7 +276,7 @@ class DocumentTypeItem(BaseModel):
     doc_type_code: Optional[str] = Field(None, alias="docTypeCode")
     
 class DocumentTypes(BaseModel):
-    document_list: List[DocumentTypeItem] = Field([], alias="documentList")
+    document_list: Optional[List[DocumentTypeItem]] = Field(None, alias="documentList")
 
 class AttachmentResponseItem(BaseModel):
     ticket_number: Optional[str] = Field(None, alias="ticketNumber")
@@ -286,7 +286,7 @@ class AttachmentResponseItem(BaseModel):
     attachment_id: Optional[str] = Field(None, alias="attachmentId")
 
 class AttachmentsResponse(BaseModel):
-    attachment_list: List[AttachmentResponseItem] = Field([], alias="attachmentList")
+    attachment_list: Optional[List[AttachmentResponseItem]] = Field(None, alias="attachmentList")
     
 # -- Claim Actions --
 class ClaimActionTicketInfo(BaseModel):
@@ -297,10 +297,10 @@ class ClaimActionTicketInfo(BaseModel):
 class ClaimActionItems(BaseModel):
     ticket_type: Optional[str] = Field(None, alias="ticketType")
     allowed_action: Optional[str] = Field(None, alias="allowedAction")
-    ticket_info: List[ClaimActionTicketInfo] = Field([], alias="ticketInfo")
+    ticket_info: Optional[List[ClaimActionTicketInfo]] = Field(None, alias="ticketInfo")
 
 class ClaimActionResponse(BaseModel):
-    actions: List[ClaimActionItems] = Field([], alias="actions")
+    actions: Optional[List[ClaimActionItems]] = Field(None, alias="actions")
     
 # -- Claim Recon --
 class ClaimInfo(BaseModel):
@@ -339,30 +339,30 @@ class TicketInfo(BaseModel):
 
     
 class PatientInfo(BaseModel):
-    patient_first_name: str = Field(..., alias="ptntFn")
-    patient_last_name: str = Field(..., alias="ptntLn")
+    patient_first_name: Optional[str] = Field(None, alias="ptntFn")
+    patient_last_name: Optional[str] = Field(None, alias="ptntLn")
     patient_middle_initial: Optional[str] = Field(None, alias="ptntMi")
-    patient_date_of_birth: str = Field(..., alias="ptntDob")
+    patient_date_of_birth: Optional[str] = Field(None, alias="ptntDob")
     relationship_cd: Optional[str] = Field(None, alias="relationshipCd")
     dep_seq_nbr: Optional[str] = Field(None, alias="depSeqNbr")
 
 class PayerInfo(BaseModel):
-    payer_name: str = Field(..., alias="payerName")
-    id: str = Field(..., alias="id")
+    payer_name: Optional[str] = Field(None, alias="payerName")
+    id: Optional[str] = Field(None, alias="id")
 
 class TicketDetailItems(BaseModel):
     comments: Optional[List[Dict[str, Any]]] = Field(None, alias="comments")
-    provider_info: ProviderInfo = Field(..., alias="providerInfo")
-    claim_info: ClaimInfo = Field(..., alias="claimInfo")
-    operator: Operator = Field(..., alias="operator")
-    ticket_info: TicketInfo = Field(..., alias="ticketInfo")
-    member_info: MemberInfo = Field(..., alias="memberInfo")
-    patient_info: PatientInfo = Field(..., alias="patientInfo")
-    payer_info: PayerInfo = Field(..., alias="payerInfo")
+    provider_info: Optional[ProviderInfo] = Field(None, alias="providerInfo")
+    claim_info: Optional[ClaimInfo] = Field(None, alias="claimInfo")
+    operator: Optional[Operator] = Field(None, alias="operator")
+    ticket_info: Optional[TicketInfo] = Field(None, alias="ticketInfo")
+    member_info: Optional[MemberInfo] = Field(None, alias="memberInfo")
+    patient_info: Optional[PatientInfo] = Field(None, alias="patientInfo")
+    payer_info: Optional[PayerInfo] = Field(None, alias="payerInfo")
 
 class ReconsiderationItemsResponse(BaseModel):
     ticket_detail: TicketDetailItems = Field(..., alias="ticketDetail")
 
 class ReconsiderationResponse(BaseModel):
-    tickets: List[ReconsiderationItemsResponse]
-    partial_data: bool = Field(..., alias="partialData")
+    tickets: Optional[List[ReconsiderationItemsResponse]] = Field([], alias="tickets")
+    partial_data: Optional[bool] = Field(None, alias="partialData")
