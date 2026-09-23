@@ -8,6 +8,7 @@ if TYPE_CHECKING:
 from .BenefitNotes import BenefitNotes
 from .BenefitSummary import BenefitSummary
 from .BenefitUtilization import BenefitUtilization
+from .ClaimSubmission import ClaimSubmission
 
 class _DentalScopedClient:
     """A thin proxy around the root `OptumAPI` client that prefixes every
@@ -49,7 +50,7 @@ class DentalResource:
         self.benefit_summary = BenefitSummary(scoped_client)
         self.benefit_utilization = BenefitUtilization(scoped_client)
         self.claim_detail = None
-        self.claim_submission = None
+        self.claim_submission = ClaimSubmission(scoped_client)
         self.claim_summary = None
         self.eligibility_summary = None
         self.member_search = None

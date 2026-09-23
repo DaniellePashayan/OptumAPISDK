@@ -4,6 +4,8 @@ from urllib3.util import Retry
 from typing import Any, Dict, Optional
 import logging
 
+from optumapisdk.dental.DentalResource import DentalResource
+
 from .exceptions import APIError
 from .Auth import OAuth
 
@@ -80,6 +82,7 @@ class OptumAPI:
         )
 
         self.claims = ClaimsResource(self)
+        self.dental = DentalResource(self)
 
         # Optionally prefetch a token during initialization. Useful to
         if prefetch_token:
