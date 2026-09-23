@@ -5,7 +5,7 @@ import logging
 
 from ..enums import ReconSearchType
 from ..input_models import ReconRequest, ReconUpdateRequest
-
+from ..output_models import ReconsiderationResponse
 
 class ClaimRecon:
     def __init__(self, client, logger: Optional[logging.Logger] = None):
@@ -20,7 +20,7 @@ class ClaimRecon:
         ticket_number: Optional[str] = None,
         first_subm_dt: Optional[str] = None,
         last_subm_dt: Optional[str] = None,
-    ) -> dict:
+    ) -> ReconsiderationResponse:
         """GET /api/claim/recon/v2.0.
 
         This API facilitates search for claim reconsideration ticket information.
@@ -54,7 +54,7 @@ class ClaimRecon:
             headers["lastSubmDt"] = last_subm_dt
 
         response = self.client.request("GET", url, headers=headers)
-        return response.json()
+        return ReconsiderationResponse.model_validate(response.json())
 
     def post_recon(self, body: ReconRequest, tin: str) -> dict:
         """POST /api/claim/recon/v2.0 -- submit a reconsideration.

@@ -13,6 +13,16 @@ class ClaimCode(BaseModel):
     code: str  
     description: Optional[str] = None # Description is sometimes missing
 
+class MemberAddress(BaseModel):
+    address: Optional[str] = Field(None, alias="address")
+    city: Optional[str] = Field(None, alias="city")
+    state: Optional[str] = Field(None, alias="state")
+    zip_code: Optional[str] = Field(None, alias="zipCode")
+
+class MemberName(BaseModel):
+    first_name: Optional[str] = Field(None, alias="firstName")
+    last_name: Optional[str] = Field(None, alias="lastName")
+
 class MemberInfo(BaseModel):  
     """  
     Member information within a claim summary.  
@@ -22,6 +32,12 @@ class MemberInfo(BaseModel):
     ptnt_fn: Optional[str] = Field(None, alias="ptntFn")  
     ptnt_ln: Optional[str] = Field(None, alias="ptntLn")  
     ptnt_dob: Optional[str] = Field(None, alias="ptntDob")
+    member_id: Optional[str] = Field(None, alias="memberId")
+    member_name: Optional[MemberName] = Field(None, alias="memberName")
+    member_address: Optional[MemberAddress] = Field(None, alias="memberAddress")
+    zip_code: Optional[str] = Field(None, alias="zipCode")
+    policy_nbr: Optional[str] = Field(None, alias="policyNbr")
+    group_nbr: Optional[str] = Field(None, alias="groupNbr")
 
 class SubmittedProvInfoDetails(BaseModel):  
     """  
@@ -47,8 +63,11 @@ class ProviderInfo(BaseModel):
     """  
     Provider information container, separating submitted and adjudicated details.  
     """  
-    submitted: Optional[SubmittedProvInfoDetails] = None # No alias needed if name matches  
-    adjudicated: Optional[AdjudicatedProvInfoDetails] = None # No alias needed if name matches
+    submitted: Optional[SubmittedProvInfoDetails] = Field(None, alias="submitted") 
+    adjudicated: Optional[AdjudicatedProvInfoDetails] = Field(None, alias="adjudicated")
+    billing_provider_name: Optional[str] = Field(None, alias="billProvNm")
+    rendering_provider_name: Optional[dict[str, Any]] = Field(None, alias="renProvNm")
+    tin: Optional[str] = Field(None, alias="tin")
 
 class PayeeAddressModel(BaseModel):  
     """  
@@ -282,3 +301,68 @@ class ClaimActionItems(BaseModel):
 
 class ClaimActionResponse(BaseModel):
     actions: List[ClaimActionItems] = Field([], alias="actions")
+    
+# -- Claim Recon --
+class ClaimInfo(BaseModel):
+    claim_number: Optional[str] = Field(None, alias="claimNumber")
+    amount_owed: Optional[Decimal] = Field(None, alias="amtOwed")
+    total_charged_amount: Optional[Decimal] = Field(None, alias="totalChargedAmt")
+    first_service_date: Optional[str] = Field(None, alias="firstSrvcDt")
+    claim_type: Optional[str] = Field(None, alias="claimType")
+    claim_icn: Optional[str] = Field(None, alias="claimIcn")
+    claim_status: Optional[str] = Field(None, alias="claimStatus")
+    dont_know_about_checkbox: Optional[bool] = Field(None, alias="dontKnowAboutCheckBox")
+    patient_account_number: Optional[str] = Field(None, alias="ptntAcctNbr")
+
+class Operator(BaseModel):
+    operator_name: Optional[str] = Field(None, alias="operatorName")
+    email_id: Optional[str] = Field(None, alias="emailId")
+    phone_no: Optional[str] = Field(None, alias="phoneNo")
+
+class ContactAddress(BaseModel):
+    street: Optional[str] = Field(None, alias="street")
+    city: Optional[str] = Field(None, alias="city")
+    state: Optional[str] = Field(None, alias="state")
+    zip_code: Optional[str] = Field(None, alias="zip")
+
+class TicketInfo(BaseModel):
+    ticket_number: Optional[str] = Field(None, alias="ticketNumber")
+    ticket_status: Optional[str] = Field(None, alias="ticketStatus")
+    ticket_submit_date: Optional[str] = Field(None, alias="ticketSubmDt")
+    ticket_type: Optional[str] = Field(None, alias="ticketType")
+    is_closed: Optional[bool] = Field(None, alias="isClosed")
+    contact_address: Optional[ContactAddress] = Field(None, alias="contactAddress")
+    adjustment_ids: Optional[List[str]] = Field(None, alias="adjustmentIds")
+    submit_date: Optional[str] = Field(None, alias="submDt")
+    attachments_count: Optional[int] = Field(None, alias="attachmentsCount")
+    last_closed_date: Optional[str] = Field(None, alias="lastClosedDt")
+
+    
+class PatientInfo(BaseModel):
+    patient_first_name: str = Field(..., alias="ptntFn")
+    patient_last_name: str = Field(..., alias="ptntLn")
+    patient_middle_initial: Optional[str] = Field(None, alias="ptntMi")
+    patient_date_of_birth: str = Field(..., alias="ptntDob")
+    relationship_cd: Optional[str] = Field(None, alias="relationshipCd")
+    dep_seq_nbr: Optional[str] = Field(None, alias="depSeqNbr")
+
+class PayerInfo(BaseModel):
+    payer_name: str = Field(..., alias="payerName")
+    id: str = Field(..., alias="id")
+
+class TicketDetailItems(BaseModel):
+    comments: Optional[List[Dict[str, Any]]] = Field(None, alias="comments")
+    provider_info: ProviderInfo = Field(..., alias="providerInfo")
+    claim_info: ClaimInfo = Field(..., alias="claimInfo")
+    operator: Operator = Field(..., alias="operator")
+    ticket_info: TicketInfo = Field(..., alias="ticketInfo")
+    member_info: MemberInfo = Field(..., alias="memberInfo")
+    patient_info: PatientInfo = Field(..., alias="patientInfo")
+    payer_info: PayerInfo = Field(..., alias="payerInfo")
+
+class ReconsiderationItemsResponse(BaseModel):
+    ticket_detail: TicketDetailItems = Field(..., alias="ticketDetail")
+
+class ReconsiderationResponse(BaseModel):
+    tickets: List[ReconsiderationItemsResponse]
+    partial_data: bool = Field(..., alias="partialData")
