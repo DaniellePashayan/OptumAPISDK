@@ -39,7 +39,7 @@ class ClaimDetails:
         response = self.client.request("GET", url, headers=headers)
         return ClaimsDetailResponse(**response.json())
 
-    def get_detail_by_member(self, body: DetailByMemberRequest, tin: str, payerId: str) -> ClaimsDetailResponse:
+    def get_detail_by_member(self, body: DetailByMemberRequest, tin: str, payer_id: str) -> ClaimsDetailResponse:
         """POST /api/claim/details/bymember/v2.0.
         
         This API returns detailed medical claim information using member details.
@@ -70,17 +70,17 @@ class ClaimDetails:
         if not valid_search_combination:
             raise ValueError("Invalid search combination. Please provide either Member ID and Patient DOB, Member ID and Patient First Name and Last Name, or Patient First Name, Last Name and Patient DOB.")
         
-        if payerId not in {"06111", "74227", "25463", "LIFE1", "WELM2"}:
+        if payer_id not in {"06111", "74227", "25463", "LIFE1", "WELM2"}:
             raise ValueError("Invalid payerId. Allowed payerIds are 06111, 74227, 25463, LIFE1, WELM2.")
         
-        if payerId == "74227" and not (body.memberId and body.patientDob):
+        if payer_id == "74227" and not (body.memberId and body.patientDob):
             raise ValueError("For payerId 74227, only Member ID and Patient DOB search combination will work.")
         
-        if payerId == "25463" and not (body.patientFn and body.patientLn and body.patientDob):
+        if payer_id == "25463" and not (body.patientFn and body.patientLn and body.patientDob):
             raise ValueError("For payerId 25463, only Patient First Name, Last Name and Patient DOB search combination will work.")
         
         url = "/api/claim/details/bymember/v2.0"
-        headers: Dict[str, Any] = {"tin": tin, "payerId": payerId}
+        headers: Dict[str, Any] = {"tin": tin, "payerId": payer_id}
         response = self.client.request(
             "POST", url, headers=headers, json=body.model_dump(exclude_none=True)
         )

@@ -9,7 +9,7 @@ class ClaimPayment:
         self.client = client
         self.logger = logger or logging.getLogger(__name__)
 
-    def get_payment(self, transaction_id: str, tin: str, payerId: str) -> dict:
+    def get_payment(self, transaction_id: str, tin: str, payer_id: str) -> dict:
         """GET /api/claim/payment/v2.0.
         
         This API provides payment information for a claim.
@@ -25,6 +25,6 @@ class ClaimPayment:
         For more information, see: https://apimarketplace.uhcprovider.com/#/documentation/claims/get-claim-payment-v-2
         """
         url = "/api/claim/payment/v2.0"
-        headers: Dict[str, Any] = {"transactionId": transaction_id, "tin": tin, "payerId": payerId}
+        headers: Dict[str, Any] = {"transactionId": transaction_id, "tin": tin, "payerId": payer_id}
         response = self.client.request("GET", url, headers=headers)
         return response.json()

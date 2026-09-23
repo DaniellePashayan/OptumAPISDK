@@ -12,7 +12,7 @@ class ClaimSummary:
         self.client = client
         self.logger = logger or logging.getLogger(__name__)
 
-    def get_summary(self, claim_number: str, tin: str, payerId: str) -> ClaimSummaryResponse:
+    def get_summary(self, claim_number: str, tin: str, payer_id: str) -> ClaimSummaryResponse:
         """GET /api/claim/summary/v2.0 -- summary by UHC claim number.
         
         This API returns medical claim summary information based on United Healthcare Claim Number.
@@ -31,11 +31,11 @@ class ClaimSummary:
         For more information, see: https://apimarketplace.uhcprovider.com/#/documentation/claims/get-claim-summary-v-2
         """
         # validations
-        if payerId not in {"87726", "03432", "96385", "95467", "86050", "86047", "95378", "06111", "39026", "37602", "87748"}:
-            raise ValueError(f"Invalid payerId: {payerId}")
+        if payer_id not in {"87726", "03432", "96385", "95467", "86050", "86047", "95378", "06111", "39026", "37602", "87748"}:
+            raise ValueError(f"Invalid payer_id: {payer_id}")
         
         url = "/api/claim/summary/v2.0"
-        headers: Dict[str, Any] = {"claimNumber": claim_number, "tin": tin, "payerId": payerId}
+        headers: Dict[str, Any] = {"claimNumber": claim_number, "tin": tin, "payer_id": payer_id}
         response = self.client.request("GET", url, headers=headers)
         return ClaimSummaryResponse(**response.json())
 
@@ -73,7 +73,7 @@ class ClaimSummary:
         """
         # validations
         if payer_id not in {"87726", "03432", "96385", "95467", "86050", "86047", "95378", "37602"}:
-            raise ValueError(f"Invalid payerId: {payer_id}")
+            raise ValueError(f"Invalid payer_id: {payer_id}")
         
         # can only search by either transactionId or date range, but not both
         if transaction_id and (first_service_dt or last_service_dt):
@@ -91,7 +91,7 @@ class ClaimSummary:
         response = self.client.request("GET", url, headers=headers)
         return ClaimSummaryResponse(**response.json())
 
-    def get_summary_by_pan(self, tin: str, payerId: str, pan: str | None = None) -> ClaimSummaryResponse:
+    def get_summary_by_pan(self, tin: str, payer_id: str, pan: str | None = None) -> ClaimSummaryResponse:
         """GET /api/claim/summary/bypan/v2.0.
         
         This API returns medical claim summary information based on provider TIN (Tax Identification Number) with a date range.
@@ -119,17 +119,17 @@ class ClaimSummary:
         """
         # validations
         ALLOWED_PAYER_IDS = {"87726", "03432", "96385", "95467", "86050", "86047", "95378", "39026", "37602", "87748"}
-        if payerId not in ALLOWED_PAYER_IDS:
+        if payer_id not in ALLOWED_PAYER_IDS:
             raise ValueError(f"Invalid payerId. Allowed payerIds are: {', '.join(ALLOWED_PAYER_IDS)}")
         
         url = "/api/claim/summary/bypan/v2.0"
-        headers: Dict[str, Any] = {"tin": tin, "payerId": payerId}
+        headers: Dict[str, Any] = {"tin": tin, "payerId": payer_id}
         if pan:
             headers["pan"] = pan
         response = self.client.request("GET", url, headers=headers)
         return ClaimSummaryResponse(**response.json())
 
-    def get_summary_detail(self, body: SummaryByMemberRequest, tin: str, payerId: str) -> ClaimSummaryResponse:
+    def get_summary_detail(self, body: SummaryByMemberRequest, tin: str, payer_id: str) -> ClaimSummaryResponse:
         """POST /api/claim/summary/bymember/v2.0.
         
         This API returns medical claim information based on member details.
@@ -162,17 +162,17 @@ class ClaimSummary:
             raise ValueError("Invalid search combination. Please provide either Member ID and Patient DOB, Member ID and Patient First Name and Last Name, or Patient First Name, Last Name and Patient DOB.")
         
         ALLOWED_PAYER_IDS = {"87726", "03432", "96385", "95467", "86050", "86047", "95378", "06111", "74227", "25463", "39026", "37602", "LIFE1", "WELM2", "87748"}
-        if payerId not in ALLOWED_PAYER_IDS:
+        if payer_id not in ALLOWED_PAYER_IDS:
             raise ValueError(f"Invalid payerId. Allowed payerIds are: {', '.join(ALLOWED_PAYER_IDS)}")
         
-        if payerId == "74227" and not (body.memberId and body.patientDob):
+        if payer_id == "74227" and not (body.memberId and body.patientDob):
             raise ValueError("For payerId 74227, only Member ID and Patient DOB search combination will work.")
         
-        if payerId == "25463" and not (body.patientFn and body.patientLn and body.patientDob):
+        if payer_id == "25463" and not (body.patientFn and body.patientLn and body.patientDob):
             raise ValueError("For payerId 25463, only Patient First Name, Last Name and Patient DOB search combination will work.")
         
         url = "/api/claim/summary/bymember/v2.0"
-        headers: Dict[str, Any] = {"tin": tin, "payerId": payerId}
+        headers: Dict[str, Any] = {"tin": tin, "payerId": payer_id}
         response = self.client.request(
             "POST", url, headers=headers, json=body.model_dump(exclude_none=True)
         )
