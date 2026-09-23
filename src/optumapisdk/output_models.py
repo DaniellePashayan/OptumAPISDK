@@ -253,18 +253,32 @@ class ClaimsDetailResponse(BaseModel):
 
 # -- ATTACHMENTS --
 class DocumentTypeItem(BaseModel):
-    doc_type_desc: str = Field(..., alias="docTypeDesc")
-    doc_type_code: str = Field(..., alias="docTypeCode")
+    doc_type_desc: Optional[str] = Field(None, alias="docTypeDesc")
+    doc_type_code: Optional[str] = Field(None, alias="docTypeCode")
     
 class DocumentTypes(BaseModel):
     document_list: List[DocumentTypeItem] = Field([], alias="documentList")
 
 class AttachmentResponseItem(BaseModel):
-    ticket_number: str = Field(..., alias="ticketNumber")
-    ticket_type: str = Field(..., alias="ticketType")
-    file_name: str = Field(..., alias="fileNm")
-    report_type_code: str = Field(..., alias="reportTypeCode")
-    attachment_id: str = Field(..., alias="attachmentId")
+    ticket_number: Optional[str] = Field(None, alias="ticketNumber")
+    ticket_type: Optional[str] = Field(None, alias="ticketType")
+    file_name: Optional[str] = Field(None, alias="fileNm")
+    report_type_code: Optional[str] = Field(None, alias="reportTypeCode")
+    attachment_id: Optional[str] = Field(None, alias="attachmentId")
 
 class AttachmentsResponse(BaseModel):
     attachment_list: List[AttachmentResponseItem] = Field([], alias="attachmentList")
+    
+# -- Claim Actions --
+class ClaimActionTicketInfo(BaseModel):
+    ticket_number: Optional[str] = Field(None, alias="ticketNumber")
+    ticket_status: Optional[str] = Field(None,alias="ticketStatus")
+    submission_date: Optional[str] = Field(None,alias="submissionDate")
+
+class ClaimActionItems(BaseModel):
+    ticket_type: Optional[str] = Field(None, alias="ticketType")
+    allowed_action: Optional[str] = Field(None, alias="allowedAction")
+    ticket_info: List[ClaimActionTicketInfo] = Field([], alias="ticketInfo")
+
+class ClaimActionResponse(BaseModel):
+    actions: List[ClaimActionItems] = Field([], alias="actions")
