@@ -36,7 +36,7 @@ class BenefitNotes:
         self.client = client
         self.logger = logger or logging.getLogger(__name__)
         
-    def get_benefit_notes(self, tin: str, body: BenefitNotesRequest):
+    def get_benefit_notes(self, tin: str, body: BenefitNotesRequest) -> DentalBenefitNotes:
         """POST /notes/v1
         Retrieve Dental Benefit Notes information for a given member.
         
@@ -50,5 +50,5 @@ class BenefitNotes:
         headers: Dict[str, Any] = {"tin": tin}
         response = self.client.request("POST", url, headers=headers, json=body.model_dump(exclude_none=True))
         
-        return response
+        return DentalBenefitNotes(**response)
         
