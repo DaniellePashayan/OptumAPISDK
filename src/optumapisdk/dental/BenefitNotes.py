@@ -1,6 +1,5 @@
 from typing import Any, Dict, Optional
 import logging
-import os
 
 from pydantic import BaseModel, Field
 from typing import List, Dict, Any, Optional
