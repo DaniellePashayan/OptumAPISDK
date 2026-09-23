@@ -122,6 +122,7 @@ class OptumAPI:
         # Obtain (thread-safe) token; OAuth.get_token will refresh if needed
         token = self.auth.get_token()
         headers["Authorization"] = f"Bearer {token}"
+        headers['env'] = 'sandbox'
 
         resp = self.session.request(
             method, url, headers=headers, timeout=timeout if timeout is not None else self.timeout, **kwargs
