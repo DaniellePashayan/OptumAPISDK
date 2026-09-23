@@ -9,7 +9,7 @@ from .conftest import CLAIMS_BASE_URL as BASE_URL
 def test_get_payment_sends_expected_headers(requests_mock, client: OptumAPI):
     requests_mock.get(f"{BASE_URL}/api/claim/payment/v2.0", json={"chkEftInd": "E"})
 
-    result = client.claims.claim_payment.get_payment("tx-1", tin="12345678", payerId="06111")
+    result = client.claims.claim_payment.get_payment("tx-1", tin="12345678", payer_id="06111")
 
     assert result == {"chkEftInd": "E"}
     headers = requests_mock.last_request.headers

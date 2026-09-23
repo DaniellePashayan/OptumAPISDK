@@ -12,7 +12,7 @@ def test_get_summary_sends_claim_number_header(requests_mock, client: OptumAPI):
 
     details = SummaryByMemberRequest(firstSrvcDt="01/01/2026", lastSrvcDt="01/31/2026", memberId="MEM-1", patientDob="01/01/2000")
     
-    result = client.claims.claim_summary.get_summary_detail(details, tin="12345678", payerId="87726")
+    result = client.claims.claim_summary.get_summary_detail(details, tin="12345678", payer_id="87726")
 
     assert result.claims == []
     headers = requests_mock.last_request.headers
@@ -51,7 +51,7 @@ def test_get_summary_by_provider_omits_transaction_id_when_not_given(requests_mo
 def test_get_summary_by_pan(requests_mock, client: OptumAPI):
     requests_mock.get(f"{BASE_URL}/api/claim/summary/bypan/v2.0", json={"claims": []})
 
-    client.claims.claim_summary.get_summary_by_pan(tin="12345678", pan="PAN-1", payerId="87726")
+    client.claims.claim_summary.get_summary_by_pan(tin="12345678", pan="PAN-1", payer_id="87726")
 
     headers = requests_mock.last_request.headers
     assert headers["pan"] == "PAN-1"
@@ -61,7 +61,7 @@ def test_get_summary_by_member_sends_json_body(requests_mock, client: OptumAPI):
     requests_mock.post(f"{BASE_URL}/api/claim/summary/bymember/v2.0", json={"claims": []})
 
     body = SummaryByMemberRequest(firstSrvcDt="01/01/2026", lastSrvcDt="01/31/2026", memberId="MEM-1", patientDob="01/01/2000")
-    client.claims.claim_summary.get_summary_detail(body, tin="12345678", payerId="87726")
+    client.claims.claim_summary.get_summary_detail(body, tin="12345678", payer_id="87726")
 
     sent_json = requests_mock.last_request.json()
     assert sent_json["firstSrvcDt"] == "01/01/2026"
