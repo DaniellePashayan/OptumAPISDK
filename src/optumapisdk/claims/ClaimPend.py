@@ -4,7 +4,7 @@ from typing import Any, Dict, Optional
 import logging
 
 from ..enums import ReconSearchType
-from ..input_models import CreatePendTicketRequest, UpdatePendTicketRequest
+from .input_models import CreatePendTicketRequest, UpdatePendTicketRequest
 
 
 class ClaimPend:

@@ -3,7 +3,7 @@
 from typing import Any, Dict, Optional
 import logging
 
-from ..input_models import ClaimsRequest, ClaimDetailsRequest
+from .input_models import ClaimsRequest, ClaimDetailsRequest
 
 
 class ClaimSubmission:

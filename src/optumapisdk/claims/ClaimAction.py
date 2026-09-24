@@ -3,7 +3,7 @@
 from typing import Any, Dict, Optional
 import logging
 
-from ..output_models import ClaimActionResponse
+from .output_models import ClaimActionResponse
 
 
 class ClaimAction:

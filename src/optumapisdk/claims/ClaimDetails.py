@@ -3,8 +3,8 @@
 from typing import Any, Dict, Optional
 import logging
 
-from ..input_models import DetailByMemberRequest
-from ..output_models import ClaimsDetailResponse
+from .input_models import DetailByMemberRequest
+from .output_models import ClaimsDetailResponse
 
 
 class ClaimDetails:
