@@ -30,7 +30,6 @@ class OptumAPI:
 
     def __init__(
         self,
-        base_url: str,
         env: str,
         client_secret: str,
         client_id: str,
@@ -42,8 +41,16 @@ class OptumAPI:
         max_retries: int = DEFAULT_MAX_RETRIES,
         backoff_factor: float = DEFAULT_BACKOFF_FACTOR,
     ):
-        self.base_url = base_url.rstrip("/")
+        
         self.env = env
+        
+        if self.env.lower() == "production" or self.env.lower() == "prod" or self.env.lower() == "sandbox":
+            self.base_url = "https://apimarketplace.uhc.com"
+        elif self.env.lower() == "staging" or self.env.lower() == "stg":
+            self.base_url = "https://apimarketplace-stg.uhc.com"
+        else:
+            raise ValueError(f"Unknown environment: {self.env}. Please enter either Production, Staging, or Sandbox")
+
         self.client_secret = client_secret
         self.client_id = client_id
         self.timeout = timeout
