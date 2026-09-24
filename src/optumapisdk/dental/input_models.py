@@ -167,4 +167,17 @@ class EligibilityInputItems(BaseModel):
 
 class EligibilitySummaryRequest(BaseModel):
     searchInput: Optional[EligibilityInputItems] = Field(None, alias="searchInput")
-    
+
+## MemberSearch
+class MemberSearchRequest(BaseModel):
+    memberId: Optional[str] = Field(None, alias="memberId")
+    lastName: Optional[str] = Field(None, alias="lastName")
+    firstName: Optional[str] = Field(None, alias="firstName")
+    dateOfBirth: Optional[str] = Field(None, alias="dateOfBirth")
+    state: Optional[str] = Field(None, alias="state")
+    zipCode: Optional[str] = Field(None, alias="zipCode")
+    groupId: Optional[str] = Field(None, alias="groupId")
+    groupName: Optional[str] = Field(None, alias="groupName")
+    groupPolicyNumber: Optional[str] = Field(None, alias="groupPolicyNumber")
+    activeFlag: Optional[str] = Field(None, alias="activeFlag")
+    pagination: Optional[Dict[str, Any]] = Field(None, alias="pagination")

@@ -10,6 +10,9 @@ from .BenefitSummary import BenefitSummary
 from .BenefitUtilization import BenefitUtilization
 from .ClaimDetail import ClaimDetail
 from .ClaimSubmission import ClaimSubmission
+from .ClaimSummary import ClaimSummary
+from .EligibilitySummary import EligibilitySummary
+from .MemberSearch import MemberSearch
 
 class _DentalScopedClient:
     """A thin proxy around the root `OptumAPI` client that prefixes every
@@ -52,6 +55,6 @@ class DentalResource:
         self.benefit_utilization = BenefitUtilization(scoped_client)
         self.claim_detail = ClaimDetail(scoped_client)
         self.claim_submission = ClaimSubmission(scoped_client)
-        self.claim_summary = None
-        self.eligibility_summary = None
-        self.member_search = None
+        self.claim_summary = ClaimSummary(scoped_client)
+        self.eligibility_summary = EligibilitySummary(scoped_client)
+        self.member_search = MemberSearch(scoped_client)

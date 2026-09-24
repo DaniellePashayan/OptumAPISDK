@@ -354,11 +354,11 @@ class DentalClaimResponse(BaseModel):
 
 ## ClaimSubmission
 class StatusMessage(BaseModel):  
-    """  
-    Represents a single status message with a code and description.  
-    """  
-    code: Optional[str] = None  
-    description: Optional[str] = None
+    code: Optional[int] = Field(None, alias="code")  
+    name: Optional[str] = Field(None, alias="name")  
+    origin: Optional[str] = Field(None, alias="origin")  
+    severity: Optional[str] = Field(None, alias="severity")  
+    description: Optional[str] = Field(None, alias="description")
 
 class StatusInfo(BaseModel):  
     """  
@@ -736,3 +736,72 @@ class DentalCoverageSearchResult(BaseModel):
 
 class DentalCoverageSearchResponse(BaseModel):  
     search_result: Optional[DentalCoverageSearchResult] = Field(None, alias="searchResult")
+    
+## MemberSearch
+class NameWithMiddleInitial(BaseModel):  
+    last_name: Optional[str] = Field(None, alias="lastName")  
+    first_name: Optional[str] = Field(None, alias="firstName")  
+    middle_initial: Optional[str] = Field(None, alias="middleInitial")
+
+
+class MemberGroupInfo(BaseModel):  
+    group_id: Optional[str] = Field(None, alias="groupID")  
+    group_name: Optional[str] = Field(None, alias="groupName")  
+    ehb_indicator: Optional[str] = Field(None, alias="ehbIndicator")  
+    parent_group_name: Optional[str] = Field(None, alias="parentGroupName")  
+    group_policy_number: Optional[str] = Field(None, alias="groupPolicyNumber")  
+    group_effective_date: Optional[DateOfService] = Field(None, alias="groupEffectiveDate") 
+    subgroup_identifier: Optional[str] = Field(None, alias="subgroupIdentifier")  
+    subgroup_policy_code: Optional[str] = Field(None, alias="subgroupPolicyCode")  
+    is_offshore_restricted: Optional[str] = Field(None, alias="isOffshoreRestricted")  
+    parent_group_identifier: Optional[str] = Field(None, alias="parentGroupIdentifier")  
+    private_label_indicator: Optional[str] = Field(None, alias="privateLabelIndicator")
+
+
+class MemberIdentifiers(BaseModel):  
+    member_key: Optional[str] = Field(None, alias="memberKey") 
+    member_ssn: Optional[str] = Field(None, alias="memberSSN")  
+    subscriber_id: Optional[str] = Field(None, alias="subscriberId")  
+    subscriber_employee_id: Optional[str] = Field(None, alias="subscriberEmployeeId")  
+    subscribers_member_key: Optional[str] = Field(None, alias="subscribersMemberKey") 
+
+ 
+class MemberPostalAddressSimplified(BaseModel):  
+    city: Optional[str] = Field(None, alias="city")  
+    zip4: Optional[str] = Field(None, alias="zip4")  
+    zip5: Optional[str] = Field(None, alias="zip5")  
+    line1: Optional[str] = Field(None, alias="line1")  
+    line2: Optional[str] = Field(None, alias="line2")  
+    state: Optional[str] = Field(None, alias="state")
+
+
+class MemberDetailSearch(BaseModel):  
+    name: Optional[NameWithMiddleInitial] = Field(None, alias="name")  
+    gender: Optional[CodeValueDescription] = Field(None, alias="gender") 
+    group_info: Optional[MemberGroupInfo] = Field(None, alias="groupInfo")  
+    date_of_birth: Optional[str] = Field(None, alias="dateOfBirth")  
+    identifiers: Optional[MemberIdentifiers] = Field(None, alias="identifiers")  
+    member_active: Optional[str] = Field(None, alias="memberActive")  
+    member_suffix: Optional[str] = Field(None, alias="memberSuffix")   
+    postal_address: Optional[MemberPostalAddressSimplified] = Field(None, alias="postalAddress")  
+    relationship_code: Optional[CodeValueDescription] = Field(None, alias="relationshipCode") 
+
+ 
+class ResultMeta(BaseModel):  
+    count: Optional[int] = Field(None, alias="count")  
+    start: Optional[int] = Field(None, alias="start")  
+    total_results: Optional[int] = Field(None, alias="totalResults")  
+    threshold_indicator: Optional[str] = Field(None, alias="thresholdIndicator")
+ 
+class StatusContainer(BaseModel):  
+    messages: Optional[List[StatusMessage]] = Field(None, alias="messages")
+
+
+class MembersResultContent(BaseModel): 
+    members: Optional[List[MemberDetailSearch]] = Field(None, alias="members")  
+    result_meta: Optional[ResultMeta] = Field(None, alias="resultmeta")
+
+
+class MembersSearchResponse(BaseModel):  
+    result: Optional[MembersResultContent] = Field(None, alias="result")  
+    status: Optional[StatusContainer] = Field(None, alias="status")
