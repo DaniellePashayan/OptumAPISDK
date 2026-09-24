@@ -609,3 +609,130 @@ class SearchResult(BaseModel):
 
 class DentalClaimSearchResponse(BaseModel):  
     search_result: Optional[SearchResult] = Field(None, alias="searchResult")
+    
+## EligibilitySummary
+class SimpleName(BaseModel):  
+    first_name: Optional[str] = Field(None, alias="firstName")  
+    last_name: Optional[str] = Field(None, alias="lastName")
+ 
+class PersonNameWithMiddleAndSuffix(BaseModel):  
+    first_name: Optional[str] = Field(None, alias="firstName")  
+    middle_name: Optional[str] = Field(None, alias="middleName")  
+    last_name: Optional[str] = Field(None, alias="lastName")  
+    suffix: Optional[str] = Field(None, alias="suffix")
+
+class AddressWithCountryCode(BaseModel):  
+    address_line1: Optional[str] = Field(None, alias="addressLine1")  
+    address_line2: Optional[str] = Field(None, alias="addressLine2")  
+    city: Optional[str] = Field(None, alias="city")  
+    state: Optional[str] = Field(None, alias="state")  
+    zip5: Optional[str] = Field(None, alias="zip5")  
+    zip4: Optional[str] = Field(None, alias="zip4")  
+    iso_country_code: Optional[str] = Field(None, alias="isoCountryCode")
+    
+class MemberProfile(BaseModel):  
+    person_name: Optional[PersonNameWithMiddleAndSuffix] = Field(None, alias="personName")  
+    date_of_birth: Optional[str] = Field(None, alias="dateOfBirth")  
+    gender: Optional[str] = Field(None, alias="gender")
+
+class MemberPostalAddress(BaseModel): 
+    postal_address: Optional[AddressWithCountryCode] = Field(None, alias="postalAddress")  
+    county_name: Optional[str] = Field(None, alias="countyName")
+
+class MemberPhone(BaseModel):  
+    telephone_nbr: Optional[str] = Field(None, alias="telephoneNbr")  
+    extension: Optional[str] = Field(None, alias="extension")
+
+class PcpForCoverage(BaseModel):
+    provider_id: Optional[str] = Field(None, alias="providerId")  
+    provider_effective_date: Optional[str] = Field(None, alias="providerEffectiveDate")  
+    provider_termination_date: Optional[str] = Field(None, alias="providerTerminationDate")  
+    provider_name: Optional[SimpleName] = Field(None, alias="providerName")  
+    provider_group_id: Optional[str] = Field(None, alias="providerGroupId")
+
+class LapAndHcrInfo(BaseModel):  
+    language_assistance_indicator: Optional[str] = Field(None, alias="languageAssistanceIndicator")  
+    writen_language_preference: Optional[str] = Field(None, alias="writenLanguagePreference")  
+    spoken_language_preference: Optional[str] = Field(None, alias="spokenLanguagePreference")  
+    writen_language_threshold: Optional[str] = Field(None, alias="writenLanguageThreshold")  
+    eob_opt_out_flag: Optional[str] = Field(None, alias="eobOptOutFlag")  
+    situs_state: Optional[str] = Field(None, alias="situsState")  
+    embedded_member_flag: Optional[str] = Field(None, alias="embeddedMemberFlag")
+
+class EligibilityDetails(BaseModel):  
+    member_eligibility_effective_date: Optional[str] = Field(None, alias="memberEligibilityEffectiveDate")  
+    eligibility_indicator: Optional[str] = Field(None, alias="eligibilityIndicator")  
+    eligibility_term_date: Optional[str] = Field(None, alias="eligibilityTermDate")  
+    conditional_eligibility: Optional[str] = Field(None, alias="conditionalEligibility") 
+    plan: Optional[CodeValueDescription] = Field(None, alias="plan")  
+    product: Optional[CodeValueDescription] = Field(None, alias="product")  
+    legal_entity: Optional[CodeValueDescription] = Field(None, alias="legalEntity")  
+    family_indicator: Optional[str] = Field(None, alias="familyIndicator")  
+    product_plan_type: Optional[CodeValueDescription] = Field(None, alias="productPlanType")  
+    plan_type_val1_code: Optional[str] = Field(None, alias="planTypeVal1Code")  
+    plan_type_val2_code: Optional[str] = Field(None, alias="planTypeVal2Code")  
+    class_plan_category: Optional[str] = Field(None, alias="classPlanCategory")  
+    class_plan_effective_date: Optional[str] = Field(None, alias="classPlanEffectiveDate")  
+    plan_year_begin_date: Optional[str] = Field(None, alias="planYearBeginDate")  
+    benefit_effective_date: Optional[str] = Field(None, alias="benefitEffectiveDate")  
+    network_prefix: Optional[str] = Field(None, alias="networkPrefix")  
+    benefit_summary_prefix: Optional[str] = Field(None, alias="benefitSummaryPrefix")  
+    network_id: Optional[str] = Field(None, alias="networkId")  
+    claim_mailing_address: Optional[str] = Field(None, alias="claimMailingAddress")
+
+class MemberDetail(BaseModel):  
+    member_contrived_key: Optional[str] = Field(None, alias="memberContrivedKey")  
+    group_id: Optional[str] = Field(None, alias="groupId")  
+    group_name: Optional[str] = Field(None, alias="groupName")  
+    parent_group_identifier: Optional[str] = Field(None, alias="parentGroupIdentifier")  
+    parent_group_name: Optional[str] = Field(None, alias="parentGroupName")  
+    subscriber_contrived_key: Optional[str] = Field(None, alias="subscriberContrivedKey")  
+    group_contrived_key: Optional[str] = Field(None, alias="groupContrivedKey")  
+    client_system_id: Optional[str] = Field(None, alias="clientSystemId")  
+    line_of_business_id: Optional[str] = Field(None, alias="lineOfBusinessId")  
+    group_type: Optional[str] = Field(None, alias="groupType")  
+    group_type_desc: Optional[str] = Field(None, alias="groupTypeDesc")  
+    alternate_line_of_business_id: Optional[str] = Field(None, alias="alternateLineOfBusinessId")  
+    id_card_eligible_indicator: Optional[str] = Field(None, alias="idCardEligibleIndicator")  
+    member_suffix: Optional[str] = Field(None, alias="memberSuffix")  
+    member_profile: Optional[MemberProfile] = Field(None, alias="memberProfile")  
+    original_eligibility_effective_date: Optional[str] = Field(None, alias="originalEligibilityEffectiveDate")  
+    member_ssn: Optional[str] = Field(None, alias="memberSsn")  
+    member_relation: Optional[CodeValueDescription] = Field(None, alias="memberRelation")  
+    member_responsible_party_type: Optional[str] = Field(None, alias="memberResponsiblePartyType")  
+    member_address: Optional[MemberPostalAddress] = Field(None, alias="memberAddress")  
+    member_phone: Optional[MemberPhone] = Field(None, alias="memberPhone")  
+    member_email: Optional[str] = Field(None, alias="memberEmail")  
+    member_id_card_level: Optional[str] = Field(None, alias="memberIdCardLevel")  
+    phi_flag: Optional[str] = Field(None, alias="phiFlag")  
+    ehb_indicator: Optional[str] = Field(None, alias="ehbIndicator")  
+    eligibility_paid_through_date: Optional[str] = Field(None, alias="eligibilityPaidThroughDate")  
+    consumer_max_multiplier: Optional[str] = Field(None, alias="consumerMaxMultiplier")  
+    nw_flag: Optional[str] = Field(None, alias="nwFlag")  
+    pcp: Optional[PcpForCoverage] = Field(None, alias="pcp")  
+    lap_and_hcr_info: Optional[LapAndHcrInfo] = Field(None, alias="lapAndHcrInfo")  
+    eligibility: Optional[List[EligibilityDetails]] = Field(None, alias="eligibility")
+
+class Subscriber(BaseModel):  
+    subscriber_id: Optional[str] = Field(None, alias="subscriberId")  
+    employee_id: Optional[str] = Field(None, alias="employeeId")  
+    group_policy_number: Optional[str] = Field(None, alias="groupPolicyNumber")  
+    subscriber_name: Optional[SimpleName] = Field(None, alias="subscriberName") 
+    subscriber_address: Optional[AddressWithCountryCode] = Field(None, alias="subscriberAddress") 
+    subscriber_id_display_config: Optional[str] = Field(None, alias="subscriberIdDisplayConfig")  
+    member_details: Optional[List[MemberDetail]] = Field(None, alias="memberDetails")
+
+class DentalCoverage(BaseModel):  
+    subscriber: Optional[Subscriber] = Field(None, alias="subscriber")
+
+ 
+class DentalCoverageSearchOutput(BaseModel):  
+    dental_coverage: Optional[DentalCoverage] = Field(None, alias="dentalCoverage")
+ 
+class DentalCoverageSearchResult(BaseModel):  
+    search_output: Optional[DentalCoverageSearchOutput] = Field(None, alias="searchOutput")  
+    errors: Optional[List[Error]] = Field(None, alias="errors") 
+
+
+class DentalCoverageSearchResponse(BaseModel):  
+    search_result: Optional[DentalCoverageSearchResult] = Field(None, alias="searchResult")

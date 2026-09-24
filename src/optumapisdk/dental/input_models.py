@@ -118,7 +118,7 @@ class ClaimSubmissionForm(BaseModel):
     claimSubmissionBody: bytes
 
 ## ClaimSummary
-class SearchInputItems(BaseModel):
+class ClaimSearchInputItems(BaseModel):
     memberContrivedKey: Optional[str] = Field(None, alias="memberContrivedKey")
     ehbMemberContrivedKey: Optional[str] = Field(None, alias="ehbMemberContrivedKey")
     groupPolicy: Optional[str] = Field(None, alias="groupPolicy")
@@ -145,4 +145,26 @@ class SearchInputItems(BaseModel):
     toothEnd: Optional[str] = Field(None, alias="toothEnd")
     
 class ClaimSummaryRequest(BaseModel):
-    searchInput: Optional[SearchInputItems] = Field(None, alias="searchInput")
+    searchInput: Optional[ClaimSearchInputItems] = Field(None, alias="searchInput")
+    
+## EligibilitySummary
+
+class DateRange(BaseModel):
+    startDate: Optional[str] = Field(None, alias="startDate")
+    stopDate: Optional[str] = Field(None, alias="stopDate")
+
+class EligibilityInputItems(BaseModel):
+    memberContrivedKey: Optional[str] = Field(None, alias="memberContrivedKey")
+    subscriberId: Optional[str] = Field(None, alias="subscriberId")
+    groupPolicy: Optional[str] = Field(None, alias="groupPolicy")
+    dateRange: Optional[DateRange] = Field(None, alias="dateRange")
+    requestType: Optional[str] = Field(None, alias="requestType")
+    lapAndHcrInfoNeeded: Optional[str] = Field(None, alias="lapAndHcrInfoNeeded")
+    dependentCode: Optional[str] = Field(None, alias="dependentCode")
+    dateOfBirth: Optional[str] = Field(None, alias="dateOfBirth")
+    alphaNum: Optional[str] = Field(None, alias="alphaNum")
+    providerId: Optional[str] = Field(None, alias="providerId")
+
+class EligibilitySummaryRequest(BaseModel):
+    searchInput: Optional[EligibilityInputItems] = Field(None, alias="searchInput")
+    
