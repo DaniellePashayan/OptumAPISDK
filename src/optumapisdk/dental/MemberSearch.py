@@ -20,4 +20,4 @@ class MemberSearch:
         url = "/v1/members/search"
         headers: Dict[str, Any] = {"tin": tin}
         response = self.client.request("POST", url, headers=headers, json=body.model_dump(exclude_none=True))
-        return MembersSearchResponse.model_validate(response)
+        return MembersSearchResponse.model_validate(response.json())

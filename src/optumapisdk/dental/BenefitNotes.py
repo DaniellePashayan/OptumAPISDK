@@ -23,5 +23,5 @@ class BenefitNotes:
         headers: Dict[str, Any] = {"tin": tin}
         response = self.client.request("POST", url, headers=headers, json=body.model_dump(exclude_none=True))
         
-        return DentalBenefitNotes(**response)
+        return DentalBenefitNotes(**response.json())
         

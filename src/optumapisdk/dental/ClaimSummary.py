@@ -20,4 +20,4 @@ class ClaimSummary:
         url = "/claims/v2/search"
         headers: Dict[str, Any] = {"tin": tin}
         response = self.client.request("POST", url, headers=headers, json=body.model_dump(exclude_none=True))
-        return DentalClaimSearchResponse(**response)
+        return DentalClaimSearchResponse(**response.json())

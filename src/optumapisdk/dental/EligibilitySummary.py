@@ -21,5 +21,5 @@ class EligibilitySummary:
 
         url = "/eligibilities/v2/search"
         headers: Dict[str, Any] = {"tin": tin}
-        response = self.client.post(url, headers=headers, json=body.model_dump(exclude_none=True))
-        return DentalCoverageSearchResponse.model_validate(response)
+        response = self.client.request("POST", url, headers=headers, json=body.model_dump(exclude_none=True))
+        return DentalCoverageSearchResponse.model_validate(response.json())

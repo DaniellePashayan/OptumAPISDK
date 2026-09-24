@@ -108,8 +108,7 @@ def test_prefetch_token_true_fetches_immediately(requests_mock):
     requests_mock.post(TOKEN_URL, json=make_token_payload(token="prefetched"))
 
     api = OptumAPI(
-        base_url=BASE_URL,
-        env="test",
+        env="sandbox",
         client_id="cid",
         client_secret="secret",
         prefetch_token=True,
@@ -126,8 +125,7 @@ def test_prefetch_token_failure_does_not_raise(requests_mock):
 
     # Should not raise even though the prefetch attempt fails internally.
     api = OptumAPI(
-        base_url=BASE_URL,
-        env="test",
+        env="sandbox",
         client_id="cid",
         client_secret="bad-secret",
         prefetch_token=True,
@@ -141,8 +139,7 @@ def test_prefetch_uses_custom_token_url(requests_mock):
     requests_mock.post(custom_token_url, json=make_token_payload(token="custom-prefetch-token"))
 
     api = OptumAPI(
-        base_url=BASE_URL,
-        env="test",
+        env="sandbox",
         client_id="cid",
         client_secret="secret",
         token_url=custom_token_url,
@@ -175,8 +172,7 @@ def test_custom_default_timeout_from_constructor(requests_mock):
     requests_mock.get(f"{BASE_URL}/api/claim/detail/v2.0", json={"ok": True})
 
     api = OptumAPI(
-        base_url=BASE_URL,
-        env="test",
+        env="sandbox",
         client_id="cid",
         client_secret="secret",
         timeout=10,
@@ -199,8 +195,7 @@ def test_max_retries_is_configurable(requests_mock):
     requests_mock.post(TOKEN_URL, json=make_token_payload())
 
     api = OptumAPI(
-        base_url=BASE_URL,
-        env="test",
+        env="sandbox",
         client_id="cid",
         client_secret="secret",
         max_retries=7,
