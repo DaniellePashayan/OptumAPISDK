@@ -4,6 +4,8 @@ from urllib3.util import Retry
 from typing import Any, Dict, Optional
 import logging
 
+from optumapisdk.dental.DentalResource import DentalResource
+
 from .exceptions import APIError
 from .Auth import OAuth
 
@@ -28,7 +30,6 @@ class OptumAPI:
 
     def __init__(
         self,
-        base_url: str,
         env: str,
         client_secret: str,
         client_id: str,
@@ -40,8 +41,16 @@ class OptumAPI:
         max_retries: int = DEFAULT_MAX_RETRIES,
         backoff_factor: float = DEFAULT_BACKOFF_FACTOR,
     ):
-        self.base_url = base_url.rstrip("/")
+        
         self.env = env
+        
+        if self.env.lower() == "production" or self.env.lower() == "prod" or self.env.lower() == "sandbox":
+            self.base_url = "https://apimarketplace.uhc.com"
+        elif self.env.lower() == "staging" or self.env.lower() == "stg":
+            self.base_url = "https://apimarketplace-stg.uhc.com"
+        else:
+            raise ValueError(f"Unknown environment: {self.env}. Please enter either Production, Staging, or Sandbox")
+
         self.client_secret = client_secret
         self.client_id = client_id
         self.timeout = timeout
@@ -80,6 +89,7 @@ class OptumAPI:
         )
 
         self.claims = ClaimsResource(self)
+        self.dental = DentalResource(self)
 
         # Optionally prefetch a token during initialization. Useful to
         if prefetch_token:
@@ -122,7 +132,8 @@ class OptumAPI:
         # Obtain (thread-safe) token; OAuth.get_token will refresh if needed
         token = self.auth.get_token()
         headers["Authorization"] = f"Bearer {token}"
-        headers['env'] = 'sandbox'
+        if self.env.lower() == "sandbox":
+            headers['env'] = 'sandbox'
 
         resp = self.session.request(
             method, url, headers=headers, timeout=timeout if timeout is not None else self.timeout, **kwargs

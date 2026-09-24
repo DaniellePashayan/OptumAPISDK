@@ -6,7 +6,7 @@ import pytest
 
 from optumapisdk import OptumAPI
 from optumapisdk.enums import ReconSearchType
-from optumapisdk.input_models import ReconRequest, ReconUpdateRequest
+from optumapisdk.claims.input_models import ReconRequest, ReconUpdateRequest
 from .conftest import CLAIMS_BASE_URL as BASE_URL
 
 

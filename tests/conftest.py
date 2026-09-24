@@ -12,6 +12,7 @@ from optumapisdk.Auth import OAuth
 
 BASE_URL = "https://apimarketplace.uhc.com"
 CLAIMS_BASE_URL = f"{BASE_URL}/Claims"
+DENTAL_BASE_URL = f"{BASE_URL}/Dental"
 TOKEN_URL = f"{BASE_URL}/v1/oauthtoken"
 
 
@@ -30,8 +31,7 @@ def client(requests_mock) -> OptumAPI:
     """An OptumAPI client with the token endpoint pre-mocked to succeed."""
     requests_mock.post(TOKEN_URL, json=make_token_payload())
     return OptumAPI(
-        base_url=BASE_URL,
-        env="test",
+        env="sandbox",
         client_id="cid",
         client_secret="secret",
     )

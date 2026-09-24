@@ -7,7 +7,7 @@ from optumapisdk import OptumAPI
 from optumapisdk.enums import TicketType
 from .conftest import CLAIMS_BASE_URL as BASE_URL
 
-from src.optumapisdk.output_models import AttachmentsResponse, DocumentTypeItem, DocumentTypes
+from optumapisdk.claims.output_models import AttachmentsResponse, DocumentTypeItem, DocumentTypes
 
 def test_get_attachment_doc_types_v2_accepts_enum(requests_mock, client: OptumAPI):
     sample_response = DocumentTypes(

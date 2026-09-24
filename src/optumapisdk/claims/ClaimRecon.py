@@ -4,8 +4,8 @@ from typing import Any, Dict, Optional
 import logging
 
 from ..enums import ReconSearchType
-from ..input_models import ReconRequest, ReconUpdateRequest
-from ..output_models import ReconsiderationResponse
+from .input_models import ReconRequest, ReconUpdateRequest
+from .output_models import ReconsiderationResponse
 
 class ClaimRecon:
     def __init__(self, client, logger: Optional[logging.Logger] = None):

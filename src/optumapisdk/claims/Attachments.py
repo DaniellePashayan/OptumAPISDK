@@ -5,7 +5,7 @@ import logging
 import os
 
 from ..enums import TicketType
-from ..output_models import DocumentTypes
+from .output_models import DocumentTypes
 
 
 class Attachments:

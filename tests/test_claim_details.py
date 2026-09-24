@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from optumapisdk import OptumAPI
-from optumapisdk.input_models import DetailByMemberRequest
+from optumapisdk.claims.input_models import DetailByMemberRequest
 from .conftest import CLAIMS_BASE_URL as BASE_URL
 
 
@@ -30,7 +30,7 @@ def test_get_detail_by_member_sends_json_body(requests_mock, client: OptumAPI):
     )
 
     body = DetailByMemberRequest(srvcDt="01/01/2026", memberId="M123", patientDob="01/01/2000")
-    result = client.claims.claim_details.get_detail_by_member(body, tin="12345678", payerId="06111")
+    result = client.claims.claim_details.get_detail_by_member(body, tin="12345678", payer_id="06111")
 
     assert result.claims_detail_info == []
     sent_json = requests_mock.last_request.json()

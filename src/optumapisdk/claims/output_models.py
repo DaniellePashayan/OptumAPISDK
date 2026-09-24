@@ -267,7 +267,7 @@ class ClaimsDetailResponse(BaseModel):
     """  
     transaction_id: Optional[str] = Field(None, alias="transactionId")  
     invoke_actions: Optional[str] = Field(None, alias="invokeActions")  
-    claims_detail_info: Optional[List[ClaimDetailInfoItem]] = Field(None, alias="claimsDetailInfo")  
+    claims_detail_info: Optional[List[ClaimDetailInfoItem]] = Field([], alias="claimsDetailInfo")  
     claim_summary_info: Optional[List[ClaimSummaryItemModel]] = Field(None, alias="claimSummaryInfo")
 
 # -- ATTACHMENTS --
@@ -276,7 +276,7 @@ class DocumentTypeItem(BaseModel):
     doc_type_code: Optional[str] = Field(None, alias="docTypeCode")
     
 class DocumentTypes(BaseModel):
-    document_list: Optional[List[DocumentTypeItem]] = Field(None, alias="documentList")
+    document_list: Optional[List[DocumentTypeItem]] = Field([], alias="documentList")
 
 class AttachmentResponseItem(BaseModel):
     ticket_number: Optional[str] = Field(None, alias="ticketNumber")
