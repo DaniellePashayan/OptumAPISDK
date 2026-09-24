@@ -18,6 +18,6 @@ class ClaimSummary:
         """
         # API body does not list any of the fields as mandatory..
         url = "/claims/v2/search"
-        headers: Dict[str, str] = {"tin": tin}
+        headers: Dict[str, Any] = {"tin": tin}
         response = self.client.request("POST", url, headers=headers, json=body.model_dump(exclude_none=True))
         return DentalClaimSearchResponse(**response)
