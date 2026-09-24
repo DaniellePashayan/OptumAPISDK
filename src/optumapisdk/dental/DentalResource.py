@@ -8,6 +8,7 @@ if TYPE_CHECKING:
 from .BenefitNotes import BenefitNotes
 from .BenefitSummary import BenefitSummary
 from .BenefitUtilization import BenefitUtilization
+from .ClaimDetail import ClaimDetail
 from .ClaimSubmission import ClaimSubmission
 
 class _DentalScopedClient:
@@ -49,7 +50,7 @@ class DentalResource:
         self.benefit_notes = BenefitNotes(scoped_client)
         self.benefit_summary = BenefitSummary(scoped_client)
         self.benefit_utilization = BenefitUtilization(scoped_client)
-        self.claim_detail = None
+        self.claim_detail = ClaimDetail(scoped_client)
         self.claim_submission = ClaimSubmission(scoped_client)
         self.claim_summary = None
         self.eligibility_summary = None
