@@ -3,6 +3,8 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:  
     from ..Client import OptumAPI
     
+from .EligibilityInformation import EligibilityInformation
+    
 class _EligibilityLightScopedClient:
     """A thin proxy around the root `OptumAPI` client that prefixes every
     request path with "/Claims".
@@ -33,4 +35,4 @@ class EligibilityLightResource:
         
         scoped_client = _EligibilityLightScopedClient(client)
     
-        self.eligibility_information = None
+        self.eligibility_information = EligibilityInformation(scoped_client)
