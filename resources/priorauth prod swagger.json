@@ -1,0 +1,1328 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Prior Authorizations API",
+    "description": "https://apimarketplace.uhc.com/",
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "https://apimarketplace.uhc.com/PriorAuth"
+    }
+  ],
+  "paths": {
+    "/v1/apim/case/summary": {
+      "post": {
+        "tags": ["Case Search"],
+        "summary": "Summary By Provider And Member",
+        "description": "The case summary service will return all existing cases for the Corporate Tax ID and Care Provider included on the request along with high level details including Service Reference Numbers (SRN), Case Status and other case details.\n<br></br>\n<strong>Request attributes:</strong>\n<br><br>\nTo return the case summary list the following attributes are required: \n<br> <strong>corporateProviderTaxIdNumber </strong> along with <strong> careProviderFirstName </strong> AND <strong> careProviderLastNameOrOrganizationName </strong>\n<br><br>\nIf searching by an organization/facility <strong>careProviderFirstName</strong> should be “Null”.<br><br>To filter the results by a specific patient the following attribute combinations can be included in the request:\n\n<ul style=\"list-style-type: disc;padding-left: 20px;\">\n  <li style=\"font-weight:400\"> <strong>  memberId </strong>  AND <strong> memberBirthDate </li></strong>\n  <li style=\"font-weight:400\"> <strong> memberId, memberFirstName</strong>  AND <strong> memberLastName </strong> </li>\n  <li style=\"font-weight:400\"> <strong> MemberFirstName, memberLastName, memberBirthDate</strong>  AND <strong> memberStateCode </strong> \n  </li>\n</ul>\n<br>\nAdditional optional attributes can be utilized to filter the results by: \n<ul style=\"list-style-type: disc;padding-left: 20px;\">\n  <li style=\"font-weight:400\"><strong> serviceSetting </strong> </li>\n  <li style=\"font-weight:400\"><strong>status </li></strong>\n  <li style=\"font-weight:400\"><strong>startDate </li> </strong>\n  <li style=\"font-weight:400\"><strong>endDate</strong></li>\n</ul>\n<br>\nAdditional details about the request/response attributes can be found in the data dictionary.\n<br><br>\n<strong>Note:</strong> If there more than 200 cases in response, the API will return a message to refine the search criteria for shorter time periods.\n<br><br>\nAllowed payerIds are 87726, 25463, 37602, 65088, 76342, 78857, 81400, 86047, 86050, 95123, 95378, 95467, 96385, 06111, 03432\n<br><br>\nThis summary response does not include case status for Cardiology, Gastroenterology endoscopy, Oncology, Physical health, Radiology, Radiation Oncology, or Specialty Pharmacy prior authorization/notification request.",
+        "operationId": "GET-CASE-SUMMARY-BY-PROVIDER-AND-MEMBER",
+        "parameters": [{
+          "name": "Authorization",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CaseSummaryRequestAPIM"
+              },
+              "example": {
+                "corporateProviderTaxIdNumber": "string",
+                "careProviderFirstName": "string",
+                "careProviderLastNameOrOrganizationName": "string",
+                "careProviderAddressLine1": "string",
+                "careProviderStateCode": "string",
+                "careProviderZipCode": "string",
+                "memberId": "string",
+                "memberFirstName": "string",
+                "memberLastName": "string",
+                "memberBirthDate": "string",
+                "memberStateCode": "string",
+                "memberZipCode": "string",
+                "groupOrPolicyNumber": "string",
+                "serviceSetting": "string",
+                "status": "string",
+                "startDate": "string",
+                "endDate": "string"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success || ERR0010 - No Records found || ERR008 - Request Data is missing (birthDate) || ERR0036 - careproviderFirstName/careproviderLastNameOrOrganizationName is invalid, please provide a valid input. To validate Care Provider name please utilize the provider lookup",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CaseSummaryResponseAPIM"
+                },
+                "example": {
+                  "caseSummary": [
+                    {
+                      "serviceReferenceNumber": "AXXXXXXXXX",
+                      "memberID": "memberID",
+                      "memberFirstName": "memberFirstName",
+                      "memberLastName": "memberLastName",
+                      "serviceSetting": "serviceSetting",
+                      "placeOfService": "placeOfService",
+                      "serviceDates": "01/01/0000-01/01/0000",
+                      "caseStatus": "caseStatus",
+                      "overallCoverageStatus": "overallCoverageStatus"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "ERR1000 - careProviderFirstName is required || ERR1000 - careProviderLastName is required || ERR1000 - corporateProviderTaxIdNumber is required || ERR1000 - either memberId or memberFirstName/memberLastName/memberStateCode is required || ERR1000 - memberBirthDate or memberFirstName/memberLastName is required || ERR1000 - memberBirthDate/memberStateCode or memberId is required || PAANI3001 - The case search results in excessive number of cases returned. Please refine the search criteria or date range",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorVO"
+                },
+                "example": {
+                  "errorMessageList": [{
+                    "code": "string",
+                    "message": "string"
+                  }],
+                  "code": "string",
+                  "message": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR0032 - Client ID not found || ERR0033 - Corporate Provider Tax ID Number not found for this Client ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorVO"
+                },
+                "example": {
+                  "errorMessageList": [{
+                    "code": "string",
+                    "message": "string"
+                  }],
+                  "code": "string",
+                  "message": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error || ERR0034 - Service setting is invalid. Please update your request with one of the following - Inpatient, Outpatient Facility, Outpatient, or All and resubmit your request || ERR0035 - Status is invalid. Please update your request with one of the following - Cancelled, Open, Closed or All and resubmit your request || ERR0036 - careProviderTaxIdNumber, careproviderFirstName, careProviderLastNameOrOrginzationName is invalid, please provide a valid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorVO"
+                },
+                "example": {
+                  "errorMessageList": [{
+                    "code": "string",
+                    "message": "string"
+                  }],
+                  "code": "string",
+                  "message": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/apim/case/detail": {
+      "post": {
+        "tags": ["Case Search"],
+        "summary": "Case Detail By Provider",
+        "description": "The Case Details service provides the ability to search for a case by Service Reference Number (SRN) and returns the matching Prior Authorization case details.\n<br><br>\nA record will be returned if the care provider entered on the request is listed on the case as: submitting/requesting, ordering, admitting/attending, or servicing provider.\n<br><br>\n<strong>Request attributes:</strong> \n<br><br>\nTo return the case details the following attributes are required: \n<strong>serviceReferenceNumber</strong>, <strong>corporateProviderTaxIdNumber</strong> along with <strong>careProviderFirstName </strong> AND <strong>careProviderLastNameOrOrganizationName</strong>\n<br><br>\nIf searching by an organization/facility careProviderFirstName should be “Null”. Additional details about the request/response attributes can be found in the data dictionary.\n<br><br>\nAllowed payerIds are 87726, 25463, 37602, 65088, 76342, 78857, 81400, 86047, 86050, 95123, 95378, 95467, 96385, 06111, 03432\n<br><br>\nThis detail response does not include Cardiology, Gastroenterology endoscopy, Oncology, Physical health, Radiology, Radiation Oncology, or Specialty Pharmacy prior authorization/notification request details.\n",
+        "operationId": "GET-CASE-DETAIL-BY-PROVIDER",
+        "parameters": [{
+          "name": "Authorization",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CaseDetailRequestAPIM"
+              },
+              "example": {
+                "serviceReferenceNumber": "string",
+                "corporateProviderTaxIdNumber": "string",
+                "careProviderFirstName": "string",
+                "careProviderLastNameOrOrganizationName": "string"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success || ERR0010 - No record found || ERRXXXX - Message will depend on the membership and will display when this case can not be viewed through the API Marketplace",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CaseDetailResponseAPIM"
+                },
+                "example": {
+                  "caseSearchMessages": [
+                    "string"
+                  ],
+                  "caseDetail": {
+                    "serviceReferenceNumber": "string",
+                    "caseStatus": "string",
+                    "caseStatusReason": "string",
+                    "primaryCarePhysician": "string",
+                    "advanceNotifyDateTime": "string",
+                    "admissionNotifyDateTime": "string",
+                    "expectedServiceStartDate": "string",
+                    "expectedServiceEndDate": "string",
+                    "actualServiceStartDate": "string",
+                    "actualServiceEndDate": "string"
+                  },
+                  "coverageStatus": [
+                    {
+                      "overallCoverageStatus": "string",
+                      "procedureCode": "string",
+                      "description": "string",
+                      "coverageStatus": "string",
+                      "decisionDate": "string",
+                      "geneticMolecularTestCode": "string",
+                      "geneticMolecularTestReviewType": "string"
+                    }
+                  ],
+                  "clinicalNotes": [
+                    {
+                      "createdTime": "string",
+                      "createdBy": "string",
+                      "noteText": "string"
+                    }
+                  ],
+                  "patientDetails": {
+                    "memberId": "string",
+                    "firstName": "string",
+                    "lastName": "string",
+                    "groupNumber": "string",
+                    "product": "string",
+                    "relationship": "string",
+                    "effectiveDate": "string",
+                    "terminationDate": "string",
+                    "insuranceType": "string",
+                    "verbalLanguagePreference": "string",
+                    "writtenLanguagePreference": "string",
+                    "informationalMessage": "string"
+                  },
+                  "submittingProvider": {
+                    "firstName": "string",
+                    "middleName": "string",
+                    "lastName": "string",
+                    "providerOrganizationName": "string",
+                    "taxIdNumber": "string",
+                    "address1": "string",
+                    "address2": "string",
+                    "city": "string",
+                    "state": "string",
+                    "zip": "string",
+                    "zipSuffix": "string",
+                    "primaryPhone": "string",
+                    "fax": "string",
+                    "status": "string"
+                  },
+                  "admittingAttendingProvider": {
+                    "name": "string",
+                    "taxIdNumber": "string",
+                    "address1": "string",
+                    "address2": "string",
+                    "city": "string",
+                    "state": "string",
+                    "zip": "string",
+                    "zipSuffix": "string",
+                    "status": "string"
+                  },
+                  "orderingProvider": {
+                    "name": "string",
+                    "taxIdNumber": "string",
+                    "address1": "string",
+                    "address2": "string",
+                    "city": "string",
+                    "state": "string",
+                    "zip": "string",
+                    "zipSuffix": "string",
+                    "status": "string"
+                  },
+                  "facilityDetails": {
+                    "name": "string",
+                    "address1": "string",
+                    "city": "string",
+                    "state": "string",
+                    "zip": "string",
+                    "zipSuffix": "string",
+                    "taxIdNumber": "string",
+                    "coverage": "string",
+                    "status": "string"
+                  },
+                  "serviceDetails": {
+                    "placeOfService": "string",
+                    "serviceDescription": "string",
+                    "serviceDetails": "string"
+                  },
+                  "facilityServiceDetails": {
+                    "startDate": "string",
+                    "endDate": "string",
+                    "serviceDescription": "string",
+                    "isPatientAdmitted": "string",
+                    "expectedAdmissionDate": "string",
+                    "expectedDischargeDate": "string",
+                    "actualAdmissionDateTime": "string",
+                    "isPatientDischarged": "string",
+                    "dischargeDate": "string",
+                    "dischargeLocation": "string"
+                  },
+                  "diagnosisDetails": [
+                    {
+                      "codePointer": "string",
+                      "code": "string",
+                      "description": "string"
+                    }
+                  ],
+                  "procedureCodeDetails": [
+                    {
+                      "codePointer": "string",
+                      "code": "string",
+                      "description": "string",
+                      "coverageStatus": "string",
+                      "servicingProvider": {
+                        "name": "string",
+                        "taxIdNumber": "string",
+                        "address1": "string",
+                        "address2": "string",
+                        "city": "string",
+                        "state": "string",
+                        "zip": "string",
+                        "zipSuffix": "string",
+                        "status": "string"
+                      },
+                      "serviceDetail": "string",
+                      "expectedFromDate": "string",
+                      "expectedToDate": "string",
+                      "procedureUnitPerFrequencyCount": "string",
+                      "procedureUnitOfMeasure": "string",
+                      "procedureFrequency": "string",
+                      "procedureUnitCount": "string",
+                      "dmeProcurementType": "string",
+                      "dmeTotalCost": "string",
+                      "dmeClinicalIllnessDescText": "string",
+                      "dmeSupplyDescText": "string",
+                      "dmeEnternalFeedingSSONutrInd": true,
+                      "dmeFormulaNameText": "string",
+                      "dmeMedicalConditionText": "string"
+                    }
+                  ],
+                  "expeditedRequestReview": true,
+                  "initialContact": {
+                    "contactName": "string",
+                    "phoneNumber": "string",
+                    "fax": "string"
+                  },
+                  "followUpContact": {
+                    "contactName": "string",
+                    "phoneNumber": "string",
+                    "fax": "string",
+                    "departmentType": "string",
+                    "contactRoleType": "string",
+                    "emailAddress": "string",
+                    "medicalRecordNumber": "string",
+                    "memberPhone": "string"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "ERR1000 - corporateProviderTaxIdNumber is required || ERR1000 - careProviderFirstName is required || ERR1000 - careProviderLastNameOrOrganizationName is required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorVO"
+                },
+                "example": {
+                  "errorMessageList": [{
+                    "code": "string",
+                    "message": "string"
+                  }],
+                  "code": "string",
+                  "message": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR0032 - Client ID not found || ERR0033 - Corporate Provider Tax ID Number not found for this Client ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorVO"
+                },
+                "example": {
+                  "errorMessageList": [{
+                    "code": "string",
+                    "message": "string"
+                  }],
+                  "code": "string",
+                  "message": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error || ERR0036 - careProviderTaxIdNumber, careproviderFirstName, careProviderLastNameOrOrginzationName is invalid, please provide a valid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorVO"
+                },
+                "example": {
+                  "errorMessageList": [{
+                    "code": "string",
+                    "message": "string"
+                  }],
+                  "code": "string",
+                  "message": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/apim/provider/lookup": {
+      "post": {
+        "tags": ["Case Search"],
+        "summary": "Case Provider Lookup",
+        "description": "The provider search service can be utilized to confirm Care Provider names to ensure that the provider name entered in the caseSummary or caseDetail request matches the United Health Group name.\n<br></br>\nAll care provider records tied to the entered Corporate Provider Tax ID Number will be returned in the response. If there are more than 50 records the request can be updated to view additional page results. \n<br></br>\n<strong>Request attributes:</strong>\n<br><br>\nTo return the care providers associated to the Corporate Tax ID Number the following attribute is required: <strong>corporateProviderTaxIdNumber </strong>\n<br><br>\nAdditional details about the request/response attributes can be found in the data dictionary.\n<br><br>\nAllowed payerIds are 87726, 25463, 37602, 65088, 76342, 78857, 81400, 86047, 86050, 95123, 95378, 95467, 96385, 06111, 03432",
+        "operationId": "GET-REFERRAL-PROVIDER",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReferralProviderRequestAPIM"
+              },
+              "example": {
+                "corporateProviderTaxIdNumber": "string",
+                "page": "string"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReferralProviderResponseAPIM"
+                },
+                "example": {
+                  "pagingState": [
+                    {
+                      "page": "page",
+                      "totalPages": "totalPages",
+                      "totalRecords": "totalRecords"
+                    }
+                  ],
+                  "careProviderList": [
+                    {
+                      "careProviderName": "careProviderName",
+                      "careProviderNPI": "careProviderNPI",
+                      "careProviderLastName": "careProviderLastName",
+                      "careProviderFirstName": "careProviderFirstName"
+                    }
+                  ],
+                  "errors": [
+                    {
+                      "code": "code",
+                      "message": "message"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request || ERR1000 - corporateProviderTaxIdNumber is required || ERR1000 - page must be a valid number and should be greater than zero.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                },
+                "example": {
+                  "code": "string",
+                  "message": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ERR0010 - No record found || ERR0032 - Client ID not found. || ERR0033 - Corporate Provider Tax ID Number not found for this Client ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                },
+                "example": {
+                  "code": "string",
+                  "message": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ReferralProviderRequestAPIM": {
+        "type": "object",
+        "required": [
+          "corporateProviderTaxIdNumber"
+        ],
+        "properties": {
+          "corporateProviderTaxIdNumber": {
+            "type": "string"
+          },
+          "page": {
+            "type": "string"
+          }
+        }
+      },
+      "ReferralProviderResponseAPIM": {
+        "type": "object",
+        "properties": {
+          "pagingState": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReferralProviderPagingStateAPIM"
+            }
+          },
+          "careProviderList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReferralProviderAPIM"
+            }
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ErrorMessage"
+            }
+          }
+        }
+      },
+      "CaseSummaryRequestAPIM": {
+        "type": "object",
+        "required": [
+          "corporateProviderTaxIdNumber",
+          "careProviderFirstName",
+          "careProviderLastNameOrOrganizationName"
+        ],
+        "properties": {
+          "corporateProviderTaxIdNumber": {
+            "type": "string"
+          },
+          "careProviderFirstName": {
+            "type": "string"
+          },
+          "careProviderLastNameOrOrganizationName": {
+            "type": "string"
+          },
+          "careProviderAddressLine1": {
+            "type": "string"
+          },
+          "careProviderStateCode": {
+            "type": "string"
+          },
+          "careProviderZipCode": {
+            "type": "string"
+          },
+          "memberId": {
+            "type": "string"
+          },
+          "memberFirstName": {
+            "type": "string"
+          },
+          "memberLastName": {
+            "type": "string"
+          },
+          "memberBirthDate": {
+            "type": "string"
+          },
+          "memberStateCode": {
+            "type": "string"
+          },
+          "memberZipCode": {
+            "type": "string"
+          },
+          "groupOrPolicyNumber": {
+            "type": "string"
+          },
+          "serviceSetting": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "startDate": {
+            "type": "string"
+          },
+          "endDate": {
+            "type": "string"
+          }
+        }
+      },
+      "CaseSummary": {
+        "type": "object",
+        "properties": {
+          "serviceReferenceNumber": {
+            "type": "string"
+          },
+          "memberID": {
+            "type": "string"
+          },
+          "memberFirstName": {
+            "type": "string"
+          },
+          "memberLastName": {
+            "type": "string"
+          },
+          "serviceSetting": {
+            "type": "string"
+          },
+          "placeOfService": {
+            "type": "string"
+          },
+          "serviceDates": {
+            "type": "string"
+          },
+          "caseStatus": {
+            "type": "string"
+          },
+          "overallCoverageStatus": {
+            "type": "string"
+          }
+        }
+      },
+      "CaseSummaryResponseAPIM": {
+        "type": "object",
+        "properties": {
+          "caseSummary": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CaseSummary"
+            }
+          }
+        }
+      },
+      "ErrorMessage": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "ErrorVO": {
+        "type": "object",
+        "properties": {
+          "errorMessageList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ErrorMessage"
+            }
+          },
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "CaseDetailRequestAPIM": {
+        "type": "object",
+        "required": [
+          "serviceReferenceNumber",
+          "corporateProviderTaxIdNumber",
+          "careProviderFirstName",
+          "careProviderLastNameOrOrganizationName"
+        ],
+        "properties": {
+          "serviceReferenceNumber": {
+            "type": "string"
+          },
+          "corporateProviderTaxIdNumber": {
+            "type": "string"
+          },
+          "careProviderFirstName": {
+            "type": "string"
+          },
+          "careProviderLastNameOrOrganizationName": {
+            "type": "string"
+          }
+        }
+      },
+      "CaseDetailResponseAPIM": {
+        "type": "object",
+        "properties": {
+          "caseSearchMessages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "caseDetail": {
+            "$ref": "#/components/schemas/CaseInfo"
+          },
+          "coverageStatus": {
+            "$ref": "#/components/schemas/CoverageStatus"
+          },
+          "clinicalNotes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CaseNote"
+            }
+          },
+          "patientDetails": {
+            "$ref": "#/components/schemas/MemberInfo"
+          },
+          "submittingProvider": {
+            "$ref": "#/components/schemas/ProviderInfo"
+          },
+          "admittingAttendingProvider": {
+            "$ref": "#/components/schemas/ProviderQuickInfo"
+          },
+          "orderingProvider": {
+            "$ref": "#/components/schemas/ProviderQuickInfo"
+          },
+          "facilityDetails": {
+            "$ref": "#/components/schemas/FacilityProviderDetails"
+          },
+          "serviceDetails": {
+            "$ref": "#/components/schemas/ServiceDetails"
+          },
+          "facilityServiceDetails": {
+            "$ref": "#/components/schemas/FacilityDetails"
+          },
+          "diagnosisDetails": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CodeDescription"
+            }
+          },
+          "procedureCodeDetails": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProcedureCode"
+            }
+          },
+          "expeditedRequestReview": {
+            "type": "boolean"
+          },
+          "initialContact": {
+            "$ref": "#/components/schemas/ContactQuickInfo"
+          },
+          "followUpContact": {
+            "$ref": "#/components/schemas/FollowUpContactQuickInfo"
+          }
+        }
+      },
+      "CaseInfo": {
+        "type": "object",
+        "properties": {
+          "serviceReferenceNumber": {
+            "type": "string"
+          },
+          "caseStatus": {
+            "type": "string"
+          },
+          "caseStatusReason": {
+            "type": "string"
+          },
+          "primaryCarePhysician": {
+            "type": "string"
+          },
+          "advanceNotifyDateTime": {
+            "type": "string"
+          },
+          "admissionNotifyDateTime": {
+            "type": "string"
+          },
+          "expectedServiceStartDate": {
+            "type": "string"
+          },
+          "expectedServiceEndDate": {
+            "type": "string"
+          },
+          "actualServiceStartDate": {
+            "type": "string"
+          },
+          "actualServiceEndDate": {
+            "type": "string"
+          }
+        }
+      },
+      "CoverageStatus": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/CoverageStatusItem"
+        }
+      },
+      "CoverageStatusItem": {
+        "type": "object",
+        "properties": {
+          "overallCoverageStatus": {
+            "type": "string"
+          },
+          "procedureCode": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "coverageStatus": {
+            "type": "string"
+          },
+          "decisionDate": {
+            "type": "string"
+          },
+          "geneticMolecularTestCode": {
+            "type": "string"
+          },
+          "geneticMolecularTestReviewType": {
+            "type": "string"
+          }
+        }
+      },
+      "CaseNote": {
+        "type": "object",
+        "properties": {
+          "createdTime": {
+            "type": "string"
+          },
+          "createdBy": {
+            "type": "string"
+          },
+          "noteText": {
+            "type": "string"
+          }
+        }
+      },
+      "CodeDescription": {
+        "type": "object",
+        "properties": {
+          "codePointer": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "ProcedureCode": {
+        "type": "object",
+        "properties": {
+          "codePointer": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "coverageStatus": {
+            "type": "string"
+          },
+          "procedureFrequency": {
+            "type": "string"
+          },
+          "procedureUnitCount": {
+            "type": "string"
+          },
+          "accumulatedUnitCount": {
+            "type": "string"
+          },
+          "procedureUnitOfMeasure": {
+            "type": "string"
+          },
+          "procedureUnitPerFrequencyCount": {
+            "type": "string"
+          },
+          "dmeProcurementType": {
+            "type": "string"
+          },
+          "dmeTotalCost": {
+            "type": "string"
+          },
+          "dmeClinicalIllnessDescText": {
+            "type": "string"
+          },
+          "dmeSupplyDescText": {
+            "type": "string"
+          },
+          "dmeEnternalFeedingSSONutrInd": {
+            "type": "boolean"
+          },
+          "dmeFormulaNameText": {
+            "type": "string"
+          },
+          "dmeMedicalConditionText": {
+            "type": "string"
+          },
+          "expectedFromDate": {
+            "type": "string"
+          },
+          "expectedToDate": {
+            "type": "string"
+          },
+          "serviceDetail": {
+            "type": "string"
+          },
+          "servicingProvider": {
+            "$ref": "#/components/schemas/ProviderQuickInfo"
+          }
+        }
+      },
+      "CommunicationContactPhone": {
+        "type": "object",
+        "properties": {
+          "phoneType": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "phoneInternationalInd": {
+            "type": "boolean"
+          },
+          "preferredInd": {
+            "type": "boolean"
+          }
+        }
+      },
+      "CommunicationContactPhones": {
+        "type": "object",
+        "properties": {
+          "communicationContactPhone": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CommunicationContactPhone"
+            }
+          }
+        }
+      },
+      "FacilityProviderDetails": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          },
+          "idNumber": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "coverage": {
+            "type": "string"
+          }
+        }
+      },
+      "FacilityDetails": {
+        "type": "object",
+        "properties": {
+          "startDate": {
+            "type": "string"
+          },
+          "endDate": {
+            "type": "string"
+          },
+          "expectedAdmissionDate": {
+            "type": "string"
+          },
+          "expectedDischargeDate": {
+            "type": "string"
+          },
+          "actualAdmissionDateTime": {
+            "type": "string"
+          },
+          "dischargeDate": {
+            "type": "string"
+          },
+          "dischargeLocation": {
+            "type": "string"
+          },
+          "facilityCoverage": {
+            "type": "string"
+          },
+          "facilityDecisionDate": {
+            "type": "string"
+          },
+          "isPatientAdmitted": {
+            "type": "string"
+          },
+          "isPatientDischarged": {
+            "type": "string"
+          },
+          "serviceDescription": {
+            "type": "string"
+          },
+          "procedureFrequency": {
+            "type": "string"
+          },
+          "procedureUnitCount": {
+            "type": "string"
+          },
+          "accumulatedUnitCount": {
+            "type": "string"
+          },
+          "procedureUnitOfMeasure": {
+            "type": "string"
+          },
+          "procedureUnitPerFrequencyCount": {
+            "type": "string"
+          },
+          "dmeTotalCost": {
+            "type": "string"
+          }
+        }
+      },
+      "GeneticMolecularTestDetail": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "testReviewType": {
+            "type": "string"
+          }
+        }
+      },
+      "ContactQuickInfo": {
+        "type": "object",
+        "properties": {
+          "contactName": {
+            "type": "string"
+          },
+          "fax": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          }
+        }
+      },
+      "FollowUpContactQuickInfo": {
+        "type": "object",
+        "properties": {
+          "contactName": {
+            "type": "string"
+          },
+          "fax": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "departmentType": {
+            "type": "string"
+          },
+          "contactRoleType": {
+            "type": "string"
+          },
+          "emailAddress": {
+            "type": "string"
+          },
+          "medicalRecordNumber": {
+            "type": "string"
+          },
+          "memberPhone": {
+            "type": "string"
+          }
+        }
+      },
+      "MemberCoverageInfo": {
+        "type": "object",
+        "properties": {
+          "groupNumber": {
+            "type": "string"
+          },
+          "product": {
+            "type": "string"
+          },
+          "effectiveDate": {
+            "type": "string"
+          },
+          "terminationDate": {
+            "type": "string"
+          }
+        }
+      },
+      "MemberInfo": {
+        "type": "object",
+        "properties": {
+          "memberId": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "groupNumber": {
+            "type": "string"
+          },
+          "product": {
+            "type": "string"
+          },
+          "relationship": {
+            "type": "string"
+          },
+          "effectiveDate": {
+            "type": "string"
+          },
+          "terminationDate": {
+            "type": "string"
+          },
+          "insuranceType": {
+            "type": "string"
+          },
+          "verbalLanguagePreference": {
+            "type": "string"
+          },
+          "writtenLanguagePreference": {
+            "type": "string"
+          },
+          "informationalMessage": {
+            "type": "string"
+          }
+        }
+      },
+      "ProviderIdentifier": {
+        "type": "object",
+        "properties": {
+          "providerIDType": {
+            "type": "string"
+          },
+          "providerIDText": {
+            "type": "string"
+          },
+          "providerIDDesc": {
+            "type": "string"
+          }
+        }
+      },
+      "ProviderQuickInfo": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "taxIdNumber": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "address1": {
+            "type": "string"
+          },
+          "address2": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "zip": {
+            "type": "string"
+          },
+          "zipSuffix": {
+            "type": "string"
+          }
+        }
+      },
+      "ProviderInfo": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string"
+          },
+          "middleName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "providerOrganizationName": {
+            "type": "string"
+          },
+          "taxIdNumber": {
+            "type": "string"
+          },
+          "address1": {
+            "type": "string"
+          },
+          "address2": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "zip": {
+            "type": "string"
+          },
+          "zipSuffix": {
+            "type": "string"
+          },
+          "primaryPhone": {
+            "type": "string"
+          },
+          "fax": {
+            "type": "string"
+          },
+          "primaryPhoneInternationalInd": {
+            "type": "string"
+          },
+          "faxInternationalInd": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+      "ProviderRole": {
+        "type": "object",
+        "properties": {
+          "providerRole": {
+            "type": "string"
+          },
+          "providerRoleDesc": {
+            "type": "string"
+          }
+        }
+      },
+      "ServiceDetails": {
+        "type": "object",
+        "properties": {
+          "placeOfService": {
+            "type": "string"
+          },
+          "serviceDescription": {
+            "type": "string"
+          },
+          "serviceDetails": {
+            "type": "string"
+          }
+        }
+      },
+      "ReferralProviderAPIM": {
+        "type": "object",
+        "properties": {
+          "careProviderName": {
+            "type": "string"
+          },
+          "careProviderNPI": {
+            "type": "string"
+          },
+          "careProviderLastName": {
+            "type": "string"
+          },
+          "careProviderFirstName": {
+            "type": "string"
+          }
+        }
+      },
+      "ReferralProviderPagingStateAPIM": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "string"
+          },
+          "totalPages": {
+            "type": "string"
+          },
+          "totalRecords": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "apiKeyHeader": {
+        "type": "apiKey",
+        "name": "Ocp-Apim-Subscription-Key",
+        "in": "header"
+      },
+      "apiKeyQuery": {
+        "type": "apiKey",
+        "name": "subscription-key",
+        "in": "query"
+      }
+    }
+  },
+  "security": [
+    {
+      "apiKeyHeader": []
+    },
+    {
+      "apiKeyQuery": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Summary By Provider And Member",
+      "description": ""
+    },
+    {
+      "name": "Case Detail By Provider",
+      "description": ""
+    }
+  ]
+}
