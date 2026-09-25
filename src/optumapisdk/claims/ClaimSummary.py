@@ -4,15 +4,13 @@ from typing import Any, Dict, Optional
 import logging
 
 from .input_models import SummaryByMemberRequest
-from .output_models import ClaimSummaryResponse
-
 
 class ClaimSummary:
     def __init__(self, client, logger: Optional[logging.Logger] = None):
         self.client = client
         self.logger = logger or logging.getLogger(__name__)
 
-    def get_summary(self, claim_number: str, tin: str, payer_id: str) -> ClaimSummaryResponse:
+    def get_summary(self, claim_number: str, tin: str, payer_id: str) -> dict:
         """GET /api/claim/summary/v2.0 -- summary by UHC claim number.
         
         This API returns medical claim summary information based on United Healthcare Claim Number.
@@ -37,7 +35,7 @@ class ClaimSummary:
         url = "/api/claim/summary/v2.0"
         headers: Dict[str, Any] = {"claimNumber": claim_number, "tin": tin, "payer_id": payer_id}
         response = self.client.request("GET", url, headers=headers)
-        return ClaimSummaryResponse(**response.json())
+        return response.json()
 
     def get_summary_by_provider(
         self,
@@ -47,7 +45,7 @@ class ClaimSummary:
         last_service_dt: Optional[str] = None,
         *,
         transaction_id: Optional[str] = None,
-    ) -> ClaimSummaryResponse:
+    ) -> dict:
         """GET /api/claim/summary/byprovider/v2.0.
         
         This API returns medical claim summary information based on provider TIN (Tax Identification Number) with a date range.
@@ -89,9 +87,9 @@ class ClaimSummary:
         if transaction_id:
             headers["transactionId"] = transaction_id
         response = self.client.request("GET", url, headers=headers)
-        return ClaimSummaryResponse(**response.json())
+        return response.json()
 
-    def get_summary_by_pan(self, tin: str, payer_id: str, pan: str | None = None) -> ClaimSummaryResponse:
+    def get_summary_by_pan(self, tin: str, payer_id: str, pan: str | None = None) -> dict:
         """GET /api/claim/summary/bypan/v2.0.
         
         This API returns medical claim summary information based on provider TIN (Tax Identification Number) with a date range.
@@ -127,9 +125,9 @@ class ClaimSummary:
         if pan:
             headers["pan"] = pan
         response = self.client.request("GET", url, headers=headers)
-        return ClaimSummaryResponse(**response.json())
+        return response.json()
 
-    def get_summary_detail(self, body: SummaryByMemberRequest, tin: str, payer_id: str) -> ClaimSummaryResponse:
+    def get_summary_detail(self, body: SummaryByMemberRequest, tin: str, payer_id: str) -> dict:
         """POST /api/claim/summary/bymember/v2.0.
         
         This API returns medical claim information based on member details.
@@ -176,4 +174,4 @@ class ClaimSummary:
         response = self.client.request(
             "POST", url, headers=headers, json=body.model_dump(exclude_none=True)
         )
-        return ClaimSummaryResponse(**response.json())
+        return response.json()

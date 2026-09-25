@@ -5,11 +5,12 @@ from typing import Any, Dict, Optional
 import logging
 
 from optumapisdk.dental.DentalResource import DentalResource
-
-from .exceptions import APIError
-from .Auth import OAuth
-
 from .claims.ClaimsResource import ClaimsResource
+from .eligibility_light.EligibilityLightResource import EligibilityLightResource
+
+from .Auth import OAuth
+from .exceptions import APIError
+
 
 # Default network resilience settings. These are deliberately conservative:
 # a handful of retries with exponential backoff for transient failures, and
@@ -34,7 +35,6 @@ class OptumAPI:
         client_secret: str,
         client_id: str,
         *,
-        token_url: Optional[str] = None,
         prefetch_token: bool = False,
         logger: Optional[logging.Logger] = None,
         timeout: float = DEFAULT_TIMEOUT,
@@ -85,11 +85,11 @@ class OptumAPI:
             self.base_url,
             self.client_id,
             self.client_secret,
-            token_url=token_url,
         )
 
         self.claims = ClaimsResource(self)
         self.dental = DentalResource(self)
+        self.eligibility_light = EligibilityLightResource(self)
 
         # Optionally prefetch a token during initialization. Useful to
         if prefetch_token:

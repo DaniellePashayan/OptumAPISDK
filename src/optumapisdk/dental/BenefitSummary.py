@@ -2,7 +2,6 @@ import logging
 from typing import Dict, Any
 
 from .input_models import BenefitSummaryRequest
-from .output_models import DentalBenefitsResponse
 
     
 class BenefitSummary:
@@ -10,7 +9,7 @@ class BenefitSummary:
         self.client = client
         self.logger = logger or logging.getLogger(__name__)
         
-    def get_benefit_summary(self, tin: str, body: BenefitSummaryRequest) -> DentalBenefitsResponse:
+    def get_benefit_summary(self, tin: str, body: BenefitSummaryRequest) -> dict:
         """POST /benefits/v1
         
         Retrieves Dental Benefit Summary information for a member.
@@ -25,4 +24,4 @@ class BenefitSummary:
         headers: Dict[str, Any] = {"tin": tin}
         response = self.client.request("POST", url, headers=headers, json=body.model_dump(exclude_none=True))
         
-        return DentalBenefitsResponse(**response.json())
+        return response.json()

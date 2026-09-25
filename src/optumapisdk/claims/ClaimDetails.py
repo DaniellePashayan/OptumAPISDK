@@ -4,7 +4,6 @@ from typing import Any, Dict, Optional
 import logging
 
 from .input_models import DetailByMemberRequest
-from .output_models import ClaimsDetailResponse
 
 
 class ClaimDetails:
@@ -12,7 +11,7 @@ class ClaimDetails:
         self.client = client
         self.logger = logger or logging.getLogger(__name__)
 
-    def get_detail(self, claim_number: str, tin: str, *, payer_id: str, include_summary: bool = True) -> ClaimsDetailResponse:
+    def get_detail(self, claim_number: str, tin: str, *, payer_id: str, include_summary: bool = True) -> dict:
         """GET /api/claim/detail/v2.0 -- transaction is valid for 24 hours.
         
         Response Information:
@@ -37,9 +36,9 @@ class ClaimDetails:
             "includeSummary": str(include_summary).lower(),
         }
         response = self.client.request("GET", url, headers=headers)
-        return ClaimsDetailResponse(**response.json())
+        return response.json()
 
-    def get_detail_by_member(self, body: DetailByMemberRequest, tin: str, payer_id: str) -> ClaimsDetailResponse:
+    def get_detail_by_member(self, body: DetailByMemberRequest, tin: str, payer_id: str) -> dict:
         """POST /api/claim/details/bymember/v2.0.
         
         This API returns detailed medical claim information using member details.
@@ -84,4 +83,4 @@ class ClaimDetails:
         response = self.client.request(
             "POST", url, headers=headers, json=body.model_dump(exclude_none=True)
         )
-        return ClaimsDetailResponse(**response.json())
+        return response.json()

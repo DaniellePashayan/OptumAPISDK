@@ -25,14 +25,12 @@ class OAuth:
         base_url: str,
         client_id: str,
         client_secret: str,
-        *,
-        token_url: Optional[str] = None,
     ):
         self.env = env
         self.base_url = base_url.rstrip("/")
         self.client_id = client_id
         self.client_secret = client_secret
-        self.token_url = token_url or f"{self.base_url}/v1/oauthtoken"
+        self.token_url = f"{self.base_url}/v1/oauthtoken"
 
         self._lock = threading.RLock()
         self._token: Optional[str] = None
