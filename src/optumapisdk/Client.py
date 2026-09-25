@@ -35,7 +35,6 @@ class OptumAPI:
         client_secret: str,
         client_id: str,
         *,
-        token_url: Optional[str] = None,
         prefetch_token: bool = False,
         logger: Optional[logging.Logger] = None,
         timeout: float = DEFAULT_TIMEOUT,
@@ -86,7 +85,6 @@ class OptumAPI:
             self.base_url,
             self.client_id,
             self.client_secret,
-            token_url=token_url,
         )
 
         self.claims = ClaimsResource(self)
