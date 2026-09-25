@@ -2,14 +2,13 @@ import logging
 from typing import  Dict, Any
 
 from .input_models import EligibilitySummaryRequest
-from .output_models import DentalCoverageSearchResponse
 
 class EligibilitySummary:
     def __init__(self, client, logger=None):
         self.client = client
         self.logger = logger or logging.getLogger(__name__)
         
-    def get_eligibility_summary(self, tin: str, body: EligibilitySummaryRequest) -> DentalCoverageSearchResponse:
+    def get_eligibility_summary(self, tin: str, body: EligibilitySummaryRequest) -> dict:
         """POST /eligibilities/v2/search
         
         Search for Dental Eligibility Summary Information for a members
@@ -22,4 +21,4 @@ class EligibilitySummary:
         url = "/eligibilities/v2/search"
         headers: Dict[str, Any] = {"tin": tin}
         response = self.client.request("POST", url, headers=headers, json=body.model_dump(exclude_none=True))
-        return DentalCoverageSearchResponse.model_validate(response.json())
+        return response.json()

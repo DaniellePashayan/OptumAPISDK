@@ -2,7 +2,6 @@ import logging
 from typing import Dict, Any
 
 from .input_models import BenefitUtilizationRequest
-from .output_models import BenefitUtilizationResponse
 
 
 class BenefitUtilization:
@@ -10,7 +9,7 @@ class BenefitUtilization:
         self.client = client
         self.logger = logger or logging.getLogger(__name__)
     
-    def get_benefit_utilization(self, tin: str, body: BenefitUtilizationRequest) -> BenefitUtilizationResponse:
+    def get_benefit_utilization(self, tin: str, body: BenefitUtilizationRequest) -> dict:
         """
         POST /members/v1
         
@@ -25,4 +24,4 @@ class BenefitUtilization:
         headers: Dict[str, Any] = {"tin": tin}
         response = self.client.request("POST", url, headers=headers, json=body.model_dump(exclude_none=True))
         
-        return BenefitUtilizationResponse(**response.json())
+        return response.json()

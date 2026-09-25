@@ -2,14 +2,13 @@ from typing import Any, Dict, Optional
 import logging
 
 from .input_models import EligibilityInformationV1Request, SearchOption, EligibilityInformationV2Request
-from .output_models import EligibilityInformationV1Response, EligibilityInformationV2Response
 
 class EligibilityInformation:
     def __init__(self, client, logger: Optional[logging.Logger] = None):
         self.client = client
         self.logger = logger or logging.getLogger(__name__)
     
-    def get_member_search_v1(self, body: EligibilityInformationV1Request, header_args: Optional[Dict[str, Any]] = None) -> EligibilityInformationV1Response:
+    def get_member_search_v1(self, body: EligibilityInformationV1Request, header_args: Optional[Dict[str, Any]] = None) -> dict:
         """POST /api/memberSearch/v1.0
         
         The API accepts the following search option for member retrieval: MemberIDDateOfBirth | MemberIDLastNameDateOfBirth | MemberIDFirstNameDateOfBirth | MemberIDName | MemberIDNameDateOfBirth | MemberIDNamePolicyNumberDateOfBirth | NameDateOfBirth. The searchOption is a required attribute to be passed with appropriate search type values. Search dates are not mandatory and service start date should not be older than 6 years and the service end date not over 1 year. When not provided the search dates are defaulted to current date, accepted date format: yyyy-MM-dd. Header attribute extended is by default false on making it true we will be getting extended data.
@@ -44,9 +43,9 @@ class EligibilityInformation:
         url = "/api/memberSearch/v1.0"
         headers: Dict[str, Any] = header_args or {}
         response = self.client.request("POST", url, json=body.model_dump(exclude_none=True), headers=headers)
-        return EligibilityInformationV1Response(**response)
+        return response.json()
     
-    def get_member_search_vs(self, body: EligibilityInformationV2Request, header_args: Optional[Dict[str, Any]] = None) -> EligibilityInformationV2Response:
+    def get_member_search_v2(self, body: EligibilityInformationV2Request, header_args: Optional[Dict[str, Any]] = None) -> dict:
         """POST /api/memberSearch/v2.0
 
         The API performs a search using memberId, dateOfBirth, serviceStart, serviceEnd and firstName. The following fields are mandatory: memberId, dateOfBirth, firstName, serviceStart, and serviceEnd. Service start and end dates must be explicitly provided; they are not defaulted to the current date. The service end date must be on or after the service start date. Accepted date format: yyyy-MM-dd. The policyNumber field is optional; however, if the search returns a 'Multiple Members Found' error, it is recommended to include the policyNumber to narrow the results to a specific member.
@@ -61,4 +60,4 @@ class EligibilityInformation:
         url = "/api/memberSearch/v2.0"
         headers: Dict[str, Any] = header_args or {}
         response = self.client.request("POST", url, json=body.model_dump(exclude_none=True), headers=headers)
-        return EligibilityInformationV2Response(**response)
+        return response.json()

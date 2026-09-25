@@ -1,14 +1,12 @@
 import logging
 from typing import Dict, Any
 
-from .output_models import DentalClaimResponse
-
 class ClaimDetail:
     def __init__(self, client, logger=None):
         self.client = client
         self.logger = logger or logging.getLogger(__name__)
         
-    def get_claim_detail(self, tin: str, claim_id: str):
+    def get_claim_detail(self, tin: str, claim_id: str) -> dict:
         """POST /claims/v2
         
         Retrieves Dental Claim Details for a given claimId.
@@ -20,4 +18,4 @@ class ClaimDetail:
         body: Dict[str, Any] = {"claimId": claim_id}
         response = self.client.request("POST", url, headers=headers, json=body)
         
-        return DentalClaimResponse(**response.json())
+        return response.json()

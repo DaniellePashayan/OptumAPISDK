@@ -2,7 +2,6 @@ import logging
 from typing import  Dict, Any
 
 from .input_models import TrialClaimSubmissionRequest, ClaimSubmissionForm
-from .output_models import ClaimDetailsV2Response
 
 class ClaimSubmission:
     def __init__(self, client, logger=None):
@@ -12,7 +11,7 @@ class ClaimSubmission:
     def submit_claim(self, tin: str, 
                      path_to_claim_submission_body: str, 
                      path_to_misc: str | None = None, 
-                     path_to_xray: str | None = None):
+                     path_to_xray: str | None = None) -> dict:
         """POST /claim-submissions/v1/submit
         
         Submits a Dental claim through the rule engine into the database
@@ -43,12 +42,12 @@ class ClaimSubmission:
         headers: Dict[str, Any] = {"tin": tin}
         response = self.client.request("POST", url, headers=headers, data=body.model_dump(exclude_none=True))
         
-        return ClaimDetailsV2Response(**response.json())
+        return response.json()
     
     def submit_PTE(self, tin: str, 
                      path_to_claim_submission_body: str, 
                      path_to_misc: str | None = None, 
-                     path_to_xray: str | None = None):
+                     path_to_xray: str | None = None) -> dict:
         """POST /claim-submissions/v1/submit-pte
         
         Submits a Dental claim through the rule engine into the database
@@ -79,9 +78,9 @@ class ClaimSubmission:
         headers: Dict[str, Any] = {"tin": tin}
         response = self.client.request("POST", url, headers=headers, data=body.model_dump(exclude_none=True))
         
-        return ClaimDetailsV2Response(**response.json())
+        return response.json()
         
-    def submit_trial_claim(self, tin: str, body: TrialClaimSubmissionRequest) -> ClaimDetailsV2Response:
+    def submit_trial_claim(self, tin: str, body: TrialClaimSubmissionRequest) -> dict:
         """POST /claim-submissions/v1/trial-claim
         
         Submits a trial Claim through Dental Facets Rule Engine, does not persist anything into database
@@ -92,4 +91,4 @@ class ClaimSubmission:
         headers: Dict[str, Any] = {"tin": tin}
         response = self.client.request("POST", url, headers=headers, data=body.model_dump(exclude_none=True))
         
-        return ClaimDetailsV2Response(**response.json())
+        return response.json()

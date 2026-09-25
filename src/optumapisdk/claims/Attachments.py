@@ -5,7 +5,6 @@ import logging
 import os
 
 from ..enums import TicketType
-from .output_models import DocumentTypes
 
 
 class Attachments:
@@ -13,7 +12,7 @@ class Attachments:
         self.client = client
         self.logger = logger or logging.getLogger(__name__)
 
-    def get_attachment_doc_types_v2(self, ticket_type: TicketType | str, tin: str) -> DocumentTypes:
+    def get_attachment_doc_types_v2(self, ticket_type: TicketType | str, tin: str) -> dict:
         """GET /api/doctypes/v2.0 -- list of allowed document type codes/descriptions.
         
         This API provides a list of Document Type Codes and Document Type Descriptions
@@ -36,7 +35,7 @@ class Attachments:
         url = "/api/doctypes/v2.0"
         headers: Dict[str, Any] = {"ticketType": ticket_type.value, "tin": tin}
         response = self.client.request("GET", url, headers=headers)
-        return DocumentTypes(**response.json())
+        return response.json()
 
     def get_attachments_list(self, ticket_number: str, tin: str) -> dict:
         """GET /api/attachment/list/v2.0 -- list attachments for a ticket/appeal.
