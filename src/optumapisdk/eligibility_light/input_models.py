@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field
 from enum import Enum
 
 class SearchOption(str, Enum):
+    MemberIDDateOfBirth = "MemberIDDateOfBirth"
     MemberIDLastNameDateOfBirth = "MemberIDLastNameDateOfBirth"
     MemberIDFirstNameDateOfBirth = "MemberIDFirstNameDateOfBirth"
     MemberIDName = "MemberIDName"

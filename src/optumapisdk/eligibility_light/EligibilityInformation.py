@@ -25,6 +25,9 @@ class EligibilityInformation:
         elif type(body.searchOption) is str:
             raise ValueError(f"Invalid searchOption: {body.searchOption}. Valid options are: {list(SearchOption.__members__.keys())}")
         
+        if body.searchOption == SearchOption.MemberIDDateOfBirth and not (all([body.memberId, body.dateOfBirth])):
+            raise ValueError("memberId and dateOfBirth are required for MemberIDDateOfBirth search option")
+        
         if body.searchOption == SearchOption.MemberIDLastNameDateOfBirth and not (all([body.memberId, body.lastName, body.dateOfBirth])):
             raise ValueError("memberId, lastName, and dateOfBirth are required for MemberIDLastNameDateOfBirth search option")
     

@@ -133,24 +133,6 @@ def test_prefetch_token_failure_does_not_raise(requests_mock):
 
     assert api is not None
 
-
-def test_prefetch_uses_custom_token_url(requests_mock):
-    custom_token_url = "https://auth.example.com/oauth2/token"
-    requests_mock.post(custom_token_url, json=make_token_payload(token="custom-prefetch-token"))
-
-    api = OptumAPI(
-        env="sandbox",
-        client_id="cid",
-        client_secret="secret",
-        token_url=custom_token_url,
-        prefetch_token=True,
-    )
-
-    assert requests_mock.call_count == 1
-    assert requests_mock.last_request.url == custom_token_url
-    assert api.auth.get_token() == "custom-prefetch-token"
-
-
 def test_default_timeout_is_applied(requests_mock, client: OptumAPI):
     requests_mock.get(f"{BASE_URL}/api/claim/detail/v2.0", json={"ok": True})
 

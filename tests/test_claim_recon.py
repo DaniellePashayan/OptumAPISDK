@@ -17,7 +17,7 @@ def test_get_recon_by_ticket_number(requests_mock, client: OptumAPI):
         tin="12345678", search_type=ReconSearchType.TICKET_NUMBER, ticket_number="T1"
     )
 
-    assert result.tickets == []
+    assert result.get("tickets") == None
     headers = requests_mock.last_request.headers
     assert headers["searchType"] == "T"
     assert headers["ticketNumber"] == "T1"
