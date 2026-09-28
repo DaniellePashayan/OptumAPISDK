@@ -22,3 +22,9 @@ class CaseSummaryRequest(BaseModel):
     status: Optional[str] = Field(None)
     startDate: Optional[str] = Field(None)
     endDate: Optional[str] = Field(None)
+
+class CaseDetailsRequest(BaseModel):
+    serviceReferenceNumber: str = Field(...)
+    corporateProviderTaxIdNumber: str = Field(...)
+    careProviderFirstName: str = Field(...)
+    careProviderLastNameOrOrganizationName: str = Field(...)

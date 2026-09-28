@@ -1,7 +1,7 @@
 from typing import Any, Dict, Optional
 import logging
 
-from .input_models import CaseSummaryRequest
+from .input_models import CaseSummaryRequest, CaseDetailsRequest
 
 class PriorAuthorization:
     def __init__(self, client, logger: Optional[logging.Logger] = None):
@@ -64,4 +64,50 @@ class PriorAuthorization:
         url = "/v1/apim/case/summary"
         response = self.client.request("POST", url, json=body.model_dump(exclude_none=True))
         
+        return response
+    
+    def get_case_details_by_provider(self, body: CaseDetailsRequest) -> dict:
+        """POST /v1/apim/case/detail
+        
+        The Case Details service provides the ability to search for a case by Service Reference Number (SRN) and returns the matching Prior Authorization case details.
+
+        A record will be returned if the care provider entered on the request is listed on the case as: submitting/requesting, ordering, admitting/attending, or servicing provider.
+
+        Request attributes:
+
+        To return the case details the following attributes are required: serviceReferenceNumber, corporateProviderTaxIdNumber along with careProviderFirstName AND careProviderLastNameOrOrganizationName
+
+        If searching by an organization/facility careProviderFirstName should be “Null”. Additional details about the request/response attributes can be found in the data dictionary.
+
+        Allowed payerIds are 87726, 25463, 37602, 65088, 76342, 78857, 81400, 86047, 86050, 95123, 95378, 95467, 96385, 06111, 03432
+
+        This detail response does not include Cardiology, Gastroenterology endoscopy, Oncology, Physical health, Radiology, Radiation Oncology, or Specialty Pharmacy prior authorization/notification request details.
+        
+        For more information, see: https://apimarketplace.uhcprovider.com/#/documentation/priorauth/get-case-detail-by-provider
+        """ 
+        url = "/v1/apim/case/detail"
+        response = self.client.request("POST", url, json=body.model_dump(exclude_none=True))
+        return response
+    
+    def get_referral_provider(self, tin: str, page: str = "1") -> dict:
+        """POST /v1/apim/provider/lookup
+        
+        The provider search service can be utilized to confirm Care Provider names to ensure that the provider name entered in the caseSummary or caseDetail request matches the United Health Group name.
+
+        All care provider records tied to the entered Corporate Provider Tax ID Number will be returned in the response. If there are more than 50 records the request can be updated to view additional page results.
+
+        Request attributes:
+
+        To return the care providers associated to the Corporate Tax ID Number the following attribute is required: corporateProviderTaxIdNumber
+
+        Additional details about the request/response attributes can be found in the data dictionary.
+
+        Allowed payerIds are 87726, 25463, 37602, 65088, 76342, 78857, 81400, 86047, 86050, 95123, 95378, 95467, 96385, 06111, 03432
+        
+        For more information, see: https://apimarketplace.uhcprovider.com/#/documentation/priorauth/get-referral-provider
+        """
+        body: Dict[str, Any] = {"corporateProviderTaxIdNumber": tin, "page": page}
+        
+        url = "/v1/apim/provider/lookup"
+        response = self.client.request("POST", url, json=body)
         return response
