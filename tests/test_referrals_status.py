@@ -16,7 +16,7 @@ def test_get_referral_status_posts_json_and_returns_response(requests_mock, clie
         firstServiceDt="2024-01-01",
         lastServiceDt="2024-02-01",
         payerId="87726",
-    )
+    ) # pyright: ignore[reportCallIssue]
 
     result = client.referrals.referral_status.get_referral_status(body)
 

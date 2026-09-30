@@ -44,7 +44,7 @@ def test_referral_submission_posts_json_and_returns_response(requests_mock, clie
         requesterCity="RCity",
         requesterState="RST",
         requesterZip="54321",
-    )
+    ) # pyright: ignore[reportCallIssue]
 
     result = client.referrals.referral_submission.referral_submission(body)
 
