@@ -1,0 +1,2249 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Referral GraphQL API",
+    "description": "baseUrl-https://apimarketplace.uhc.com",
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "https://apimarketplace.uhc.com/Referrals"
+    }
+  ],
+  "security": [
+    {
+      "apiKeyHeader": []
+    },
+    {
+      "apiKeyQuery": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Referral Status",
+      "description": "REST API for Referral Status"
+    },
+    {
+      "name": "Referral Submission",
+      "description": "REST API for Referral Submission Information"
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "summary": "Referral Health Check",
+        "description": "Referral Health Check",
+        "operationId": "Hidden-referral-health-check",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/api/graphql/referral/submission/v1.0": {
+      "post": {
+        "tags": [
+          "Referral Submission"
+        ],
+        "summary": "Referral submission",
+        "description": "Referral Submission API provides the ability to Submit Referrals.  <br>  <br> The following parameters are required: <br> - payerId - 87726 <br> - Referring Provider/Requester Details - Name, Address, NPI, MPIN. MPIN is returned in the response of Retrieve Provider Information API (api/graphql/provider/v1.0). <br> - Referred to Provider Details - Name, Address, National Provider Identifier (NPI),  <br> - Provider Identification Number (MPIN-UHC proprietary field). MPIN is returned in the response of Retrieve Provider Information API (api/graphql/provider/v1.0). <br> - Patient Information - Patient/Dependent Information <br> - Subscriber Information - Information of policy holder <br> - Date Range for the services to be provided <br> - Diagnosis/Clinical information <br> <br> The API response will include the below information: <br> - Referral Status <br> - Referring Provider Information <br> - Referred Provider Information <br> - Referred Patient/Subscriber Information <br> - Rejection Reasons if any <br><br>Rejection reason may be present as below <br> - AAAN42P : The system is unavailable please try again <br> - AAAN42Y : Timeout/Backend issue, please try again <br> - AAAN33C : Please review service date range for the member's policy <br> - AAAN41N : Please verify the requesting provider details <br> - AAAN42N : Please review the syntax  <br> - AAAN57C : Please update the service dates and try resubmission  <br> - AAAN95N : Patient is not eligibile, resubmission is not allowed  <br> - AAAY72C : Please verify the member ID and try again  <br> - AAAN78N : Please verify members eligibility, resubmission is not allowed  <br> - AAAN65C : Please verify members Last Name and try again  <br> - AAAN75N : Subscriber/insured not found, please verify details  <br> - AAA:AK9 : Please try again referral submission failed <br> - AAAN35C : Only PCP can do referral submission for this member, please update the referring provider details  <br> - AAAY95C : Patient is not eligibile, please correct and resubmit <br> - AAAN49C : Please update the referring provider details to members PCP <br> - AAAN51C : Referring or referred provider details are not correct, please update and try resubmission <br> - AAAN51N : Referring or referred provider details are not correct, resubmission not allowed  <br> - AAAN71N : Patient Birth Date Does Not Match our record <br> - AAAN72C : Please verify the member ID <br> - AAAN79C : Referring or referred provider details are not correct, please update and try resubmission <br> - AAAN95C : Patient is not eligibile, please correct and resubmit <br> - AAANAFC : Please correct the diagnosis code and try again  <br> - AAAY42C : The system is unavailable please try again  <br> - AAAY64C : Please verify the member ID <br> - AAAY65C : Please verify members Name/DOB  and try again  <br> - AAAY71C : Patient Birth Date Does Not Match our record, please update and try again  <br> - AAAY68C : Duplicate records for the member was found, please add more details and resubmit <br> - AAAY73C : Please verify the member/subscriber name and try again. <BR><BR><FONT>This API supports these Payer IDs: 87726, 06111.</FONT><BR><BR>",
+        "operationId": "POST-graphql-referral-submission",
+        "parameters": [
+          {
+            "name": "env",
+            "in": "header",
+            "description": "Allowable values : sandbox, test and prod. Default value : prod.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "sandbox",
+                "test",
+                "prod"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReferralRequestRecord"
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReferralSubmissionGraphQLResponse"
+                },
+                "example": {
+                  "referralStatus": "Accepted",
+                  "payerName": null,
+                  "payerIndustryId": null,
+                  "umo": {
+                    "name": {
+                      "firstName": "",
+                      "lastName": "TEST HEALTHCARE",
+                      "middleName": "",
+                      "prefix": "",
+                      "suffix": ""
+                    },
+                    "npi": null,
+                    "address": null,
+                    "entityIdentifier": "X3",
+                    "ids": {
+                      "PI": "87726"
+                    },
+                    "contact": null
+                  },
+                  "requestingProvider": {
+                    "name": {
+                      "firstName": "TEST",
+                      "lastName": "USER",
+                      "middleName": "",
+                      "prefix": "",
+                      "suffix": ""
+                    },
+                    "npi": "111111",
+                    "address": null,
+                    "entityIdentifier": "1P",
+                    "ids": {
+                      "EI": "11111111",
+                      "ZH": "11111111"
+                    },
+                    "contact": null
+                  },
+                  "referredProviders": [
+                    {
+                      "name": {
+                        "firstName": "TEST",
+                        "lastName": "TEST-USER",
+                        "middleName": "",
+                        "prefix": "",
+                        "suffix": ""
+                      },
+                      "npi": "11111111",
+                      "address": {
+                        "addressLine1": "addressLine1",
+                        "addressLine2": null,
+                        "city": "TEST RIVER",
+                        "state": "MD",
+                        "postalCode": "11111",
+                        "countryCode": null
+                      },
+                      "entityIdentifier": "SJ",
+                      "ids": null,
+                      "contact": null
+                    }
+                  ],
+                  "patientName": {
+                    "firstName": "TEST",
+                    "lastName": "USER",
+                    "middleName": "E",
+                    "prefix": "",
+                    "suffix": ""
+                  },
+                  "patientDateOfBirth": "04-11-2000",
+                  "patientRelationship": "18",
+                  "patientMemberId": "1111111",
+                  "referralId": "11111111",
+                  "rejectionReasons": {
+                    "rejectionLevel": "UMO Level",
+                    "validRequestIndicator": "",
+                    "reasonDescription": "",
+                    "followUpAction": "",
+                    "rejectionCode": "",
+                    "rejectionReason": ""
+                  },
+                  "payerMessages": [
+                    "TEST+DUPLICATE REFERRAL"
+                  ],
+                  "patientEvents": [
+                    {
+                      "certificationAction": "A1",
+                      "reviewDecisionReason": null,
+                      "certificationIssueDate": null,
+                      "certificationExpirationDate": null,
+                      "quantityQualifier": "VS",
+                      "quantity": "8"
+                    }
+                  ],
+                  "serviceEvents": null,
+                  "missingDob": false,
+                  "x12Response": ""
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReferralSubmissionGraphQLResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "UHCPRF_RSUB_101 - PatientBirthDate is not in valid format. Please enter in yyyy-MM-dd format. || UHCPRF_RSUB_101 - ServiceStartDate is not in valid format. Please enter in yyyy-MM-dd format. || UHCPRF_RSUB_103 - ServiceEndDate is not in valid format. Please enter in yyyy-MM-dd format. || UHCPRF_RSUB_104 - subscriberBirthDate is not in valid format. Please enter in yyyy-MM-dd format. || UHCPRF_RS_105 - ServiceEndDate cannot be greater than ServiceStartDate. || UHCPRF_RSUB_400 - Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "faultCode": "string",
+                  "message": "string"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UHCPRF_RSUB_200 - Authorization Error: Not having access to the service.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "faultCode": "string",
+                  "message": "string"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "UHCPRF_RSUB_201 - Access to the specified resource has been forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "faultCode": "string",
+                  "message": "string"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "UHCPRF_RSUB_300 - Internal Server Error, Please contact System Administrators.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "faultCode": "string",
+                  "message": "string"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "body-1"
+      }
+    },
+    "/api/graphql/referral/status/v1.0": {
+      "post": {
+        "tags": [
+          "Referral Status"
+        ],
+        "summary": "Referral status",
+        "description": "Referral Status API provides the status information of a previously Submitted Referral.<br>For the CSP platform, 'referringProviderMpin', 'referredToProviderMpin', and 'denialDescription' will be populated in the response. <br>  <br> The following parameters are required: <br>  <br> - memberId <br> - patientDob <br> - patientFn <br> - firstServiceDt <br> - lastServiceDt <br> - payerId - 87726 <br> <br> The API response will include the below information: <br> <br> - Referral ID <br> - Referring Provider Information <br> - Referred Provider Information <br> - Referred Patient/Subscriber Information <br> <BR><FONT>This API supports these Payer IDs: 87726, 06111.</FONT><BR>",
+        "operationId": "POST-graphql-referral-status",
+        "parameters": [
+          {
+            "name": "env",
+            "in": "header",
+            "description": "Allowable values : sandbox, test and prod. Default value : prod.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "sandbox",
+                "test",
+                "prod"
+              ]
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReferralStatusRequest"
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReferralStatusGraphQLResponse"
+                },
+                "example": {
+                  "getReferralStatus": [
+                    {
+                      "referralId": "123456789",
+                      "sourceReferralId": "asdfasd",
+                      "sourceReferralName": "Oxford",
+                      "referringProviderName": "Test, Provider",
+                      "referralStartDt": "2021-05-24T00:00:00.000Z",
+                      "referralEndDt": "2021-11-24T00:00:00.000Z",
+                      "numberOfVisits": "6",
+                      "remainingVisits": "6",
+                      "firstDiagnosisCode": "R22.0",
+                      "comments": "-",
+                      "secondDiagnosisCode": "",
+                      "referredToProviderPhNbr": "(123) 456-7890",
+                      "referredToProviderNpi": "1629076559",
+                      "providerSpecialityType": {
+                        "code": "code",
+                        "description": "description"
+                      },
+                      "referringProviderAddr": {
+                        "address1": "Test ST",
+                        "address2": null,
+                        "city": "NEW YORK",
+                        "state": "NY",
+                        "zip": "10012"
+                      },
+                      "referringProviderTin": "1111111",
+                      "referredToProviderTin": "111111",
+                      "referredToProviderSpeciality": null,
+                      "referringProviderNpi": "1111111",
+                      "referringProviderPhoneNumber": "(111) 111-1120",
+                      "referringProviderMpin": "referringProviderMpin",
+                      "referredToProviderMpin": "referredToProviderMpin",
+                      "denialDescription": "Denial Description"
+                    }
+                  ],
+                  "pagingInfo": {
+                    "nextControlNumber": "string"
+                  }
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReferralStatusGraphQLResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "UHCPRF_RS_101 - Mandatory Element Missing in the Request: memberId || UHCPRF_RS_102 - Mandatory Element Missing in the Request: patientDob || UHCPRF_RS_103 - Mandatory Element Missing in the Request: patientFn || UHCPRF_RS_104 - Mandatory Element Missing in the Request: firstServiceDt || UHCPRF_RS_105 - Mandatory Element Missing in the Request: lastServiceDt || UHCPRF_RS_106 - Mandatory Element Missing in the Request: payerId || UHCPRF_RS_107 - Incorrect Date Format in the Request: patientDob || UHCPRF_RS_108 - Incorrect Date Format in the Request: firstServiceDt || UHCPRF_RS_109 - Incorrect Date Format in the Request: lastServiceDt || UHCPRF_RS_110 - Incorrect Data: lastServiceDt should be greater than firstServiceDt",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "faultCode": "string",
+                  "message": "string"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UHCPRF_RS_200 - Authorization Error: Not having access to the service.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "faultCode": "string",
+                  "message": "string"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "UHCPRF_RS_201 - Access to the specified resource has been forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "faultCode": "string",
+                  "message": "string"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "UHCPRF_RS_301 - No referral information found with the given criteria.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "faultCode": "string",
+                  "message": "string"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "UHCPRF_RS_300 - Internal Server Error, Please contact System Administrators.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "faultCode": "string",
+                  "message": "string"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      }
+    },
+    "/api/graphql/provider/v1.0": {
+      "post": {
+        "tags": [
+          "Provider Details"
+        ],
+        "summary": "Retrieve Provider Information",
+        "description": "This API returns Provider Details based on the TIN and provider last name.  <br>  <br> The response body will include: <br> - Medical Provider Identification Number (MPIN-UHC proprietary field) <br> - National Provider Identifier (NPI) <br> - Phone <br> - First Name and Last Name for the submitted TIN. <br> <br> The following key information is required: <br> <br> - MPIN <br> - NPI <br> <br> Both of these values are required for Referral Submission, and therefore must be called before submitting a referral via Referral Submission API. <br> <br> Note: This API should be used for each provider associated with a given referral, and must be called separately to obtain each referring and referred provider. <br> <BR><FONT>This API supports these Payer IDs: 87726, 06111, 81400, 37602, 86047.</FONT><BR>",
+        "operationId": "POST-graphql-provider-details",
+        "parameters": [
+          {
+            "name": "env",
+            "in": "header",
+            "description": "Allowable values : sandbox, test and prod. Default value : prod.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "sandbox",
+                "test",
+                "prod"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReferredProviderDetailsRequest"
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProviderServiceResponse"
+                },
+                "example": {
+                  "providerList": [
+                    {
+                      "name": "XXXXXXXXXXX",
+                      "mpin": "08XXXXXX",
+                      "npi": "34XXXXXXXX",
+                      "primaryProviderPhone": "202XXXXXXX",
+                      "lastName": "JhXXXXX",
+                      "firstName": "CiXXXXXX"
+                    }
+                  ],
+                  "message": "providers found",
+                  "pagingState": {
+                    "key": "string",
+                    "page": "string",
+                    "totalRecords": 0
+                  }
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProviderServiceResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "UHCPRF_PD_300 - Internal Server Error, Please contact System Administrators.One of the mandatory field(s) is passed as blank in the request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "faultCode": "string",
+                  "message": "string"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UHCPRF_PD_200 - Authorization Error: Not having access to the service.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "faultCode": "string",
+                  "message": "string"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "UHCPRF_PD_201 - Access to the specified resource has been forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "faultCode": "string",
+                  "message": "string"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "UHCPRF_PD_301 - Internal Server Error, Please contact System Administrators.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "faultCode": "string",
+                  "message": "string"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "body-2"
+      }
+    },
+    "/api/graphql/search/referred/provider/v1.0": {
+      "post": {
+        "tags": [
+          "Provider Details"
+        ],
+        "summary": "Search Provider Information",
+        "description": "This API helps to fetch details of the specialist to whom the member can be referred in that area  \n\n Input variables:  <br>  <br> memberId: string <br> policyNumber: string <br> dateOfBirth : yyyy-mm-dd <br> firstName: string <br> firstDateOfService: yyyy-mm-dd <br> lastDateOfService: yyyy-mm-dd <br> radius: string <br> page: string <br> key: string <br> providerFirstName: string <br> providerLastName: string <br> providerSpeciality: string <br> providerGender: string <br> zipCode: string <br> npi: string <br> start: string <br> langCode: string <br> ",
+        "operationId": "POST-graphql-search-referred-provider",
+        "parameters": [
+          {
+            "name": "env",
+            "in": "header",
+            "description": "Allowable values : sandbox, test and prod. Default value : prod.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "sandbox",
+                "test",
+                "prod"
+              ]
+            }
+          },
+          {
+            "name": "isMock",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReferredProviderSearchRequest"
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "example": {
+                  "getReferredProvider": {
+                    "providerDetails": [
+                      {
+                        "address": {
+                          "addressLine1": "addressLine1",
+                          "city": "city",
+                          "state": "state",
+                          "zip": "zip",
+                          "primaryPhoneNumber": null
+                        },
+                        "providerFirstName": "providerFirstName",
+                        "providerLastName": "providerLastName",
+                        "specialty": "specialty",
+                        "handicapAccessible": null,
+                        "gender": "M",
+                        "distance": "5.58",
+                        "npi": "123456789",
+                        "tin": "123456789",
+                        "corporateOwnerLastName": "corporateOwnerLastName",
+                        "phoneNumber": "111-111-1111",
+                        "networkStatus": "networkStatus",
+                        "coordinatedCareOrg": [],
+                        "providerId": "123456789"
+                      },
+                      {
+                        "address": {
+                          "addressLine1": "addressLine1",
+                          "city": "city",
+                          "state": "state",
+                          "zip": "zip",
+                          "primaryPhoneNumber": null
+                        },
+                        "providerFirstName": "providerFirstName",
+                        "providerLastName": "providerLastName",
+                        "specialty": "specialty",
+                        "handicapAccessible": null,
+                        "gender": "M",
+                        "distance": "5.58",
+                        "npi": "123456789",
+                        "tin": "123456789",
+                        "corporateOwnerLastName": "corporateOwnerLastName",
+                        "phoneNumber": "111-111-1111",
+                        "networkStatus": "networkStatus",
+                        "coordinatedCareOrg": [],
+                        "providerId": "123456789"
+                      },
+                      {
+                        "address": {
+                          "addressLine1": "addressLine1",
+                          "city": "city",
+                          "state": "state",
+                          "zip": "zip",
+                          "primaryPhoneNumber": null
+                        },
+                        "providerFirstName": "providerFirstName",
+                        "providerLastName": "providerLastName",
+                        "specialty": "specialty",
+                        "handicapAccessible": null,
+                        "gender": "M",
+                        "distance": "5.58",
+                        "npi": "123456789",
+                        "tin": "123456789",
+                        "corporateOwnerLastName": "corporateOwnerLastName",
+                        "phoneNumber": "111-111-1111",
+                        "networkStatus": "networkStatus",
+                        "coordinatedCareOrg": [],
+                        "providerId": "123456789"
+                      },
+                      {
+                        "address": {
+                          "addressLine1": "addressLine1",
+                          "city": "city",
+                          "state": "state",
+                          "zip": "zip",
+                          "primaryPhoneNumber": null
+                        },
+                        "providerFirstName": "providerFirstName",
+                        "providerLastName": "providerLastName",
+                        "specialty": "specialty",
+                        "handicapAccessible": null,
+                        "gender": "M",
+                        "distance": "5.58",
+                        "npi": "123456789",
+                        "tin": "123456789",
+                        "corporateOwnerLastName": "corporateOwnerLastName",
+                        "phoneNumber": "111-111-1111",
+                        "networkStatus": "networkStatus",
+                        "coordinatedCareOrg": [],
+                        "providerId": "123456789"
+                      },
+                      {
+                        "address": {
+                          "addressLine1": "addressLine1",
+                          "city": "city",
+                          "state": "state",
+                          "zip": "zip",
+                          "primaryPhoneNumber": null
+                        },
+                        "providerFirstName": "providerFirstName",
+                        "providerLastName": "providerLastName",
+                        "specialty": "specialty",
+                        "handicapAccessible": null,
+                        "gender": "M",
+                        "distance": "5.58",
+                        "npi": "123456789",
+                        "tin": "123456789",
+                        "corporateOwnerLastName": "corporateOwnerLastName",
+                        "phoneNumber": "111-111-1111",
+                        "networkStatus": "networkStatus",
+                        "coordinatedCareOrg": [],
+                        "providerId": "123456789"
+                      },
+                      {
+                        "address": {
+                          "addressLine1": "addressLine1",
+                          "city": "city",
+                          "state": "state",
+                          "zip": "zip",
+                          "primaryPhoneNumber": null
+                        },
+                        "providerFirstName": "providerFirstName",
+                        "providerLastName": "providerLastName",
+                        "specialty": "specialty",
+                        "handicapAccessible": null,
+                        "gender": "M",
+                        "distance": "5.58",
+                        "npi": "123456789",
+                        "tin": "123456789",
+                        "corporateOwnerLastName": "corporateOwnerLastName",
+                        "phoneNumber": "111-111-1111",
+                        "networkStatus": "networkStatus",
+                        "coordinatedCareOrg": [],
+                        "providerId": "123456789"
+                      },
+                      {
+                        "address": {
+                          "addressLine1": "addressLine1",
+                          "city": "city",
+                          "state": "state",
+                          "zip": "zip",
+                          "primaryPhoneNumber": null
+                        },
+                        "providerFirstName": "providerFirstName",
+                        "providerLastName": "providerLastName",
+                        "specialty": "specialty",
+                        "handicapAccessible": null,
+                        "gender": "M",
+                        "distance": "5.58",
+                        "npi": "123456789",
+                        "tin": "123456789",
+                        "corporateOwnerLastName": "corporateOwnerLastName",
+                        "phoneNumber": "111-111-1111",
+                        "networkStatus": "networkStatus",
+                        "coordinatedCareOrg": [],
+                        "providerId": "123456789"
+                      },
+                      {
+                        "address": {
+                          "addressLine1": "addressLine1",
+                          "city": "city",
+                          "state": "state",
+                          "zip": "zip",
+                          "primaryPhoneNumber": null
+                        },
+                        "providerFirstName": "providerFirstName",
+                        "providerLastName": "providerLastName",
+                        "specialty": "specialty",
+                        "handicapAccessible": null,
+                        "gender": "M",
+                        "distance": "5.58",
+                        "npi": "123456789",
+                        "tin": "123456789",
+                        "corporateOwnerLastName": "corporateOwnerLastName",
+                        "phoneNumber": "111-111-1111",
+                        "networkStatus": "networkStatus",
+                        "coordinatedCareOrg": [],
+                        "providerId": "123456789"
+                      },
+                      {
+                        "address": {
+                          "addressLine1": "addressLine1",
+                          "city": "city",
+                          "state": "state",
+                          "zip": "zip",
+                          "primaryPhoneNumber": null
+                        },
+                        "providerFirstName": "providerFirstName",
+                        "providerLastName": "providerLastName",
+                        "specialty": "specialty",
+                        "handicapAccessible": null,
+                        "gender": "M",
+                        "distance": "5.58",
+                        "npi": "123456789",
+                        "tin": "123456789",
+                        "corporateOwnerLastName": "corporateOwnerLastName",
+                        "phoneNumber": "111-111-1111",
+                        "networkStatus": "networkStatus",
+                        "coordinatedCareOrg": [],
+                        "providerId": "123456789"
+                      },
+                      {
+                        "address": {
+                          "addressLine1": "addressLine1",
+                          "city": "city",
+                          "state": "state",
+                          "zip": "zip",
+                          "primaryPhoneNumber": null
+                        },
+                        "providerFirstName": "providerFirstName",
+                        "providerLastName": "providerLastName",
+                        "specialty": "specialty",
+                        "handicapAccessible": null,
+                        "gender": "M",
+                        "distance": "5.58",
+                        "npi": "123456789",
+                        "tin": "123456789",
+                        "corporateOwnerLastName": "corporateOwnerLastName",
+                        "phoneNumber": "111-111-1111",
+                        "networkStatus": "networkStatus",
+                        "coordinatedCareOrg": [],
+                        "providerId": "123456789"
+                      },
+                      {
+                        "address": {
+                          "addressLine1": "addressLine1",
+                          "city": "city",
+                          "state": "state",
+                          "zip": "zip",
+                          "primaryPhoneNumber": null
+                        },
+                        "providerFirstName": "providerFirstName",
+                        "providerLastName": "providerLastName",
+                        "specialty": "specialty",
+                        "handicapAccessible": null,
+                        "gender": "M",
+                        "distance": "5.58",
+                        "npi": "123456789",
+                        "tin": "123456789",
+                        "corporateOwnerLastName": "corporateOwnerLastName",
+                        "phoneNumber": "111-111-1111",
+                        "networkStatus": "networkStatus",
+                        "coordinatedCareOrg": [],
+                        "providerId": "123456789"
+                      },
+                      {
+                        "address": {
+                          "addressLine1": "addressLine1",
+                          "city": "city",
+                          "state": "state",
+                          "zip": "zip",
+                          "primaryPhoneNumber": null
+                        },
+                        "providerFirstName": "providerFirstName",
+                        "providerLastName": "providerLastName",
+                        "specialty": "specialty",
+                        "handicapAccessible": null,
+                        "gender": "M",
+                        "distance": "5.58",
+                        "npi": "123456789",
+                        "tin": "123456789",
+                        "corporateOwnerLastName": "corporateOwnerLastName",
+                        "phoneNumber": "111-111-1111",
+                        "networkStatus": "networkStatus",
+                        "coordinatedCareOrg": [],
+                        "providerId": "123456789"
+                      },
+                      {
+                        "address": {
+                          "addressLine1": "addressLine1",
+                          "city": "city",
+                          "state": "state",
+                          "zip": "zip",
+                          "primaryPhoneNumber": null
+                        },
+                        "providerFirstName": "providerFirstName",
+                        "providerLastName": "providerLastName",
+                        "specialty": "specialty",
+                        "handicapAccessible": null,
+                        "gender": "M",
+                        "distance": "5.58",
+                        "npi": "123456789",
+                        "tin": "123456789",
+                        "corporateOwnerLastName": "corporateOwnerLastName",
+                        "phoneNumber": "111-111-1111",
+                        "networkStatus": "networkStatus",
+                        "coordinatedCareOrg": [],
+                        "providerId": "123456789"
+                      },
+                      {
+                        "address": {
+                          "addressLine1": "addressLine1",
+                          "city": "city",
+                          "state": "state",
+                          "zip": "zip",
+                          "primaryPhoneNumber": null
+                        },
+                        "providerFirstName": "providerFirstName",
+                        "providerLastName": "providerLastName",
+                        "specialty": "specialty",
+                        "handicapAccessible": null,
+                        "gender": "M",
+                        "distance": "5.58",
+                        "npi": "123456789",
+                        "tin": "123456789",
+                        "corporateOwnerLastName": "corporateOwnerLastName",
+                        "phoneNumber": "111-111-1111",
+                        "networkStatus": "networkStatus",
+                        "coordinatedCareOrg": [],
+                        "providerId": "123456789"
+                      },
+                      {
+                        "address": {
+                          "addressLine1": "addressLine1",
+                          "city": "city",
+                          "state": "state",
+                          "zip": "zip",
+                          "primaryPhoneNumber": null
+                        },
+                        "providerFirstName": "providerFirstName",
+                        "providerLastName": "providerLastName",
+                        "specialty": "specialty",
+                        "handicapAccessible": null,
+                        "gender": "M",
+                        "distance": "5.58",
+                        "npi": "123456789",
+                        "tin": "123456789",
+                        "corporateOwnerLastName": "corporateOwnerLastName",
+                        "phoneNumber": "111-111-1111",
+                        "networkStatus": "networkStatus",
+                        "coordinatedCareOrg": [],
+                        "providerId": "123456789"
+                      }
+                    ],
+                    "pagingState": {
+                      "key": null,
+                      "page": null,
+                      "totalRecords": "10000"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "RFRPINT:BR - One of the mandatory field(s) is passed as blank in the request <br> RFRPINT:NA - Date is not in valid format. Please enter in yyyy-MM-dd format <br> RFRPINT:INVD - End date is before start date.Please correct the dates and try again <br> ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "faultCode": "string",
+                  "message": "string"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "RFRPPES:NF , RFRPGQL:NF , RFPRGSB:NF , RFRPINT:NF - Provider Not Found <br> ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "faultCode": "string",
+                  "message": "string"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "RFRPINT:EE - Internal API Failure <br> ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "faultCode": "string",
+                  "message": "string"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "body-3"
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AddressDetailType": {
+        "title": "AddressDetailType",
+        "type": "object",
+        "properties": {
+          "address1": {
+            "type": "string"
+          },
+          "address2": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "zip": {
+            "type": "string"
+          }
+        }
+      },
+      "AddressInformation": {
+        "title": "AddressInformation",
+        "type": "object",
+        "properties": {
+          "addressLine1": {
+            "type": "string"
+          },
+          "addressLine2": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "countryCode": {
+            "type": "string"
+          },
+          "postalCode": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          }
+        }
+      },
+      "ContactInformation": {
+        "title": "ContactInformation",
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "faxNumber": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "phoneExtension": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        }
+      },
+      "Error": {
+        "title": "Error",
+        "type": "object",
+        "properties": {
+          "faultCode": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "GraphQLRequest": {
+        "title": "GraphQLRequest",
+        "type": "object",
+        "properties": {
+          "operationName": {
+            "type": "string"
+          },
+          "query": {
+            "type": "string"
+          },
+          "variables": {
+            "type": "object",
+            "properties": {}
+          },
+          "variablesMap": {
+            "type": "object",
+            "properties": {}
+          }
+        }
+      },
+      "MapIds": {
+        "title": "MapIds",
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        }
+      },
+      "NameInformation": {
+        "title": "NameInformation",
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "middleName": {
+            "type": "string"
+          },
+          "prefix": {
+            "type": "string"
+          },
+          "suffix": {
+            "type": "string"
+          }
+        }
+      },
+      "ProviderSpecialityType": {
+        "title": "ProviderSpecialityType",
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "ReferralResponsePatientEvent": {
+        "title": "ReferralResponsePatientEvent",
+        "type": "object",
+        "properties": {
+          "certificationAction": {
+            "type": "string"
+          },
+          "certificationExpirationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "certificationIssueDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "quantity": {
+            "type": "string"
+          },
+          "quantityQualifier": {
+            "type": "string"
+          },
+          "reviewDecisionReason": {
+            "type": "string"
+          }
+        }
+      },
+      "ReferralResponseProviderGraphQL": {
+        "title": "ReferralResponseProviderGraphQL",
+        "type": "object",
+        "properties": {
+          "address": {
+            "$ref": "#/components/schemas/AddressInformation"
+          },
+          "contact": {
+            "$ref": "#/components/schemas/ContactInformation"
+          },
+          "entityIdentifier": {
+            "type": "string"
+          },
+          "ids": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MapIds"
+            }
+          },
+          "name": {
+            "$ref": "#/components/schemas/NameInformation"
+          },
+          "npi": {
+            "type": "string"
+          }
+        }
+      },
+      "ReferralResponseRejectionModel": {
+        "title": "ReferralResponseRejectionModel",
+        "type": "object",
+        "properties": {
+          "rejectionLevel": {
+            "type": "string",
+            "enum": [
+              "UMO Level",
+              "UMO Name Level",
+              "Requester Level",
+              "Subscriber Level",
+              "Dependent Level",
+              "Patient Event Level",
+              "Patient Event Provider Name",
+              "Patient Event Transport",
+              "Service Level",
+              "Service Provider Name",
+              "Functional Group Response Trailer"
+            ]
+          },
+          "validRequestIndicator": {
+            "type": "string"
+          },
+          "reasonDescription": {
+            "type": "string"
+          },
+          "followUpAction": {
+            "type": "string"
+          },
+          "rejectionCode": {
+            "type": "string"
+          },
+          "rejectionReason": {
+            "type": "string"
+          }
+        }
+      },
+      "ReferralResponseServiceEvent": {
+        "title": "ReferralResponseServiceEvent",
+        "type": "object",
+        "properties": {
+          "certificationAction": {
+            "type": "string"
+          },
+          "certificationExpirationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "certificationIssueDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "quantity": {
+            "type": "string"
+          },
+          "quantityQualifier": {
+            "type": "string"
+          },
+          "reviewDecisionReason": {
+            "type": "string"
+          }
+        }
+      },
+      "ReferralStatusGraphQLResponse": {
+        "title": "ReferralStatusGraphQLResponse",
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/getReferralStatus"
+        }
+      },
+      "getReferralStatus": {
+        "type": "object",
+        "properties": {
+          "referralId": {
+            "type": "string"
+          },
+          "sourceReferralId": {
+            "type": "string"
+          },
+          "sourceReferralName": {
+            "type": "string"
+          },
+          "referringProvider": {
+            "type": "string"
+          },
+          "referredToProvider": {
+            "type": "string"
+          },
+          "startDate": {
+            "type": "string"
+          },
+          "endDate": {
+            "type": "string"
+          },
+          "numberOfVisits": {
+            "type": "string"
+          },
+          "remainingVisits": {
+            "type": "string"
+          },
+          "firstDiagnosisCode": {
+            "type": "string"
+          },
+          "secondDiagnosisCode": {
+            "type": "string"
+          },
+          "comments": {
+            "type": "string"
+          },
+          "referredToProviderPhoneNumber": {
+            "type": "string"
+          },
+          "referredToProviderNpi": {
+            "type": "string"
+          },
+          "referredToProviderAddress": {
+            "$ref": "#/components/schemas/AddressDetailType"
+          },
+          "referringProviderAddress": {
+            "$ref": "#/components/schemas/AddressDetailType"
+          },
+          "referringProviderTin": {
+            "type": "string"
+          },
+          "referredToProviderTin": {
+            "type": "string"
+          },
+          "referredToProviderSpeciality": {
+            "$ref": "#/components/schemas/ProviderSpecialityType"
+          },
+          "referringProviderNpi": {
+            "type": "string"
+          },
+          "referringProviderPhoneNumber": {
+            "type": "string"
+          },
+          "referringProviderMpin": {
+            "type": "string"
+          },
+          "referredToProviderMpin": {
+            "type": "string"
+          },
+          "statusCode": {
+            "type": "string"
+          },
+          "statusDescription": {
+            "type": "string"
+          },
+          "denialDescription": {
+            "type": "string"
+          }
+        }
+      },
+      "ProviderServiceResponse": {
+        "type": "object",
+        "properties": {
+          "providerList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReferralIntakeProviderResponse"
+            }
+          },
+          "message": {
+            "type": "string"
+          },
+          "pagingState": {
+            "$ref": "#/components/schemas/PagingState"
+          }
+        }
+      },
+      "PagingState": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "page": {
+            "type": "string"
+          },
+          "totalRecords": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ReferralIntakeProviderResponse": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "mpin": {
+            "type": "string"
+          },
+          "npi": {
+            "type": "string"
+          },
+          "primaryPhoneNumber": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          }
+        }
+      },
+      "ReferralSubmissionGraphQLResponse": {
+        "title": "ReferralSubmissionGraphQLResponse",
+        "type": "object",
+        "properties": {
+          "missingDob": {
+            "type": "boolean"
+          },
+          "patientDob": {
+            "type": "string"
+          },
+          "patientEvents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReferralResponsePatientEvent"
+            }
+          },
+          "patientMemberId": {
+            "type": "string"
+          },
+          "patientName": {
+            "$ref": "#/components/schemas/NameInformation"
+          },
+          "patientRelationship": {
+            "type": "string"
+          },
+          "payerId": {
+            "type": "string"
+          },
+          "payerMessages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "payerName": {
+            "type": "string"
+          },
+          "referralId": {
+            "type": "string"
+          },
+          "referralStatus": {
+            "type": "string"
+          },
+          "referredProviders": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReferralResponseProviderGraphQL"
+            }
+          },
+          "rejectionReasons": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReferralResponseRejectionModel"
+            }
+          },
+          "requestingProvider": {
+            "$ref": "#/components/schemas/ReferralResponseProviderGraphQL"
+          },
+          "serviceEvents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReferralResponseServiceEvent"
+            }
+          },
+          "umo": {
+            "$ref": "#/components/schemas/ReferralResponseProviderGraphQL"
+          },
+          "x12Response": {
+            "type": "string"
+          }
+        }
+      },
+      "Body": {
+        "type": "object",
+        "example": {
+          "variables": {
+            "patientFn": "patientFn",
+            "lastServiceDt": "2021-06-30T00:00:00.000Z",
+            "policyNbr": "dfmja",
+            "payerId": "payerId",
+            "patientDob": "1991-09-08T00:00:00.000Z",
+            "firstServiceDt": "2020-12-01T00:00:00.000Z",
+            "memberId": "123456789"
+          },
+          "query": "query ReferralStatusQuery($memberId: String, $policyNbr: String, $patientDob: String,$patientFn: String, $firstServiceDt: String, $lastServiceDt: String, $payerId: String){getReferralStatus(memberId:$memberId, policyNbr:$policyNbr,patientDob:$patientDob,patientFn:$patientFn,firstServiceDt:$firstServiceDt,lastServiceDt:$lastServiceDt,payerId:$payerId){referralId referringProviderName referralStartDt referralEndDt numberOfVisits remainingVisits firstDiagnosisCode secondDiagnosisCode referredToProviderPhNbr referredToProviderNpi providerSpecialityType{ code description} referringProviderAddr{ address1 address2 city state zip} }}"
+        }
+      },
+      "Body-1": {
+        "type": "object",
+        "example": {
+          "variables": {
+            "recordId": 0,
+            "payerId": "payerId",
+            "payerName": "TEST HEALTHCARE REFERRAL",
+            "referralVersionCd": "",
+            "platform": "CSP",
+            "requesterNpi": "111111",
+            "requesterTin": "1111111",
+            "requesterFn": "TEST",
+            "requesterLn": "USER",
+            "requesterContactName": "RLink User",
+            "requesterContactPhNbr": "1111111111",
+            "requesterAddr": "207 TEST Ave",
+            "requesterCity": "WICHITA",
+            "requesterState": "KS",
+            "requesterZip": "67208",
+            "requesterMpin": "1111111",
+            "patientFn": "Test",
+            "patientLn": "Test",
+            "patientMi": "E",
+            "patientDob": "04-11-2000",
+            "patientMemberId": "11111",
+            "patientGender": "F",
+            "patientGroupNbr": "MDCAID",
+            "patientRelationship": "EE",
+            "referredFn": "TEST",
+            "referredLn": "TEST-TEST",
+            "referredPhNbr": "1111111111",
+            "referredCity": "TEST RIVER",
+            "referredState": "MD",
+            "referredZip": "11111",
+            "referredAddrLn1": "11560 TEST Cir Ste 106,",
+            "referredAddrLn2": "",
+            "referredTin": "111111",
+            "referredMpin": "111111",
+            "referredNpi": "1",
+            "numberOfVisits": "8",
+            "submissionComments": "TEST",
+            "subscriberFn": "",
+            "subscriberLn": "",
+            "subscriberDob": "",
+            "subscriberGender": "",
+            "serviceStartDt": "20220112",
+            "serviceEndDt": "20220711",
+            "diagDiagnosis1": "A259",
+            "diagDiagnosis2": ""
+          },
+          "query": "query ReferralSubmissionQuery($recordId:Long,$payerId:String,$payerName:String,$referralVersionCd:String,$requesterNpi:String,$requesterTin:String,$requesterFn:String,$requesterLn:String,$requesterContactName:String,$requesterContactPhNbr:String,$patientLn:String,$patientFn:String,$patientMi:String,$patientDob:String,$patientMemberId:String,$patientGender:String,$patientGroupNbr:String,$patientRelationship:String,$referredNpi:String,$numberOfVisits:String,$submissionComments:String,$diagnosisCodes:[KeyValue],$subscriberFn:String,$subscriberLn:String,$subscriberDob:String,$subscriberGender:String,$referredFn:String,$referredLn:String,$referredPhNbr:String,$serviceStartDt:String,$serviceEndDt:String,$diagDiagnosis1:String,$diagDiagnosis2:String,$referredTin:String,$referredMpin:String,$referredCity:String,$referredState:String,$referredZip:String,$referredAddrLn1:String,$referredAddrLn2:String,$requesterAddr:String,$requesterMpin:String,$requesterCity:String,$requesterState:String,$requesterZip:String,$platform:String) {getReferralSubmission(recordId:$recordId, payerId:$payerId, payerName:$payerName, referralVersionCd:$referralVersionCd, requesterNpi:$requesterNpi,requesterTin:$requesterTin, requesterFn:$requesterFn, requesterLn:$requesterLn, requesterContactName:$requesterContactName, requesterContactPhNbr:$requesterContactPhNbr,patientLn:$patientLn, patientFn:$patientFn, patientMi:$patientMi, patientDob:$patientDob, patientMemberId:$patientMemberId,patientGender:$patientGender, patientGroupNbr:$patientGroupNbr, patientRelationship:$patientRelationship, referredNpi:$referredNpi, numberOfVisits:$numberOfVisits,submissionComments:$submissionComments, diagnosisCodes:$diagnosisCodes, subscriberFn:$subscriberFn, subscriberLn:$subscriberLn, subscriberDob:$subscriberDob,subscriberGender:$subscriberGender, referredFn:$referredFn, referredLn:$referredLn, referredPhNbr:$referredPhNbr, serviceStartDt:$serviceStartDt,serviceEndDt:$serviceEndDt, diagDiagnosis1:$diagDiagnosis1, diagDiagnosis2:$diagDiagnosis2, referredTin:$referredTin, referredMpin:$referredMpin,referredCity:$referredCity, referredState:$referredState, referredZip:$referredZip, referredAddrLn1:$referredAddrLn1, referredAddrLn2:$referredAddrLn2, requesterAddr:$requesterAddr, requesterMpin:$requesterMpin, requesterCity:$requesterCity, requesterState:$requesterState, requesterZip:$requesterZip, platform:$platform){referralStatus payerName payerId patientDob patientRelationship patientMemberId referralId umo{name{firstName lastName middleName prefix suffix} npi ids{key value} address{ addressLine1 addressLine2 city state postalCode countryCode} entityIdentifier contact{ name phoneNumber phoneExtension faxNumber email url}} requestingProvider{name{firstName lastName middleName prefix suffix} npi ids{key value} address{ addressLine1 addressLine2 city state postalCode countryCode} entityIdentifier contact{ name phoneNumber phoneExtension faxNumber email url}} referredProviders{name{firstName lastName middleName prefix suffix} npi ids{key value} address{ addressLine1 addressLine2 city state postalCode countryCode} entityIdentifier contact{ name phoneNumber phoneExtension faxNumber email url}} patientName{firstName lastName middleName prefix suffix} rejectionReasons{rejectionLevel,validRequestIndicator,reasonDescription,followUpAction,rejectionCode} payerMessages missingDob x12Response}}"
+        }
+      },
+      "Body-3": {
+        "type": "object",
+        "example": {
+          "variables": {
+            "memberId": "123456789",
+            "policyNumber": "111111111",
+            "dateOfBirth": "1991-09-08T00:00:00.000Z",
+            "firstName": "Test",
+            "firstDateOfService": "2020-12-01T00:00:00.000Z",
+            "lastDateOfService": "2021-06-30T00:00:00.000Z",
+            "radius": "radius",
+            "page": "page",
+            "providerFirstName": "providerFirstName",
+            "providerLastName": "providerLastName",
+            "providerSpeciality": "providerSpeciality",
+            "providerGender": "providerGender",
+            "zipCode": "222222",
+            "npi": "npi",
+            "start": "start",
+            "langCode": "langCode"
+          },
+          "query": "query ReferredProviderQuery($memberId: String, $policyNumber: String, $dateOfBirth: String,$firstName: String, $firstDateOfService: String, $lastDateOfService: String, $radius: String,$page: String, $providerFirstName: String,$providerLastName: String, $providerSpeciality: String,$providerGender: String, $zipCode: String,$npi: String, $start: String,$langCode: String){getReferredProvider(memberId: $memberId, policyNumber: $policyNumber, dateOfBirth: $dateOfBirth,firstName: $firstName, firstDateOfService: $firstDateOfService, lastDateOfService: $lastDateOfService, radius: $radius,page: $page,providerFirstName: $providerFirstName,providerLastName: $providerLastName, providerSpeciality: $providerSpeciality,providerGender: $providerGender, zipCode: $zipCode,npi: $npi, start: $start,langCode: $langCode) { providerDetails {address {addressLine1 city state zip primaryPhoneNumber} providerFirstName providerLastName specialty handicapAccessible gender distance npi tin corporateOwnerLastName  phoneNumber networkStatus coordinatedCareOrg providerId } pagingState{key page totalRecords}}}"
+        }
+      },
+      "Body-2": {
+        "type": "object",
+        "example": {
+          "variables": {
+            "tin": "123456789",
+            "providerLastName": "Provider LastName",
+            "providerFirstName": "Provider FirstName",
+            "start": "1"
+          },
+          "query": "query ProviderDetailsQuery($tin: String, $providerLastName: String, $providerFirstName: String, $start: String){getProviderDetails(tin:$tin, providerLastName:$providerLastName, providerFirstName: $providerFirstName, start: $start) {providerList {name mpin npi primaryPhoneNumber lastName firstName} message pagingState {key page totalRecords}}}"
+        }
+      },
+      "KeyValue": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        },
+        "description": "The list of diagnosis codes.",
+        "example": "[{\"123\",\"123456789\"},{\"456\",\"4567890123\"},{\"789\",\"7890123456\"}]"
+      },
+      "ReferralStatusRequest": {
+        "required": [
+          "patientDob",
+          "firstServiceDt",
+          "patientFn",
+          "lastServiceDt",
+          "memberId",
+          "payerId",
+          "policyNbr"
+        ],
+        "type": "object",
+        "properties": {
+          "memberId": {
+            "type": "string",
+            "description": "The member's identification number. MemberId is validated to ensure that it is not blank.",
+            "example": "46382905"
+          },
+          "policyNumber": {
+            "type": "string",
+            "description": "The member's policy number.",
+            "example": "01921740"
+          },
+          "patientDob": {
+            "type": "string",
+            "description": "The member's date of birth. Must be passed in the request in yyyy-MM-dd format. Date of Birth is validated to ensure that it is not blank",
+            "example": "1900-12-20"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "The member's first name. First Name is validated to ensure that it is not blank.",
+            "example": "John"
+          },
+          "firstServiceDt": {
+            "type": "string",
+            "description": "The first date of service. Must be passed in the request in yyyy-MM-dd format. First Date of Service is validated to ensure that it is not blank. Please note that the First Date of Service must be an earlier date than the Last Date of Service.",
+            "example": "2023-02-17"
+          },
+          "lastServiceDt": {
+            "type": "string",
+            "description": "The last date of service. Must be passed in the request in yyyy-MM-dd format. Last Date of Service is validated to ensure that it is not blank. Please note that the Last Date of Service must be a later date than the First Date of Service.",
+            "example": "2023-11-17"
+          },
+          "payerId": {
+            "type": "string",
+            "description": "The payer's identification number. Payer ID is validated to ensure that it is not blank.",
+            "example": "2739211"
+          },
+          "status": {
+            "type": "string",
+            "description": "The desired referral status to search for.",
+            "example": "ALL"
+          }
+        },
+        "example": {
+          "variables": {
+            "patientFn": "patientFn",
+            "lastServiceDt": "2021-06-30T00:00:00.000Z",
+            "policyNbr": "dfmja",
+            "payerId": "payerId",
+            "patientDob": "1991-09-08T00:00:00.000Z",
+            "firstServiceDt": "2020-12-01T00:00:00.000Z",
+            "memberId": "123456789"
+          },
+          "query": "query ReferralStatusQuery($memberId: String, $policyNbr: String, $patientDob: String,$patientFn: String, $firstServiceDt: String, $lastServiceDt: String, $payerId: String){getReferralStatus(memberId:$memberId, policyNbr:$policyNbr,patientDob:$patientDob,patientFn:$patientFn,firstServiceDt:$firstServiceDt,lastServiceDt:$lastServiceDt,payerId:$payerId){referralId referringProviderName referralStartDt referralEndDt numberOfVisits remainingVisits firstDiagnosisCode secondDiagnosisCode referredToProviderPhNbr referredToProviderNpi providerSpecialityType{ code description} referringProviderAddr{ address1 address2 city state zip} }}"
+        }
+      },
+      "ReferralRequestRecord": {
+        "required": [
+          "diagDiagnosis1",
+          "diagDiagnosis2",
+          "numberOfVisits",
+          "patientDob",
+          "patientFn",
+          "patientGender",
+          "patientGroupNbr",
+          "patientLn",
+          "patientMemberId",
+          "patientMi",
+          "patientRelationship",
+          "payerIndustryId",
+          "payerName",
+          "platform",
+          "referredAddrLn1",
+          "referredAddrLn2",
+          "referredCity",
+          "referredFn",
+          "referredLn",
+          "referredMpin",
+          "referredNpi",
+          "referredPhNbr",
+          "referredState",
+          "referredTin",
+          "referredZip",
+          "requesterAddr",
+          "requesterCity",
+          "requesterContactName",
+          "requesterContactPhNbr",
+          "requesterFn",
+          "requesterLn",
+          "requesterMpin",
+          "requesterNpi",
+          "requesterState",
+          "requesterTin",
+          "requesterZip",
+          "serviceStartDt",
+          "serviceEndDt"
+        ],
+        "type": "object",
+        "properties": {
+          "recordId": {
+            "type": "integer",
+            "description": "The record's identification number.",
+            "format": "int64",
+            "example": 2739211
+          },
+          "payerIndustryId": {
+            "type": "string",
+            "description": "The payer's identification number.",
+            "example": "2739211"
+          },
+          "payerName": {
+            "type": "string",
+            "description": "The payer's name.",
+            "example": "Optum"
+          },
+          "referralVersionCode": {
+            "type": "string",
+            "description": "The referral version code.",
+            "example": "1.0"
+          },
+          "requesterNpi": {
+            "type": "string",
+            "description": "The requester's National Provider Identifier.",
+            "example": "1234567890"
+          },
+          "requesterTin": {
+            "type": "string",
+            "description": "The requester's Tax Identification Number.  If Requester TIN is passed in the request, it is validated to ensure that the TIN is not blocked.  If the TIN is blocked, a TIN validation error message will be returned.",
+            "example": "123456789"
+          },
+          "requesterFirstName": {
+            "type": "string",
+            "description": "The requester's first name.",
+            "example": "John"
+          },
+          "requesterLastName": {
+            "type": "string",
+            "description": "The requester's last name.",
+            "example": "Smith"
+          },
+          "requesterContactName": {
+            "type": "string",
+            "description": "The requester's contact name.",
+            "example": "Jane Doe"
+          },
+          "requesterContactPhNbr": {
+            "type": "string",
+            "description": "The requester's contact phone number.",
+            "example": "123-456-7890"
+          },
+          "patientLn": {
+            "type": "string",
+            "description": "The patient's last name.",
+            "example": "Doe"
+          },
+          "patientFn": {
+            "type": "string",
+            "description": "The patient's first name.",
+            "example": "John"
+          },
+          "patientMi": {
+            "type": "string",
+            "description": "The patient's middle initial.",
+            "example": "D"
+          },
+          "patientDob": {
+            "type": "string",
+            "description": "The patient's date of birth.  Must be passed in the request in MM-dd-yyyy format.",
+            "example": "12-20-1900"
+          },
+          "patientMemberId": {
+            "type": "string",
+            "description": "The patient's member identification number.",
+            "example": "46382905"
+          },
+          "patientGender": {
+            "type": "string",
+            "description": "The patient's gender.",
+            "example": "M"
+          },
+          "patientGroupNbr": {
+            "type": "string",
+            "description": "The patient's group number.",
+            "example": "123456789"
+          },
+          "patientRelationship": {
+            "type": "string",
+            "description": "The patient's relationship.",
+            "example": "Self"
+          },
+          "referredNpi": {
+            "type": "string",
+            "description": "The referred provider's National Provider Identifier.",
+            "example": "1234567890"
+          },
+          "numberOfVisits": {
+            "type": "string",
+            "description": "The number of visits.",
+            "example": "1"
+          },
+          "getsubmissionComments": {
+            "type": "string",
+            "description": "Submission Comment without special characters.",
+            "example": "This is a test"
+          },
+          "diagnosisCodes": {
+            "type": "array",
+            "description": "The list of diagnosis codes.",
+            "example": "[{\"123\",\"123456789\"},{\"456\",\"4567890123\"},{\"789\",\"7890123456\"}]",
+            "items": {
+              "$ref": "#/components/schemas/KeyValue"
+            }
+          },
+          "subscriberFn": {
+            "type": "string",
+            "description": "The subscriber's first name.",
+            "example": "Jane"
+          },
+          "subscriberLn": {
+            "type": "string",
+            "description": "The subscriber's last name.",
+            "example": "Doe"
+          },
+          "subscriberDob": {
+            "type": "string",
+            "description": "The subscriber's date of birth.",
+            "example": "1900-12-20"
+          },
+          "subscriberGender": {
+            "type": "string",
+            "description": "The subscriber's gender.",
+            "example": "F"
+          },
+          "referredFn": {
+            "type": "string",
+            "description": "The referred provider's first name.",
+            "example": "Mary"
+          },
+          "referredLn": {
+            "type": "string",
+            "description": "The referred provider's last name.",
+            "example": "Test"
+          },
+          "referredPhNbr": {
+            "type": "string",
+            "description": "The referred provider's phone number.",
+            "example": "123-456-7890"
+          },
+          "serviceStartDt": {
+            "type": "string",
+            "description": "The service start date.  Must be passed in the request in yyyyMMdd format.",
+            "example": "20230217"
+          },
+          "serviceEndDt": {
+            "type": "string",
+            "description": "The service end date.  Must be passed in the request in yyyyMMdd format.",
+            "example": "20231117"
+          },
+          "diagDiagnosis1": {
+            "type": "string",
+            "description": "The first diagnosis code.",
+            "example": "123"
+          },
+          "diagDiagnosis2": {
+            "type": "string",
+            "description": "The second diagnosis code.",
+            "example": "456"
+          },
+          "referredTin": {
+            "type": "string",
+            "description": "The referred provider's Tax Identification Number. If Referred TIN is passed in the request, it is validated to ensure that the TIN is not blocked. If the TIN is blocked, a TIN validation error message will be returned.",
+            "example": "123456789"
+          },
+          "referredMpin": {
+            "type": "string",
+            "description": "The referred provider's MPIN.",
+            "example": "123456789"
+          },
+          "referredCity": {
+            "type": "string",
+            "description": "The referred provider's city.",
+            "example": "Minneapolis"
+          },
+          "referredState": {
+            "type": "string",
+            "description": "The referred provider's state.",
+            "example": "MN"
+          },
+          "referredZip": {
+            "type": "string",
+            "description": "The referred provider's ZIP code.",
+            "example": "55401"
+          },
+          "referredAddrLn1": {
+            "type": "string",
+            "description": "The referred provider's address line 1.",
+            "example": "123 Main St"
+          },
+          "referredAddrLn2": {
+            "type": "string",
+            "description": "The referred provider's address line 2.",
+            "example": "Apt 1"
+          },
+          "requesterAddr": {
+            "type": "string",
+            "description": "The requester's address.",
+            "example": "123 Main St"
+          },
+          "requesterMpin": {
+            "type": "string",
+            "description": "The requester's MPIN.",
+            "example": "123456789"
+          },
+          "requesterCity": {
+            "type": "string",
+            "description": "The requester's city.",
+            "example": "Minneapolis"
+          },
+          "requesterState": {
+            "type": "string",
+            "description": "The requester's state.",
+            "example": "MN"
+          },
+          "requesterZip": {
+            "type": "string",
+            "description": "The requester's ZIP code.",
+            "example": "55401"
+          },
+          "platform": {
+            "type": "string",
+            "description": "Platform internal to UHC.",
+            "example": "CSP"
+          },
+          "providerUUID": {
+            "type": "string"
+          },
+          "backendEnv": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "variables": {
+            "recordId": 0,
+            "payerId": "payerId",
+            "payerName": "TEST HEALTHCARE REFERRAL",
+            "referralVersionCd": "",
+            "platform": "CSP",
+            "requesterNpi": "111111",
+            "requesterTin": "1111111",
+            "requesterFn": "TEST",
+            "requesterLn": "USER",
+            "requesterContactName": "RLink User",
+            "requesterContactPhNbr": "1111111111",
+            "requesterAddr": "207 TEST Ave",
+            "requesterCity": "WICHITA",
+            "requesterState": "KS",
+            "requesterZip": "67208",
+            "requesterMpin": "1111111",
+            "patientFn": "Test",
+            "patientLn": "Test",
+            "patientMi": "E",
+            "patientDob": "04-11-2000",
+            "patientMemberId": "11111",
+            "patientGender": "F",
+            "patientGroupNbr": "MDCAID",
+            "patientRelationship": "EE",
+            "referredFn": "TEST",
+            "referredLn": "TEST-TEST",
+            "referredPhNbr": "1111111111",
+            "referredCity": "TEST RIVER",
+            "referredState": "MD",
+            "referredZip": "11111",
+            "referredAddrLn1": "11560 TEST Cir Ste 106,",
+            "referredAddrLn2": "",
+            "referredTin": "111111",
+            "referredMpin": "111111",
+            "referredNpi": "1",
+            "numberOfVisits": "8",
+            "submissionComments": "TEST",
+            "subscriberFn": "",
+            "subscriberLn": "",
+            "subscriberDob": "",
+            "subscriberGender": "",
+            "serviceStartDt": "20220112",
+            "serviceEndDt": "20220711",
+            "diagDiagnosis1": "A259",
+            "diagDiagnosis2": ""
+          },
+          "query": "query ReferralSubmissionQuery($recordId:Long,$payerId:String,$payerName:String,$referralVersionCd:String,$requesterNpi:String,$requesterTin:String,$requesterFn:String,$requesterLn:String,$requesterContactName:String,$requesterContactPhNbr:String,$patientLn:String,$patientFn:String,$patientMi:String,$patientDob:String,$patientMemberId:String,$patientGender:String,$patientGroupNbr:String,$patientRelationship:String,$referredNpi:String,$numberOfVisits:String,$submissionComments:String,$diagnosisCodes:[KeyValue],$subscriberFn:String,$subscriberLn:String,$subscriberDob:String,$subscriberGender:String,$referredFn:String,$referredLn:String,$referredPhNbr:String,$serviceStartDt:String,$serviceEndDt:String,$diagDiagnosis1:String,$diagDiagnosis2:String,$referredTin:String,$referredMpin:String,$referredCity:String,$referredState:String,$referredZip:String,$referredAddrLn1:String,$referredAddrLn2:String,$requesterAddr:String,$requesterMpin:String,$requesterCity:String,$requesterState:String,$requesterZip:String,$platform:String) {getReferralSubmission(recordId:$recordId, payerId:$payerId, payerName:$payerName, referralVersionCd:$referralVersionCd, requesterNpi:$requesterNpi,requesterTin:$requesterTin, requesterFn:$requesterFn, requesterLn:$requesterLn, requesterContactName:$requesterContactName, requesterContactPhNbr:$requesterContactPhNbr,patientLn:$patientLn, patientFn:$patientFn, patientMi:$patientMi, patientDob:$patientDob, patientMemberId:$patientMemberId,patientGender:$patientGender, patientGroupNbr:$patientGroupNbr, patientRelationship:$patientRelationship, referredNpi:$referredNpi, numberOfVisits:$numberOfVisits,submissionComments:$submissionComments, diagnosisCodes:$diagnosisCodes, subscriberFn:$subscriberFn, subscriberLn:$subscriberLn, subscriberDob:$subscriberDob,subscriberGender:$subscriberGender, referredFn:$referredFn, referredLn:$referredLn, referredPhNbr:$referredPhNbr, serviceStartDt:$serviceStartDt,serviceEndDt:$serviceEndDt, diagDiagnosis1:$diagDiagnosis1, diagDiagnosis2:$diagDiagnosis2, referredTin:$referredTin, referredMpin:$referredMpin,referredCity:$referredCity, referredState:$referredState, referredZip:$referredZip, referredAddrLn1:$referredAddrLn1, referredAddrLn2:$referredAddrLn2, requesterAddr:$requesterAddr, requesterMpin:$requesterMpin, requesterCity:$requesterCity, requesterState:$requesterState, requesterZip:$requesterZip, platform:$platform){referralStatus payerName payerId patientDob patientRelationship patientMemberId referralId umo{name{firstName lastName middleName prefix suffix} npi ids{key value} address{ addressLine1 addressLine2 city state postalCode countryCode} entityIdentifier contact{ name phoneNumber phoneExtension faxNumber email url}} requestingProvider{name{firstName lastName middleName prefix suffix} npi ids{key value} address{ addressLine1 addressLine2 city state postalCode countryCode} entityIdentifier contact{ name phoneNumber phoneExtension faxNumber email url}} referredProviders{name{firstName lastName middleName prefix suffix} npi ids{key value} address{ addressLine1 addressLine2 city state postalCode countryCode} entityIdentifier contact{ name phoneNumber phoneExtension faxNumber email url}} patientName{firstName lastName middleName prefix suffix} rejectionReasons{rejectionLevel,validRequestIndicator,reasonDescription,followUpAction,rejectionCode} payerMessages missingDob x12Response}}"
+        }
+      },
+      "ReferredProviderDetailsRequest": {
+        "required": [
+          "providerFirstName",
+          "providerLastName",
+          "tin",
+          "start"
+        ],
+        "type": "object",
+        "properties": {
+          "providerFirstName": {
+            "type": "string",
+            "description": "Provider's first name.",
+            "example": "FN"
+          },
+          "providerLastName": {
+            "type": "string",
+            "description": "Provider's last name.",
+            "example": "LN"
+          },
+          "tin": {
+            "type": "string",
+            "description": "The provider's Tax Identification Number. TIN is validated to ensure that it is neither blank nor blocked.",
+            "example": "123456789"
+          },
+          "start": {
+            "type": "string",
+            "description": "The start index of the search results. Start is validated to ensure that it is neither blank nor less than 0.",
+            "example": "1"
+          }
+        },
+        "example": {
+          "variables": {
+            "tin": "123456789",
+            "providerLastName": "Provider LastName",
+            "providerFirstName": "Provider FirstName",
+            "start": "1"
+          },
+          "query": "query ProviderDetailsQuery($tin: String, $providerLastName: String, $providerFirstName: String, $start: String){getProviderDetails(tin:$tin, providerLastName:$providerLastName, providerFirstName: $providerFirstName, start: $start) {providerList {name mpin npi primaryPhoneNumber lastName firstName} message pagingState {key page totalRecords}}}"
+        }
+      },
+      "ReferredProviderSearchRequest": {
+        "required": [
+          "dateOfBirth",
+          "firstDateOfService",
+          "firstName",
+          "lastDateOfService",
+          "memberId",
+          "radius",
+          "zipCode"
+        ],
+        "type": "object",
+        "properties": {
+          "memberId": {
+            "type": "string",
+            "description": "Member Identifier. MemberId is validated to ensure that it is not blank.",
+            "example": "123456789"
+          },
+          "policyNumber": {
+            "type": "string",
+            "description": "Policy number",
+            "example": "24680"
+          },
+          "dateOfBirth": {
+            "type": "string",
+            "description": "Date of birth. Must be in yyyy-MM-dd format. Date of Birth is validated to ensure that it is not blank.",
+            "example": "2000-01-01"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "First name. First Name is validated to ensure that it is not blank.",
+            "example": "John"
+          },
+          "firstDateOfService": {
+            "type": "string",
+            "description": "First date of service. Must be in yyyy-MM-dd format. First Date of Service is validated to ensure that it is not blank.",
+            "example": "2024-01-01"
+          },
+          "lastDateOfService": {
+            "type": "string",
+            "description": "Last date of service. Must be in yyyy-MM-dd format. Last Date of Service is validated to ensure that it is not blank.",
+            "example": "2024-12-31"
+          },
+          "radius": {
+            "type": "string",
+            "description": "Radius. Radius is validated to ensure that it is not blank.",
+            "example": "25"
+          },
+          "page": {
+            "type": "string",
+            "description": "Page",
+            "example": "1"
+          },
+          "key": {
+            "type": "string",
+            "description": "Key used for paging.",
+            "example": "2"
+          },
+          "providerFirstName": {
+            "type": "string",
+            "description": "Provider's first name.",
+            "example": "Jane"
+          },
+          "providerLastName": {
+            "type": "string",
+            "description": "Provider's last name.",
+            "example": "Smith"
+          },
+          "providerSpeciality": {
+            "type": "string",
+            "description": "Provider's specialty",
+            "example": "Social Worker~Clinical"
+          },
+          "providerGender": {
+            "type": "string",
+            "description": "Provider's gender",
+            "example": "F"
+          },
+          "providerBusinessSubCategory": {
+            "type": "string",
+            "description": "Provider's business subcategory",
+            "example": "Subcategory"
+          },
+          "zipCode": {
+            "type": "string",
+            "description": "Zip code. Zip Code is validated to ensure that it is not blank.",
+            "example": "55440"
+          },
+          "npi": {
+            "type": "string",
+            "description": "National Provider Identifier",
+            "example": "1234567890"
+          },
+          "start": {
+            "type": "string",
+            "description": "Starting point to read results from.",
+            "example": "1"
+          },
+          "payerId": {
+            "type": "string",
+            "description": "Payer identifier",
+            "example": "06111"
+          },
+          "langCode": {
+            "type": "string",
+            "description": "Language code",
+            "example": "ENG"
+          }
+        },
+        "example": {
+          "variables": {
+            "memberId": "123456789",
+            "policyNumber": "111111111",
+            "dateOfBirth": "1991-09-08T00:00:00.000Z",
+            "firstName": "Test",
+            "firstDateOfService": "2020-12-01T00:00:00.000Z",
+            "lastDateOfService": "2021-06-30T00:00:00.000Z",
+            "radius": "radius",
+            "page": "page",
+            "providerFirstName": "providerFirstName",
+            "providerLastName": "providerLastName",
+            "providerSpeciality": "providerSpeciality",
+            "providerGender": "providerGender",
+            "zipCode": "222222",
+            "npi": "npi",
+            "start": "start",
+            "langCode": "langCode"
+          },
+          "query": "query ReferredProviderQuery($memberId: String, $policyNumber: String, $dateOfBirth: String,$firstName: String, $firstDateOfService: String, $lastDateOfService: String, $radius: String,$page: String, $providerFirstName: String,$providerLastName: String, $providerSpeciality: String,$providerGender: String, $zipCode: String,$npi: String, $start: String,$langCode: String){getReferredProvider(memberId: $memberId, policyNumber: $policyNumber, dateOfBirth: $dateOfBirth,firstName: $firstName, firstDateOfService: $firstDateOfService, lastDateOfService: $lastDateOfService, radius: $radius,page: $page,providerFirstName: $providerFirstName,providerLastName: $providerLastName, providerSpeciality: $providerSpeciality,providerGender: $providerGender, zipCode: $zipCode,npi: $npi, start: $start,langCode: $langCode) { providerDetails {address {addressLine1 city state zip primaryPhoneNumber} providerFirstName providerLastName specialty handicapAccessible gender distance npi tin corporateOwnerLastName  phoneNumber networkStatus coordinatedCareOrg providerId } pagingState{key page totalRecords}}}"
+        }
+      }
+    },
+    "securitySchemes": {
+      "apiKeyHeader": {
+        "type": "apiKey",
+        "name": "Ocp-Apim-Subscription-Key",
+        "in": "header"
+      },
+      "apiKeyQuery": {
+        "type": "apiKey",
+        "name": "subscription-key",
+        "in": "query"
+      }
+    }
+  },
+  "x-original-swagger-version": "2.0"
+}
