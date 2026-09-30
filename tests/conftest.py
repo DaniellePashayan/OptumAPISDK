@@ -15,6 +15,7 @@ CLAIMS_BASE_URL = f"{BASE_URL}/Claims"
 DENTAL_BASE_URL = f"{BASE_URL}/Dental"
 TOKEN_URL = f"{BASE_URL}/v1/oauthtoken"
 ELIGIBILITY_BASE_URL = f"{BASE_URL}/EligibilityLW"
+PRIOR_AUTHORIZATION_BASE_URL = f"{BASE_URL}/PriorAuth"
 
 
 def make_token_payload(token: str = "test-token", expires_in: int = 3600) -> Dict[str, Any]:

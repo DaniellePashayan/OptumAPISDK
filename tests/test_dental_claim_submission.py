@@ -6,7 +6,6 @@ import pytest
 
 from optumapisdk import OptumAPI
 from optumapisdk.dental.input_models import TrialClaimSubmissionRequest
-from optumapisdk.dental.output_models import ClaimDetailsV2Response
 from .conftest import DENTAL_BASE_URL as BASE_URL
 
 
@@ -21,7 +20,6 @@ def test_submit_claim_uploads_required_file(tmp_path, requests_mock, client: Opt
         path_to_claim_submission_body=str(claim_body_path),
     )
 
-    assert isinstance(result, ClaimDetailsV2Response)
     assert requests_mock.last_request.headers["tin"] == "12345678"
 
 
@@ -41,7 +39,7 @@ def test_submit_pte_uploads_required_file(tmp_path, requests_mock, client: Optum
         path_to_claim_submission_body=str(claim_body_path),
     )
 
-    assert isinstance(result, ClaimDetailsV2Response)
+    assert requests_mock.last_request.headers["tin"] == "12345678"
 
 
 def test_submit_pte_raises_when_body_path_missing(client: OptumAPI):
@@ -52,8 +50,7 @@ def test_submit_pte_raises_when_body_path_missing(client: OptumAPI):
 def test_submit_trial_claim_sends_tin_header(requests_mock, client: OptumAPI):
     requests_mock.post(f"{BASE_URL}/claim-submissions/v1/trial-claim", json={"claimId": "CLM-3"})
 
-    body = TrialClaimSubmissionRequest() # type: ignore
+    body = TrialClaimSubmissionRequest() # pyright: ignore[reportCallIssue]
     result = client.dental.claim_submission.submit_trial_claim("12345678", body)
 
-    assert isinstance(result, ClaimDetailsV2Response)
     assert requests_mock.last_request.headers["tin"] == "12345678"

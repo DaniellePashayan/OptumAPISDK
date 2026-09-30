@@ -7,7 +7,7 @@ from .PriorAuthorization import PriorAuthorization
     
 class _PriorAuthorizationScopedClient:
     """A thin proxy around the root `OptumAPI` client that prefixes every
-    request path with "/Claims".
+    request path with "/PriorAuth".
 
     Claim endpoint classes only ever call `.request(method, path, ...)` on
     the client they're given, so this proxy only needs to forward that
