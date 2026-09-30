@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional
+from typing import Optional
 import logging
 
 from .input_models import *
@@ -35,5 +35,5 @@ class ReferralStatus:
         For more information, see: https://apimarketplace.uhcprovider.com/#/documentation/referrals/post-graphql-referral-status
         """ 
         url = "/api/graphql/referral/status/v1.0"
-        response = self.client.post(url, json=body.model_dump(exclude_none=True))
+        response = self.client.request("POST", url, json=body.model_dump(exclude_none=True))
         return response.json()
