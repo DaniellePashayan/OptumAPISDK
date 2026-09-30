@@ -7,6 +7,7 @@ import logging
 from optumapisdk.dental.DentalResource import DentalResource
 from .claims.ClaimsResource import ClaimsResource
 from .eligibility_light.EligibilityLightResource import EligibilityLightResource
+from .prior_authorization.PriorAuthorizationResource import PriorAuthorizationResource
 
 from .Auth import OAuth
 from .exceptions import APIError
@@ -90,6 +91,7 @@ class OptumAPI:
         self.claims = ClaimsResource(self)
         self.dental = DentalResource(self)
         self.eligibility_light = EligibilityLightResource(self)
+        self.prior_authorization = PriorAuthorizationResource(self)
 
         # Optionally prefetch a token during initialization. Useful to
         if prefetch_token:
