@@ -64,7 +64,7 @@ class PriorAuthorization:
         url = "/v1/apim/case/summary"
         response = self.client.request("POST", url, json=body.model_dump(exclude_none=True))
         
-        return response
+        return response.json()
     
     def get_case_details_by_provider(self, body: CaseDetailsRequest) -> dict:
         """POST /v1/apim/case/detail
@@ -87,7 +87,7 @@ class PriorAuthorization:
         """ 
         url = "/v1/apim/case/detail"
         response = self.client.request("POST", url, json=body.model_dump(exclude_none=True))
-        return response
+        return response.json()
     
     def get_referral_provider(self, tin: str, page: str = "1") -> dict:
         """POST /v1/apim/provider/lookup
@@ -110,4 +110,4 @@ class PriorAuthorization:
         
         url = "/v1/apim/provider/lookup"
         response = self.client.request("POST", url, json=body)
-        return response
+        return response.json()

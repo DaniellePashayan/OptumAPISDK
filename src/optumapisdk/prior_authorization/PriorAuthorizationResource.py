@@ -3,6 +3,8 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:  
     from ..Client import OptumAPI
     
+from .PriorAuthorization import PriorAuthorization
+    
 class _PriorAuthorizationScopedClient:
     """A thin proxy around the root `OptumAPI` client that prefixes every
     request path with "/Claims".
@@ -33,4 +35,4 @@ class PriorAuthorizationResource:
         
         scoped_client = _PriorAuthorizationScopedClient(client)
     
-        self.eligibility_information = None
+        self.prior_authorization = PriorAuthorization(scoped_client)
