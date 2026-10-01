@@ -1,0 +1,1296 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "TrackIt API",
+    "description": "https://apimarketplace.uhc.com",
+    "version": "1.0"
+  },
+  "servers": [{
+    "url": "https://apimarketplace.uhc.com/TrackIt"
+  }],
+  "paths": {
+    "/api/ext/notification/summary/v1.0": {
+      "post": {
+        "tags": [
+          "Notification Summary"
+        ],
+        "summary": "Summary Of Notification Records",
+        "description": "<p>\n     This API provides a Summary of Notification Record Types.\n </p>\n <p>\n     <strong>Request Information:</strong>\n </p>\n <p>\n     <strong>recordType</strong>: Valid Record Types are Admission, Discharge, Emergency, Referrals.\n </p>\n <p>\n     <strong>fromDate</strong>:                          This field should be\n     allowed only for Referrals record type. Max date range is 90 days up to one year in the past.\n </p>\n <p>\n     <strong>toDate</strong>:                                  This field should\n     allowed only for Referrals record type. Max date range is 90 days up to one year in the past.\n </p>\n <table style=\"border: 1px solid #424242; border-collapse: collapse;\" cellspacing=\"0\" cellpadding=\"0\" align=\"left\">\n     <tbody>\n         <tr>\n             <td width=\"148\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                 <p align=\"center\">\n                     <strong>Record Type</strong>\n                 </p>\n             </td>\n             <td width=\"159\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                 <p align=\"center\">\n                     <strong>Default Date Range</strong>\n                 </p>\n             </td>\n             <td width=\"157\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                 <p align=\"center\">\n                     <strong>Allowed Date Range</strong>\n                 </p>\n             </td>\n         </tr>\n         <tr>\n             <td width=\"148\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                 <p align=\"center\">\n                     Admission\n                 </p>\n             </td>\n             <td width=\"159\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                 <p align=\"center\">\n                     7 Days\n                 </p>\n             </td>\n             <td width=\"157\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                 <p align=\"center\">\n                     N/A\n                 </p>\n             </td>\n         </tr>\n         <tr>\n             <td width=\"148\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                 <p align=\"center\">\n                     Discharge\n                 </p>\n             </td>\n             <td width=\"159\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                 <p align=\"center\">\n                     7 Days\n                 </p>\n             </td>\n             <td width=\"157\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                 <p align=\"center\">\n                     N/A\n                 </p>\n             </td>\n         </tr>\n         <tr>\n             <td width=\"148\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                 <p align=\"center\">\n                     Emergency\n                 </p>\n             </td>\n             <td width=\"159\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                 <p align=\"center\">\n                     7 Days\n                 </p>\n             </td>\n             <td width=\"157\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                 <p align=\"center\">\n                     N/A\n                 </p>\n             </td>\n         </tr>\n         <tr>\n             <td width=\"148\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                 <p align=\"center\">\n                     Referrals\n                 </p>\n             </td>\n             <td width=\"159\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                 <p align=\"center\">\n                     14 Days for Expiring referrals and 90 days for All Referrals\n                 </p>\n             </td>\n             <td width=\"157\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                 <p align=\"center\">\n                     Allowed only for All Referrals. Max date range is 90 days up\n                     to one year in past\n                 </p>\n             </td>\n         </tr>\n     </tbody>\n </table>\n\n <p>\n\n     <strong>Response Information:</strong>\n </p>\n <p>\n     Returns the count of record statuses for each record type. <br/>\n </p>",
+        "operationId": "GET-HOSPITAL-EVENTS-SUMMARY-RECORDS",
+        "parameters": [
+          {
+            "name": "tin",
+            "in": "header",
+            "description": "Facility/Tax Identification Number used in the request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Bearer Token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotificationSummarySchema"
+              },
+              "example": {
+                "recordType": "Admission",
+                "fromDate": "",
+                "toDate": ""
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": {
+                  "ADMISSION": {
+                    "totalCount": 1,
+                    "requiresAttention": 1
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request: || TMT_INV_REC_NOT_SUMMARY: recordType is mandatory to filter the search and must contain at least one of the following: Admission, Discharge, Emergency, Referrals. || TMT_INV_DT: Both fromDate and toDate must be provided together. || TMT_INV_DT_FRMT: Invalid date format. Dates must be in ISO format (yyyy-MM-dd) || TMT_INV_DT_FDGTD: fromDate cannot be after toDate || TMT_INV_DT_FDT: Dates cannot be in the future || TMT_INV_DT_OR: Dates must be within one year from the current date || TITAS113: ClientID is missing or empty. || TMT_NA_DT_RANGE: Date range is not allowed for record types Admission, Discharge, Emergency. || TITAS101: Provider TIN is required.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExtErrorResponse"
+                },
+                "example": {
+                  "status": "ERROR",
+                  "message": "BADREQUEST",
+                  "errors": [
+                    {
+                      "code": "TMT_INV_REC_NOT_SUMMARY",
+                      "message": "recordType is mandatory to filter the search and must contain at least one of the following: Admission, Discharge, Emergency, Referrals."
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExtErrorResponse"
+                },
+                "example": {
+                  "errorCode": "INTERNAL_SERVER_ERROR",
+                  "errorMessage": "An unexpected error occurred.",
+                  "httpStatusCode": 500
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ext/notification/detail/v1.0": {
+      "post": {
+        "tags": [
+          "Notification Detail"
+        ],
+        "summary": "Detailed Notification Records",
+        "description": "<p>\n    This API provides a Details of Notification Record Types.\n</p>\n<p>\n    <strong>Request Information:</strong>\n</p>\n<p>\n    <strong>recordType<sup style=\"color: red;\">*</sup></strong>: Valid Record Types are Admission, Discharge, Emergency, Referrals.\n</p>\n<p>\n    <strong>startPage</strong>:                             It always starts\n    with 0.\n</p>\n<p>\n    <strong>startDate</strong>:                             Valid Date format is\n    YYYY-MM-DD only Referrals record type allows date range.\n</p>\n<p>\n    <strong>endDate</strong>:                               Valid Date format is\n    YYYY-MM-DD and only Referrals record type allows date range.\n</p>\n<p>\n    <strong>filterName</strong>:                          This field can be used\n    to further filter down the search results. Valid Filters are shown below\n</p>\n<p>\n    <strong>filterValue</strong>:                           This field should\n    contain the value of the above filter selected.\n</p>\n  <table style=\"border: 1px solid #424242; border-collapse: collapse;\" cellspacing=\"0\" cellpadding=\"0\" align=\"left\" width=\"768\">\n    <tbody>\n        <tr>\n            <td width=\"162\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    <strong>Record Type</strong>\n                </p>\n            </td>\n            <td width=\"106\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    <strong>Allowed Date Range</strong>\n                </p>\n            </td>\n            <td width=\"75\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    <strong>Default Date Range</strong>\n                </p>\n            </td>\n            <td width=\"73\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    <strong>Days</strong>\n                </p>\n            </td>\n            <td width=\"196\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    <strong>Allowed Filter Name</strong>\n                </p>\n            </td>\n        </tr>\n        <tr>\n            <td width=\"162\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    Admission\n                </p>\n            </td>\n            <td width=\"106\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    N/A\n                </p>\n            </td>\n            <td width=\"75\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    7 Days\n                </p>\n            </td>\n            <td width=\"73\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    N/A\n                </p>\n            </td>\n            <td width=\"196\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    patientFirstName, <br/>\n                    patientLastName, <br/>\n                    patientDateOfBirth\n                </p>\n            </td>\n        </tr>\n        <tr>\n            <td width=\"162\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    Discharge\n                </p>\n            </td>\n            <td width=\"106\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    N/A\n                </p>\n            </td>\n            <td width=\"75\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    7 Days\n                </p>\n            </td>\n            <td width=\"73\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    N/A\n                </p>\n            </td>\n            <td width=\"196\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    patientFirstName, <br/>\n                    patientLastName, <br/>\n                    patientDateOfBirth\n                </p>\n            </td>\n        </tr>\n        <tr>\n            <td width=\"162\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    Emergency\n                </p>\n            </td>\n            <td width=\"106\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    N/A\n                </p>\n            </td>\n            <td width=\"75\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    7 Days\n                </p>\n            </td>\n            <td width=\"73\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    N/A\n                </p>\n            </td>\n            <td width=\"196\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    patientFirstName, <br/>\n                    patientLastName, <br/>\n                    patientDateOfBirth <br/>\n                    <br/>\n                </p>\n            </td>\n        </tr>\n        <tr>\n            <td width=\"162\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    Referrals\n                </p>\n            </td>\n            <td width=\"106\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    Allowed only for All Referrals. Max date range is 90 days up\n                    to one year in past\n                </p>\n            </td>\n            <td width=\"75\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    14 Days for Expiring referrals and 90 days for All Referrals\n                </p>\n            </td>\n            <td width=\"73\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    30 days,\n                </p>\n                <p>\n                    60 days,\n                </p>\n                <p>\n                    90 days <br/>\n                    for all Referrals\n                </p>\n            </td>\n            <td width=\"196\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    recordID,\n                </p>\n                <p>\n                    memberID, <br/>\n                    patientFirstName, <br/>\n                    patientLastName, <br/>\n                    patientDateOfBirth\n                </p>\n            </td>\n        </tr>\n    </tbody>\n</table>\n<p>\n\n    <strong>Response Information:</strong>\n</p>\n<p>\n    Returns the details of records for each record type. <br/>\n</p>\n<p>\n    <strong>Note:</strong>\n</p>\n<p>\n    (1) Filter Name should match the exact names as mentioned in the table. </p>\n<p>\n    (2) Either of days or startDate and endDate should be selected to filter the\n    results.\n</p>\n<p>\n    (3) All Date formats must be in YYYY-MM-DD format.\n</p>",
+        "operationId": "GET-NOTIFICATION-DETAIL",
+        "parameters": [
+          {
+            "name": "tin",
+            "in": "header",
+            "description": "Facility/Tax Identification Number used in the request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Bearer Token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotificationDetailRequestSchema"
+              },
+              "example": {
+                "recordType": "Admission",
+                "allReferral": "false",
+                "startPage": "0",
+                "startDate": "",
+                "endDate": "",
+                "filterName": "",
+                "filterValue": ""
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageRecordResponse"
+                },
+                "example": {
+                  "records": [
+                    {
+                      "patientFirstName": "ABC",
+                      "patientLastName": "DEF",
+                      "patientDateOfBirth": "01/01/9999",
+                      "admitDate": "2023-06-17 20:00:00",
+                      "admittingProvider": "GORDIAN ABC",
+                      "careProvider": "PCP_ABC",
+                      "bhProvider": [],
+                      "facilityHospitalProvider": "XYZ MEDICAL CENTER",
+                      "chiefCompliantList": [
+                        "INITIAL ENCOUNTER FOR FRACTURE",
+                        "UNSPECIFIED",
+                        "SPECIFIED 18667",
+                        "SPECIFIED 123"
+                      ]
+                    }
+                  ],
+                  "totalPages": 1,
+                  "pageSize": 200,
+                  "pageNumber": 0,
+                  "pageRecordCount": 1,
+                  "totalElements": 1,
+                  "firstPage": true,
+                  "lastPage": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request: || TMT_INV_NOTI_REC_DESC: recordType is mandatory to filter the search and must contain at least one of the following: Admission, Discharge, Emergency, Referrals.  || TITAS101: Provider TIN is required. || TITAS103: Start page must be non-negative. || TITAS104: Date search is not allowed for the record Type.  || TITAS105: Invalid date range. || TITAS107: Filter name and value both must be provided or be empty. || TITAS108: Invalid filter name for the given record type. || TITAS112: Invalid StartPage value,Not allowed more than or equal to totalPages value. StartPage starts with Zero index. || TITAS102: ClientID is missing or empty. || TMT_NA_DT_RANGE: Date range is not allowed for record types Admission, Discharge, Emergency. || TITAS114: Date range is not allowed for record type Referrals when allReferral is false. || TITAS106: Invalid StartDate or EndDate. || TITAS105: Request startDate or endDate is missing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExtErrorResponse"
+                },
+                "example": {
+                  "status": "ERROR",
+                  "message": "BADREQUEST",
+                  "errors": [
+                    {
+                      "code": "TMT_INV_REC_NOT_SUMMARY",
+                      "message": "recordType is mandatory to filter the search and must contain at least one of the following: Admission, Discharge, Emergency, Referrals."
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExtErrorResponse"
+                },
+                "example": {
+                  "errorCode": "INTERNAL_SERVER_ERROR",
+                  "errorMessage": "An unexpected error occurred.",
+                  "httpStatusCode": 500
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ext/action/summary/v1.0": {
+      "post": {
+        "tags": [
+          "Action Summary"
+        ],
+        "summary": "Summary Of Pending Status Records",
+        "description": "<p>\n    This API provides a summary of the claims with the count of all the statuses.\n</p>\n<p>\n   <strong>Request Information:</strong>\n</p>\n<p>\n   <strong>recordType</strong>:                     Valid Record Types are\n    RECON, PENDED, PENDINGCLAIMS and DOCUMENTATIONEDITS.\n</p>\n<p>\n    <strong>recordStatusList</strong>:          Valid statuses for different Record Types are\n    shown below.\n</p>\n<p>\n    <strong>fromDate</strong>:                          Valid Date format is\n    YYYY-MM-DD\n</p>\n<p>\n    <strong>toDate</strong>:                                  Valid Date format\n    is YYYY-MM-DD\n</p>\n<table style=\"border: 1px solid #424242; border-collapse: collapse;\" cellspacing=\"0\" cellpadding=\"0\">\n    <tbody>\n        <tr>\n            <td width=\"142\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    Record Type\n                </p>\n            </td>\n            <td width=\"163\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    Allowed Record Status\n                </p>\n            </td>\n            <td width=\"135\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p align=\"center\">\n                    Allowed Date Range\n                </p>\n            </td>\n            <td width=\"111\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p align=\"center\">\n                    Default Date Range\n                </p>\n            </td>\n        </tr>\n        <tr>\n            <td width=\"142\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    RECON\n                </p>\n            </td>\n            <td width=\"163\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    Requires Attention, Under Review, Recently Closed\n                </p>\n            </td>\n            <td width=\"135\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p align=\"center\">\n                    Max date range is 90 days up to one year in the past\n                </p>\n            </td>\n            <td width=\"111\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p align=\"center\">\n                    14 Days\n                </p>\n            </td>\n        </tr>\n        <tr>\n            <td width=\"142\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    PENDED\n                </p>\n            </td>\n            <td width=\"163\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    Requires Attention, Under Review, Recently Closed\n                </p>\n            </td>\n            <td width=\"135\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p align=\"center\">\n                    Max date range is 90 days up to one year in the past\n                </p>\n            </td>\n            <td width=\"111\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p align=\"center\">\n                    14 Days\n                </p>\n            </td>\n        </tr>\n        <tr>\n            <td width=\"142\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    PENDINGCLAIMS\n                </p>\n            </td>\n            <td width=\"163\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    Action Required, Retry Document\n                </p>\n            </td>\n            <td width=\"135\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p align=\"center\">\n                    N/A\n                </p>\n            </td>\n            <td width=\"111\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p align=\"center\">\n                    60 Days\n                </p>\n            </td>\n        </tr>\n        <tr>\n            <td width=\"142\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    DOCUMENTATIONEDITS\n                </p>\n            </td>\n            <td width=\"163\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                   Action Required, Retry Document\n                </p>\n            </td>\n            <td width=\"135\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p align=\"center\">\n                    N/A\n                </p>\n            </td>\n            <td width=\"111\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p align=\"center\">\n                    5 Days\n                </p>\n            </td>\n        </tr>\n    </tbody>\n</table>\n<p>\n\n    <strong>Response Information:</strong>\n</p>\n<p>\n    Returns the count of record statuses for each record type. <br/>\n</p>\n<p>\n    <strong>Note:</strong> For PENDINGCLAIMS & DOCUMENTATIONEDITS record type(s), the record\n    statuses Action Required, Retry Document are shown in\n    the response.\n</p>",
+        "operationId": "GET-PENDING-STATUS-SUMMARY-RECORDS",
+        "parameters": [
+          {
+            "name": "tin",
+            "in": "header",
+            "description": "Facility/Tax Identification Number used in the request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Bearer Token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActionSummarySchema"
+              },
+              "example": {
+                "recordType": "RECON",
+                "recordStatusList": [
+                  "Requires Attention",
+                  "Under Review"
+                ],
+                "fromDate": "2025-01-01",
+                "toDate": "2025-01-31"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": {
+                  "PENDINGCLAIMS": {
+                    "totalCount": 8,
+                    "requiresAttention": 8,
+                    "failures": 3,
+                    "success": 0,
+                    "notAvailable": 5
+                  },
+                  "RECON": {
+                    "totalCount": 27,
+                    "recentlyClosed": 11,
+                    "underReview": 16,
+                    "requiresAttention": 0
+                  },
+                  "PENDED": {
+                    "totalCount": 27,
+                    "recentlyClosed": 1,
+                    "underReview": 22,
+                    "requiresAttention": 4
+                  },
+                  "DOCUMENTATIONEDITS": {
+                    "totalCount": 5,
+                    "requiresAttention": 5,
+                    "failures": 1,
+                    "notAvailable": 4
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request:|| TMT_INV_REC: recordType is mandatory to filter the search and must contain at least one of the following: PENDINGCLAIMS, PENDED, RECON: Both fromDate and toDate must be provided together. || TMT_INV_DT_FRMT: Invalid date format. Dates must be in ISO format (yyyy-MM-dd) || TMT_INV_DT_FDGTD: fromDate cannot be after toDate || TMT_INV_DT_FDT: Dates cannot be in the future || TMT_INV_DT_OR: Dates must be within one year from the current date || TMT_INV_REC_ST_LST: Invalid recordStatusList for the given recordType. Expected values for the recordType RECON/PENDED Tickets are: Requires Attention, Under Review, Recently Closed and For PENDINGCLAIMS: Action Required, Retry Document. || TITAS101: Provider TIN is required. || TITAS113: ClientID is missing or empty.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExtErrorResponse"
+                },
+                "example": {
+                  "status": "ERROR",
+                  "message": "BADREQUEST",
+                  "errors": [
+                    {
+                      "code": "TMT_INV_REC",
+                      "message": "recordType is mandatory to filter the search and must contain at least one of the following: PENDINGCALIMS, PENDED, RECON."
+                    },
+                    {
+                      "code": "TMT_INV_DT_OR",
+                      "message": "Dates must be within one year from the current date"
+                    },
+                    {
+                      "code": "TMT_INV_DT_OR",
+                      "message": "Dates must be within one year from the current date"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExtErrorResponse"
+                },
+                "example": {
+                  "errorCode": "INTERNAL_SERVER_ERROR",
+                  "errorMessage": "An unexpected error occurred.",
+                  "httpStatusCode": 500
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ext/action/detail/v1.0": {
+      "post": {
+        "tags": [
+          "Action Detail"
+        ],
+        "summary": "Detailed Action Records",
+        "description": "<p>\n    This API provides a details of claims that require an action.\n</p>\n<p>\n    <strong>Request Information:</strong>\n</p>\n<p>\n <strong>recordType<sup style=\"color: red;\">*</sup></strong>: Valid Record Types are RECON, PENDED, PENDINGCLAIMS, DOCUMENTATIONEDITS.\n</p>\n<p>\n    <strong>startPage</strong>:                             It always starts\n    with 0.\n</p>\n<p>\n    <strong>startDate</strong>:                             Valid Date format is\n    YYYY-MM-DD\n</p>\n<p>\n    <strong>endDate</strong>:                               Valid Date format is\n    YYYY-MM-DD\n</p>\n<p>\n    <strong>filterName</strong>:                          This field can be used\n    to further filter down the search results. Valid Filters are shown below\n</p>\n<p>\n    <strong>filterValue</strong>:                           This field should\n    contain the value of the above filter selected.\n</p>\n<p>\n    <strong>recordStatusList</strong>:           Valid statuses for different\n    Record Types are shown below.\n</p>\n<table style=\"border: 1px solid #424242; border-collapse: collapse;\" cellspacing=\"0\" cellpadding=\"0\" align=\"left\" width=\"768\">\n    <tbody>\n        <tr>\n            <td width=\"162\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    <strong>Record Type</strong>\n                </p>\n            </td>\n            <td width=\"156\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    <strong>Allowed Record Status</strong>\n                </p>\n            </td>\n            <td width=\"106\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    <strong>Allowed Date Range</strong>\n                </p>\n            </td>\n            <td width=\"75\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    <strong>Default Date Range</strong>\n                </p>\n            </td>\n            <td width=\"196\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    <strong>Allowed Filter Name</strong>\n                </p>\n            </td>\n        </tr>\n        <tr>\n            <td width=\"162\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    RECON\n                </p>\n            </td>\n            <td width=\"156\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    Requires Attention,\n                </p>\n                <p>\n                    Under Review,\n                </p>\n                <p>\n                    Recently Closed\n                </p>\n            </td>\n            <td width=\"106\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    Max date range is 90 days up to one year in the past\n                </p>\n            </td>\n            <td width=\"75\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    14 Days\n                </p>\n            </td>\n            <td width=\"196\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    memberID, <br/>\n                    patientFirstName, <br/>\n                    patientLastName, <br/>\n                    patientAccountNumber, <br/>\n                    claimNumber, claimFirstDateOfService, <br/>\n                    patientAccountNumber, <br/>\n                    operatorName\n                </p>\n            </td>\n        </tr>\n        <tr>\n            <td width=\"162\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    PENDED\n                </p>\n            </td>\n            <td width=\"156\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    Requires Attention,\n                </p>\n                <p>\n                    Under Review,\n                </p>\n                <p>\n                    Recently Closed\n                </p>\n            </td>\n            <td width=\"106\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    Max date range is 90 days up to one year in the past\n                </p>\n            </td>\n            <td width=\"75\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    14 Days\n                </p>\n            </td>\n            <td width=\"196\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    memberID, <br/>\n                    patientFirstName, <br/>\n                    patientLastName, <br/>\n                    patientAccountNumber, <br/>\n                    claimNumber, claimFirstDateOfService <br/>\n                    patientAccountNumber, <br/>\n                    operatorName\n                </p>\n            </td>\n        </tr>\n        <tr>\n            <td width=\"162\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    PENDINGCLAIMS\n                </p>\n            </td>\n            <td width=\"156\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    Action Required,\n                </p>\n                <p>\n                    Retry Document\n                </p>\n            </td>\n            <td width=\"106\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    N/A\n                </p>\n            </td>\n            <td width=\"75\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    60 Days\n                </p>\n            </td>\n            <td width=\"196\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    memberID, <br/>\n                    patientFirstName, <br/>\n                    patientLastName, <br/>\n                    patientAccountNumber, <br/>\n                    claimNumber, claimFirstDateOfService,lineOfBusiness\n                </p>\n            </td>\n        </tr>\n        <tr>\n            <td width=\"162\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    DOCUMENTATIONEDITS\n                </p>\n            </td>\n            <td width=\"156\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    Action Required,\n                </p>\n                <p>\n                    Retry Document\n                </p>\n            </td>\n            <td width=\"106\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    N/A\n                </p>\n            </td>\n            <td width=\"75\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    5 Days\n                </p>\n            </td>\n            <td width=\"196\" valign=\"top\" style=\"border: 1px solid #424242; padding: 8px\">\n                <p>\n                    memberID, <br/>\n                    patientFirstName, <br/>\n                    patientLastName, <br/>\n                    patientAccountNumber, <br/>\n                    claimSubmissionDate, <br/>\n                    claimFirstDateOfService, <br/>\n                    alertExpirationDate\n                </p>\n            </td>\n        </tr>            \n    </tbody>\n</table>\n</br>\n<p>\n\n    <strong>Response Information:</strong>\n</p>\n<p>\n    Returns the details of records for each record type. <br/>\n</p>\n<p>\n    <strong>Note:</strong>\n</p>\n<p>\n    (1) Filter Name should match the exact names as mentioned in the table. </p>\n<p>\n    (2) Either of days or startDate and endDate should be selected to filter the\n    results.\n</p>\n<p>\n    (3) All Date formats must be in YYYY-MM-DD format. \n</p>\n<p>\n (4) The filter value for PENDINGCLAIMS must be one of the following: Commercial, Medicare, or Medicaid when the filterName is specified as lineOfBusiness. \n</p>",
+        "operationId": "GET-ACTION-DETAIL",
+        "parameters": [
+          {
+            "name": "tin",
+            "in": "header",
+            "description": "Facility/Tax Identification Number used in the request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Bearer Token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActionDetailRequestSchema"
+              },
+              "example": {
+                "recordType": "RECON",
+                "startPage": "0",
+                "startDate": "",
+                "endDate": "",
+                "filterName": "",
+                "filterValue": "",
+                "recordStatusList": []
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageRecordResponse"
+                },
+                "example": {
+                  "records": [
+                    {
+                      "claimNumber": 123456789,
+                      "memberID": "999999999",
+                      "patientFirstName": "ABC",
+                      "patientLastName": "DEF",
+                      "patientAccountNumber": "1111111",
+                      "claimFirstDateOfService": "08/24/9999",
+                      "ticketNumber": "PIQ-111111",
+                      "ticketLastUpdated": "02/04/9999",
+                      "ticketType": "RECON",
+                      "operatorName": "Ticket Owner",
+                      "ticketStatus": "Action Required",
+                      "ticketComment": "Ticket Comments.",
+                      "ticketCommentDate": "09/12/9999"
+                    }
+                  ],
+                  "totalPages": 1,
+                  "pageSize": 200,
+                  "pageNumber": 0,
+                  "pageRecordCount": 1,
+                  "totalElements": 1,
+                  "firstPage": true,
+                  "lastPage": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request: || TMT_INV_ACT_REC: recordType is mandatory to filter the search and must contain at least one of the following: RECON, PENDED, PENDINGCLAIMS and DOCUMENTATIONEDITS. || TITAS101: Provider TIN is required. ||  TITAS102: ClientID is missing or empty. || TITAS103: \"Invalid StartPage value provided in the request. || TITAS104: Date search is not allowed for the record Type. || TITAS105: Request startDate or endDate is missing. || TITAS106: Invalid StartDate or EndDate. || TITAS107: Filter name and value both must be provided or be empty. || TITAS108: Invalid filter name for the given record type. || TITAS109: Provided status is not allowed to search for the record Type. || TITAS112: Invalid StartPage value,Not allowed more than or equal to totalPages value. StartPage starts with Zero index. || TITAS115: Invalid Alert/Action Expiration Date for the given Record Type. || TITAS116 : Status search is not allowed for the given record type. || TITAS117 : The filter value for PENDINGCLAIMS must be one of the following: Commercial, Medicare, or Medicaid when the filterName is specified as lineOfBusiness.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExtErrorResponse"
+                },
+                "example": {
+                  "status": "ERROR",
+                  "message": "BADREQUEST",
+                  "errors": [
+                    {
+                      "code": "TMT_INV_ACT_REC",
+                      "message": "recordType is mandatory to filter the search and must contain at least one of the following: RECON, PENDED, PENDINGCLAIMS and DOCUMENTATIONEDITS."
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExtErrorResponse"
+                },
+                "example": {
+                  "errorCode": "INTERNAL_SERVER_ERROR",
+                  "errorMessage": "An unexpected error occurred.",
+                  "httpStatusCode": 500
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ExtSummary": {
+        "type": "object",
+        "properties": {
+          "recordType": {
+            "type": "string"
+          },
+          "recordStatusList": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "fromDate": {
+            "type": "string"
+          },
+          "toDate": {
+            "type": "string"
+          }
+        }
+      },
+      "ExtErrorResponse": {
+        "type": "object",
+        "properties": {
+          "errorCode": {
+            "type": "string"
+          },
+          "errorMessage": {
+            "type": "string"
+          },
+          "httpStatusCode": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ExternalDetailRequest": {
+        "required": [
+          "recordType"
+        ],
+        "type": "object",
+        "properties": {
+          "recordType": {
+            "type": "string"
+          },
+          "startPage": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "filterName": {
+            "type": "string"
+          },
+          "filterValue": {
+            "type": "string"
+          },
+          "recordStatusList": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "NotificationSummarySchema": {
+        "type": "object",
+        "properties": {
+          "recordType": {
+            "type": "string",
+            "description": "The Record Type indicates the Hospital Events that include Admission, Discharge, and Emergency circumstances for patients linked to Primary Care Providers (PCP) and Behavioral Health Providers, along with referrals accessible for Providers."
+          },
+          "fromDate": {
+            "type": "string",
+            "description": "Date from when the provider wants to search the notification items."
+          },
+          "toDate": {
+            "type": "string",
+            "description": "Date until when the provider wants to search the notification items."
+          }
+        },
+        "required": [
+          "recordType"
+        ]
+      },
+      "NotificationDetailRequestSchema": {
+        "type": "object",
+        "properties": {
+          "recordType": {
+            "type": "string",
+            "description": "The Record Type indicates the Hospital Events that include Admission, Discharge, and Emergency circumstances for patients linked to Primary Care Providers (PCP) and Behavioral Health Providers, along with referrals accessible for Providers."
+          },
+          "allReferral": {
+            "type": "boolean",
+            "description": "If Provider wants to get all referrals, pass true.False will return the expiring referrals."
+          },
+          "startPage": {
+            "type": "integer",
+            "description": "Displaying the data in the pages, It always starts with 0."
+          },
+          "startDate": {
+            "type": "string",
+            "description": "Date from when the provider wants to search the notification items."
+          },
+          "endDate": {
+            "type": "string",
+            "description": "Date until when the provider wants to search the notification items."
+          },
+          "filterName": {
+            "type": "string",
+            "description": "Filter Name represent to select which type of field, that provider wants to search for."
+          },
+          "filterValue": {
+            "type": "string",
+            "description": "Filter Value represent - request  to provide the exact value of the filter name that provider selected."
+          }
+        },
+        "required": [
+          "recordType"
+        ]
+      },
+      "ActionDetailRequestSchema": {
+        "type": "object",
+        "properties": {
+          "recordType": {
+            "type": "string",
+            "description": "Record Type refers to the type of Claim requiring an action."
+          },
+          "startPage": {
+            "type": "integer",
+            "description": "Displaying the data in the pages, It always starts with 0."
+          },
+          "startDate": {
+            "type": "string",
+            "description": "Date from when the provider wants to search the action items."
+          },
+          "endDate": {
+            "type": "string",
+            "description": "Date until when the provider wants to search the action items."
+          },
+          "filterName": {
+            "type": "string",
+            "description": "Filter Name represent to select which type of field, that provider wants to search for."
+          },
+          "filterValue": {
+            "type": "string",
+            "description": "Filter Value represent - request  to provide the exact value of the filter name that provider selected."
+          },
+          "recordStatusList": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Represents the status of the case the provider wants to search."
+          }
+        },
+        "required": [
+          "recordType"
+        ]
+      },
+      "ActionSummarySchema": {
+        "type": "object",
+        "properties": {
+          "recordType": {
+            "type": "string",
+            "description": "Record Type refers to the type of Claim requiring an action."
+          },
+          "fromDate": {
+            "type": "string",
+            "description": "Date from when the provider wants to search the action items."
+          },
+          "toDate": {
+            "type": "string",
+            "description": "Date until when the provider wants to search the action items."
+          }
+        },
+        "required": [
+          "recordType"
+        ]
+      },
+      "AttachmentInfo": {
+        "type": "object",
+        "properties": {
+          "attachmentStatus": {
+            "type": "string"
+          }
+        }
+      },
+      "BHProvider": {
+        "type": "object",
+        "properties": {
+          "providerTin": {
+            "type": "string"
+          },
+          "providerName": {
+            "type": "string"
+          },
+          "providerNpi": {
+            "type": "string"
+          }
+        }
+      },
+      "ClaimDetails": {
+        "type": "object",
+        "properties": {
+          "claimNumber": {
+            "type": "string"
+          },
+          "claimFirstDateOfService": {
+            "type": "string"
+          },
+          "billedAmount": {
+            "type": "string"
+          },
+          "icn": {
+            "type": "string"
+          },
+          "claimLastDateOfService": {
+            "type": "string"
+          },
+          "claimProcessedDate": {
+            "type": "string"
+          },
+          "totalPaidAmount": {
+            "type": "string"
+          },
+          "claimStatus": {
+            "type": "string"
+          },
+          "claimSysId": {
+            "type": "string"
+          },
+          "claimSubmissionDate": {
+            "type": "string"
+          },
+          "appealSubmissionDate": {
+            "type": "string"
+          },
+          "appealClosedDate": {
+            "type": "string"
+          },
+          "appealStatusCode": {
+            "type": "string"
+          },
+          "appealStatusCodeDescription": {
+            "type": "string"
+          },
+          "appealOutcomeCode": {
+            "type": "string"
+          },
+          "appealOutcomeCodeDescription": {
+            "type": "string"
+          },
+          "divisionCode": {
+            "type": "string"
+          },
+          "serviceStartDate": {
+            "type": "string"
+          },
+          "serviceEndDate": {
+            "type": "string"
+          },
+          "ticketType": {
+            "type": "string"
+          },
+          "dccfln": {
+            "type": "string"
+          },
+          "pan": {
+            "type": "string"
+          },
+          "claimNumberList": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "claimFirstDateOfServiceList": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "EncounterDetails": {
+        "type": "object",
+        "properties": {
+          "admitDate": {
+            "type": "string"
+          },
+          "dischargeDate": {
+            "type": "string"
+          },
+          "emergencyDate": {
+            "type": "string"
+          },
+          "chiefComplaintList": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "admitAcknowledgementDate": {
+            "type": "string"
+          },
+          "admitAcknowledgedUUID": {
+            "type": "string"
+          },
+          "dischargeAcknowledgementDate": {
+            "type": "string"
+          },
+          "dischargeAcknowledgedUUID": {
+            "type": "string"
+          },
+          "dischargeDisposition": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "emergencyAcknowledgementDate": {
+            "type": "string"
+          },
+          "emergencyAcknowledgedUUID": {
+            "type": "string"
+          },
+          "admitAcknowledged": {
+            "type": "boolean"
+          },
+          "dischargeAcknowledged": {
+            "type": "boolean"
+          },
+          "emergencyAcknowledged": {
+            "type": "boolean"
+          }
+        }
+      },
+      "MemberDetails": {
+        "type": "object",
+        "properties": {
+          "memberID": {
+            "type": "string"
+          },
+          "subscriberFirstName": {
+            "type": "string"
+          },
+          "subscriberLastName": {
+            "type": "string"
+          },
+          "subscriberMiddleInitial": {
+            "type": "string"
+          },
+          "subscriberID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "patientFirstName": {
+            "type": "string"
+          },
+          "patientLastName": {
+            "type": "string"
+          },
+          "patientMiddleInitial": {
+            "type": "string"
+          },
+          "patientDateOfBirth": {
+            "type": "string"
+          },
+          "patientID": {
+            "type": "string"
+          },
+          "patientAccountNumber": {
+            "type": "string"
+          },
+          "policyNumber": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "dateOfBirth": {
+            "type": "string"
+          },
+          "lob": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "patientAccountNumberList": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "PageRecordResponse": {
+        "type": "object",
+        "properties": {
+          "records": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RecordsRepo"
+            }
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageRecordCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "firstPage": {
+            "type": "boolean"
+          },
+          "lastPage": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PendCdAndDesc": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "desc": {
+            "type": "string"
+          }
+        }
+      },
+      "PriorAuthDetails": {
+        "type": "object",
+        "properties": {
+          "priorAuthNumber": {
+            "type": "string"
+          }
+        }
+      },
+      "ProviderDetails": {
+        "type": "object",
+        "properties": {
+          "renderingProviderFirstName": {
+            "type": "string"
+          },
+          "renderingProviderLastName": {
+            "type": "string"
+          },
+          "renderingProviderMiddleName": {
+            "type": "string"
+          },
+          "renderingProviderMpin": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "billingProviderFirstName": {
+            "type": "string"
+          },
+          "billingProviderLastName": {
+            "type": "string"
+          },
+          "billingProviderMiddleName": {
+            "type": "string"
+          },
+          "billingProviderMpin": {
+            "type": "string"
+          },
+          "providerTin": {
+            "type": "string"
+          },
+          "operatorName": {
+            "type": "string"
+          },
+          "operatorEmailAddress": {
+            "type": "string"
+          },
+          "placeOfServiceCode": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "placeOfServiceDescription": {
+            "type": "string"
+          },
+          "billingProviderName": {
+            "type": "string"
+          },
+          "providerCategory": {
+            "type": "string"
+          },
+          "businessName": {
+            "type": "string"
+          },
+          "referringProviderFirstName": {
+            "type": "string"
+          },
+          "referringProviderLastName": {
+            "type": "string"
+          },
+          "referringProviderTIN": {
+            "type": "string"
+          },
+          "referringProviderPhone": {
+            "type": "string"
+          },
+          "referringProviderNPI": {
+            "type": "string"
+          },
+          "referredToProviderFirstName": {
+            "type": "string"
+          },
+          "referredToProviderLastName": {
+            "type": "string"
+          },
+          "referredToProviderTIN": {
+            "type": "string"
+          },
+          "referredToProviderPhone": {
+            "type": "string"
+          },
+          "referredToProviderNPI": {
+            "type": "string"
+          },
+          "referredToProviderAddress": {
+            "$ref": "#/components/schemas/ReferralAddress"
+          },
+          "referringProviderAddress": {
+            "$ref": "#/components/schemas/ReferralAddress"
+          },
+          "admittingProviderName": {
+            "type": "string"
+          },
+          "providerName": {
+            "type": "string"
+          },
+          "facilityProvider": {
+            "type": "string"
+          },
+          "providerNpi": {
+            "type": "string"
+          },
+          "bhProviderList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BHProvider"
+            }
+          }
+        }
+      },
+      "RecordInfo": {
+        "type": "object",
+        "properties": {
+          "tmtEventID": {
+            "type": "string"
+          },
+          "recordID": {
+            "type": "string"
+          },
+          "recordType": {
+            "type": "string"
+          },
+          "recordStatus": {
+            "type": "string"
+          },
+          "recordStatusDesc": {
+            "type": "string"
+          },
+          "recordLastUpdateDate": {
+            "type": "string"
+          },
+          "submitterName": {
+            "type": "string"
+          },
+          "submitterEmailId": {
+            "type": "string"
+          },
+          "submitterPhoneNo": {
+            "type": "string"
+          },
+          "recordStatusCategory": {
+            "type": "string"
+          },
+          "predictionStartDate": {
+            "type": "string"
+          },
+          "predictionEndDate": {
+            "type": "string"
+          },
+          "smartEditCode": {
+            "type": "string"
+          },
+          "smartEditType": {
+            "type": "string"
+          },
+          "alertExpirationDate": {
+            "type": "string"
+          },
+          "comment": {
+            "type": "string"
+          },
+          "commentDate": {
+            "type": "string"
+          },
+          "commenterName": {
+            "type": "string"
+          },
+          "hscStatusSubType": {
+            "type": "string"
+          },
+          "hscStatusSubTypeDesc": {
+            "type": "string"
+          },
+          "paanChangeDateTime": {
+            "type": "string"
+          },
+          "createDateTime": {
+            "type": "string"
+          },
+          "pendCode": {
+            "type": "string"
+          },
+          "pendDescription": {
+            "type": "string"
+          },
+          "pendCodes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "pendCdAndDescs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PendCdAndDesc"
+            }
+          },
+          "encounterID": {
+            "type": "string"
+          },
+          "viewed": {
+            "type": "boolean"
+          },
+          "hidden": {
+            "type": "boolean"
+          }
+        }
+      },
+      "RecordsRepo": {
+        "type": "object",
+        "properties": {
+          "recordInfo": {
+            "$ref": "#/components/schemas/RecordInfo"
+          },
+          "memberDetails": {
+            "$ref": "#/components/schemas/MemberDetails"
+          },
+          "providerDetails": {
+            "$ref": "#/components/schemas/ProviderDetails"
+          },
+          "claimDetails": {
+            "$ref": "#/components/schemas/ClaimDetails"
+          },
+          "attachmentInfo": {
+            "$ref": "#/components/schemas/AttachmentInfo"
+          },
+          "referralDetails": {
+            "$ref": "#/components/schemas/ReferralDetails"
+          },
+          "priorAuthDetails": {
+            "$ref": "#/components/schemas/PriorAuthDetails"
+          },
+          "encounterDetails": {
+            "$ref": "#/components/schemas/EncounterDetails"
+          }
+        }
+      },
+      "ReferralAddress": {
+        "type": "object",
+        "properties": {
+          "addressLine1": {
+            "type": "string"
+          },
+          "addressLine2": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "postalCode": {
+            "type": "string"
+          },
+          "countryCode": {
+            "type": "string"
+          }
+        }
+      },
+      "ReferralDetails": {
+        "type": "object",
+        "properties": {
+          "referralVisitsRequested": {
+            "type": "string"
+          },
+          "referralComments": {
+            "type": "string"
+          },
+          "referralStDt": {
+            "type": "string"
+          },
+          "referralEnDt": {
+            "type": "string"
+          },
+          "referralDiagnosisCodeList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReferralDiagnosisCodeList"
+            }
+          }
+        }
+      },
+      "ReferralDiagnosisCodeList": {
+        "type": "object",
+        "properties": {
+          "diagCode": {
+            "type": "string"
+          },
+          "diagCodeDesc": {
+            "type": "string"
+          }
+        }
+      },
+      "Record": {
+        "type": "object",
+        "properties": {
+          "recordInfo": {
+            "$ref": "#/components/schemas/RecordInfo"
+          },
+          "memberDetails": {
+            "$ref": "#/components/schemas/MemberDetails"
+          },
+          "providerDetails": {
+            "$ref": "#/components/schemas/ProviderDetails"
+          },
+          "claimDetails": {
+            "$ref": "#/components/schemas/ClaimDetails"
+          },
+          "referralDetails": {
+            "$ref": "#/components/schemas/ReferralDetails"
+          },
+          "viewedBy": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "hiddenBy": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "apiKeyHeader": {
+        "type": "apiKey",
+        "name": "Ocp-Apim-Subscription-Key",
+        "in": "header"
+      },
+      "apiKeyQuery": {
+        "type": "apiKey",
+        "name": "subscription-key",
+        "in": "query"
+      }
+    }
+  },
+  "security": [
+    {
+      "apiKeyHeader": []
+    },
+    {
+      "apiKeyQuery": []
+    }
+  ]
+}
