@@ -63,3 +63,8 @@ class ActionDetailRequest(BaseModel):
             if v is not None and v not in FilterValues.__members__:
                 raise ValueError(f"filterValue must be one of {list(FilterValues.__members__.keys())} when filterName is LINE_OF_BUSINESS.")
         return v
+
+class ActionSummaryRequest(BaseModel):
+    recordType: RecordType = Field(..., description="Record Type refers to the type of Claim requiring an action.")
+    fromDate: Optional[str] = Field(None, description="Date from when the provider wants to search the action items.")
+    toDate: Optional[str] = Field(None, description="Date until when the provider wants to search the action items.")
