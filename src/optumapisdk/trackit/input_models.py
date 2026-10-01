@@ -6,7 +6,7 @@ from typing import Optional
 from pydantic import BaseModel, Field, field_validator
 from enum import Enum
 
-class RecordType(str, Enum):
+class ActionRecordType(str, Enum):
     RECON = "RECON"
     PENDED = "PENDED"
     PENDINGCLAIMS = "PENDINGCLAIMS"
@@ -19,7 +19,7 @@ class AllowedRecordStatus(str, Enum):
     ACTION_REQUIRED = "Action Required"
     RETRY_DOCUMENT = "Retry Document"
     
-class AllowedFilterName(str, Enum):
+class ActionAllowedFilterName(str, Enum):
     MEMBER_ID = "memberID"
     PATIENT_FIRST_NAME = "patientFirstName"
     PATIENT_LAST_NAME = "patientLastName"
@@ -31,17 +31,17 @@ class AllowedFilterName(str, Enum):
     CLAIM_SUBMISSION_DATE = "claimSubmissionDate"
     ALERT_EXPIRATION_DATE = "alertExpirationDate"
 
-class FilterValues(str, Enum):
+class ActionFilterValues(str, Enum):
     COMMERCIAL = "COMMERCIAL"
     MEDICARE = "MEDICARE"
     MEDICAID = "MEDICAID"
 
 class ActionDetailRequest(BaseModel):
-    recordType: RecordType = Field(..., description="Record Type refers to the type of Claim requiring an action.")
+    recordType: ActionRecordType = Field(..., description="Record Type refers to the type of Claim requiring an action.")
     startPage: Optional[int] = Field(0, description="Displaying the data in the pages, It always starts with 0.")
     startDate: Optional[str] = Field(None, description="Date from when the provider wants to search the action items.")
     endDate: Optional[str] = Field(None, description="Date until when the provider wants to search the action items.")
-    filterName: Optional[AllowedFilterName] = Field(None, description="Filter Name represent to select which type of field, that provider wants to search for.")
+    filterName: Optional[ActionAllowedFilterName] = Field(None, description="Filter Name represent to select which type of field, that provider wants to search for.")
     filterValue: Optional[str] = Field(None, description="Filter Value represent - request to provide the exact value of the filter name that provider selected.")
     recordStatusList: Optional[list[AllowedRecordStatus]] = Field(None, description="List of record statuses to filter the action items.")
     
@@ -59,12 +59,33 @@ class ActionDetailRequest(BaseModel):
     @field_validator("filterValue")
     @classmethod
     def validate_filter_value(cls, v: Optional[str], values):
-        if values.get("filterName") == AllowedFilterName.LINE_OF_BUSINESS:
-            if v is not None and v not in FilterValues.__members__:
-                raise ValueError(f"filterValue must be one of {list(FilterValues.__members__.keys())} when filterName is LINE_OF_BUSINESS.")
+        if values.get("filterName") == ActionAllowedFilterName.LINE_OF_BUSINESS:
+            if v is not None and v not in ActionFilterValues.__members__:
+                raise ValueError(f"filterValue must be one of {list(ActionFilterValues.__members__.keys())} when filterName is LINE_OF_BUSINESS.")
         return v
 
 class ActionSummaryRequest(BaseModel):
-    recordType: RecordType = Field(..., description="Record Type refers to the type of Claim requiring an action.")
+    recordType: ActionRecordType = Field(..., description="Record Type refers to the type of Claim requiring an action.")
     fromDate: Optional[str] = Field(None, description="Date from when the provider wants to search the action items.")
     toDate: Optional[str] = Field(None, description="Date until when the provider wants to search the action items.")
+    
+class NotificationRecordType(str, Enum):
+    ADMISSION = "Admission"
+    DISCHARGE = "Discharge"
+    EMERGENCY = "Emergency"
+    REFERRALS = "Referrals"
+
+class NotificationAllowedFilterName(str, Enum):
+    PATIENT_FIRST_NAME = "patientFirstName"
+    PATIENT_LAST_NAME = "patientLastName"
+    PATIENT_DATE_OF_BIRTH = "patientDateOfBirth"
+    RECORD_ID = "recordID"
+    MEMBER_ID = "memberID"
+
+class NotificationDetailRequest(BaseModel):
+    recordType: NotificationRecordType = Field(..., description="Record Type refers to the type of Claim requiring an action.")
+    allReferrals: Optional[bool] = Field(None, description="If Provider wants to get all referrals, pass true. False will return the expiring referrals.")
+    startPage: Optional[int] = Field(0, description="Displaying the data in the pages, It always starts with 0.")
+    startDate: Optional[str] = Field(None, description="Date from when the provider wants to search the notification items.")
+    endDate: Optional[str] = Field(None, description="Date until when the provider wants to search the notification items.")
+    filterName: Optional[NotificationAllowedFilterName] = Field(None, description="Filter Name represent to select which type of field, that provider wants to search for.")

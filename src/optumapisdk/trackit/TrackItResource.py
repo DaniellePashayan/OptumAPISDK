@@ -5,7 +5,7 @@ if TYPE_CHECKING:
     
 from .ActionDetail import ActionDetail
 from .ActionSummary import ActionSummary
-# from .NotificationDetails import NotificationDetails
+from .NotificationDetails import NotificationDetails
 # from .NotificationSummary import NotificationSummary
 
 class _TrackItScopedClient:
@@ -40,5 +40,5 @@ class TrackItResource:
         
         self.action_detail = ActionDetail(scoped_client)
         self.action_summary = ActionSummary(scoped_client)
-        # self.notification_details = NotificationDetails(scoped_client)
+        self.notification_details = NotificationDetails(scoped_client)
         # self.notification_summary = NotificationSummary(scoped_client)
