@@ -89,3 +89,8 @@ class NotificationDetailRequest(BaseModel):
     startDate: Optional[str] = Field(None, description="Date from when the provider wants to search the notification items.")
     endDate: Optional[str] = Field(None, description="Date until when the provider wants to search the notification items.")
     filterName: Optional[NotificationAllowedFilterName] = Field(None, description="Filter Name represent to select which type of field, that provider wants to search for.")
+
+class NotificationSummaryRequest(BaseModel):
+    recordType: NotificationRecordType = Field(..., description="The Record Type indicates the Hospital Events that include Admission, Discharge, and Emergency circumstances for patients linked to Primary Care Providers (PCP) and Behavioral Health Providers, along with referrals accessible for Providers.")
+    fromDate: Optional[str] = Field(None, description="Date from when the provider wants to search the notification items.")
+    toDate: Optional[str] = Field(None, description="Date until when the provider wants to search the notification items.")
