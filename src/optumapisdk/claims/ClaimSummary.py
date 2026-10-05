@@ -41,9 +41,9 @@ class ClaimSummary:
         self,
         tin: str,
         payer_id: str,
+        *,
         first_service_dt: Optional[str] = None,
         last_service_dt: Optional[str] = None,
-        *,
         transaction_id: Optional[str] = None,
     ) -> dict:
         """GET /api/claim/summary/byprovider/v2.0.
