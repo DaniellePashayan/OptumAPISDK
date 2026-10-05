@@ -3,11 +3,11 @@
 from typing import Any, Dict, Optional
 import logging
 
-from ..enums import DocumentKeyType
 from .input_models import (
     DocumentDownloadRequest,
     DocumentMetaDataRequest,
     BulkDocumentDownloadRequest,
+    DocumentKeyType
 )
 
 

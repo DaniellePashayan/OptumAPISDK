@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from optumapisdk import OptumAPI
-from optumapisdk.enums import DocumentKeyType
+from optumapisdk.claims.input_models import DocumentKeyType
 from optumapisdk.claims.input_models import (
     DocumentDownloadRequest,
     DocumentMetaDataRequest,

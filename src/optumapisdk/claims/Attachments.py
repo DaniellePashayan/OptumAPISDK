@@ -4,7 +4,7 @@ from typing import Any, Dict, Optional
 import logging
 import os
 
-from ..enums import TicketType
+from .input_models import TicketType
 
 
 class Attachments:

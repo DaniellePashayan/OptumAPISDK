@@ -4,7 +4,7 @@ from __future__ import annotations
 
 
 from optumapisdk import OptumAPI
-from optumapisdk.enums import TicketType
+from optumapisdk.claims.input_models import TicketType
 from .conftest import CLAIMS_BASE_URL as BASE_URL
 
 
