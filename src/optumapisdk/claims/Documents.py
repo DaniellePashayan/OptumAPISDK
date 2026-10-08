@@ -105,10 +105,13 @@ class Documents:
         url = "/api/document/metadata/v2.0"
         payload = body.model_dump(exclude_none=True)
 
+        # if auto_paginate and body.getPage, then set auto_paginate to False
+        if auto_paginate and payload.get("getPage", 0) != 0:
+            auto_paginate = False
+
         if not auto_paginate:
             response = self.client.request("POST", url, json=payload)
-            all_documents = response.json().get("response", {}).get("documentList", [])
-            return {"documentList": all_documents}
+            return response.json()
 
         current_page = int(payload.get("getPage", 0))
         pages_fetched = 0

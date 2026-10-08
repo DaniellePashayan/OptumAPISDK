@@ -248,10 +248,10 @@ class DocumentDownloadRequest(OptumBaseModel):
     """Body for POST /api/document/v2.0."""
 
     tin: str = Field(..., description="Tax identification number (required)")
-    documentId: Optional[str] = None
-    repoId: Optional[str] = None
-    fdsDocumentId: Optional[str] = None
-    cloudSpaceId: Optional[str] = None
+    documentId: str = Field(..., description="documentId is unique, to download a specific document.")
+    repoId: str = Field(..., description="repoId is unique, to download a document from a specific repository.")
+    fdsDocumentId: Optional[str] = Field(None, description="fdsDocumentId is optional, used for specific document identification.")
+    cloudSpaceId: Optional[str] = Field(None, description="cloudSpaceId is optional, used for specific document identification.")
 
 
 class BulkDocumentDownloadRequest(OptumBaseModel):

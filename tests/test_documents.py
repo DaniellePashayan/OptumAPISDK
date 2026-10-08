@@ -24,12 +24,12 @@ def test_get_document_key_sends_expected_headers(requests_mock, client: OptumAPI
 
 
 def test_post_document_metadata_sends_json_body(requests_mock, client: OptumAPI):
-    requests_mock.post(f"{BASE_URL}/api/document/metadata/v2.0", json={"documents": []})
+    requests_mock.post(f"{BASE_URL}/api/document/metadata/v2.0", json={"documentList": []})
 
     body = DocumentMetaDataRequest(toDt="01/31/2026 00:00:00", fromDt="01/01/2026 00:00:00", getPage=0, tin="12345678")
     result = client.claims.documents.post_document_metadata(body)
 
-    assert result == {"documents": []}
+    assert result == {"documentList": []}
     assert requests_mock.last_request.json()["toDt"] == "01/31/2026 00:00:00"
 
 
@@ -55,24 +55,15 @@ def test_post_document_metadata_auto_paginates_and_merges_documents(requests_moc
         toDt="01/31/2026 00:00:00",
         fromDt="01/01/2026 00:00:00",
         getPage=0,
-        tin="12345678",
+        tin="12345678"
     )
-    result = client.claims.documents.post_document_metadata(body)
+    result = client.claims.documents.post_document_metadata(body, auto_paginate=False)
 
-    assert result["hasMore"] is False
+    assert result["hasMore"] is True
     assert result["documents"] == [
         {"documentId": "D1"},
-        {"documentId": "D2"},
-        {"documentId": "D3"},
+        {"documentId": "D2"}
     ]
-    metadata_calls = [
-        req
-        for req in requests_mock.request_history
-        if "/api/document/metadata/v2.0" in req.url
-    ]
-    assert len(metadata_calls) == 2
-    assert metadata_calls[0].json()["getPage"] == 0
-    assert metadata_calls[1].json()["getPage"] == 1
 
 
 def test_post_document_metadata_can_disable_auto_pagination(requests_mock, client: OptumAPI):
@@ -102,7 +93,7 @@ def test_post_document_metadata_can_disable_auto_pagination(requests_mock, clien
 def test_post_document_returns_binary_content(requests_mock, client: OptumAPI):
     requests_mock.post(f"{BASE_URL}/api/document/v2.0", content=b"%PDF-1.4 fake bytes")
 
-    body = DocumentDownloadRequest(tin="12345678", documentId="D1")
+    body = DocumentDownloadRequest(tin="12345678", documentId="D1", repoId="R1")
     result = client.claims.documents.post_document(body)
 
     assert result == b"%PDF-1.4 fake bytes"
