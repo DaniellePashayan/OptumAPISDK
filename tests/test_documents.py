@@ -33,6 +33,72 @@ def test_post_document_metadata_sends_json_body(requests_mock, client: OptumAPI)
     assert requests_mock.last_request.json()["toDt"] == "01/31/2026 00:00:00"
 
 
+def test_post_document_metadata_auto_paginates_and_merges_documents(requests_mock, client: OptumAPI):
+    def metadata_callback(request, context):
+        page = request.json().get("getPage", 0)
+        if page == 0:
+            return {
+                "hasMore": True,
+                "documents": [{"documentId": "D1"}, {"documentId": "D2"}],
+            }
+        return {
+            "hasMore": False,
+            "documents": [{"documentId": "D3"}],
+        }
+
+    requests_mock.post(
+        f"{BASE_URL}/api/document/metadata/v2.0",
+        json=metadata_callback,
+    )
+
+    body = DocumentMetaDataRequest(
+        toDt="01/31/2026 00:00:00",
+        fromDt="01/01/2026 00:00:00",
+        getPage=0,
+        tin="12345678",
+    )
+    result = client.claims.documents.post_document_metadata(body)
+
+    assert result["hasMore"] is False
+    assert result["documents"] == [
+        {"documentId": "D1"},
+        {"documentId": "D2"},
+        {"documentId": "D3"},
+    ]
+    metadata_calls = [
+        req
+        for req in requests_mock.request_history
+        if "/api/document/metadata/v2.0" in req.url
+    ]
+    assert len(metadata_calls) == 2
+    assert metadata_calls[0].json()["getPage"] == 0
+    assert metadata_calls[1].json()["getPage"] == 1
+
+
+def test_post_document_metadata_can_disable_auto_pagination(requests_mock, client: OptumAPI):
+    requests_mock.post(
+        f"{BASE_URL}/api/document/metadata/v2.0",
+        json={"hasMore": True, "documents": [{"documentId": "D1"}]},
+    )
+
+    body = DocumentMetaDataRequest(
+        toDt="01/31/2026 00:00:00",
+        fromDt="01/01/2026 00:00:00",
+        getPage=0,
+        tin="12345678",
+    )
+
+    result = client.claims.documents.post_document_metadata(body, auto_paginate=False)
+
+    assert result == {"hasMore": True, "documents": [{"documentId": "D1"}]}
+    metadata_calls = [
+        req
+        for req in requests_mock.request_history
+        if "/api/document/metadata/v2.0" in req.url
+    ]
+    assert len(metadata_calls) == 1
+
+
 def test_post_document_returns_binary_content(requests_mock, client: OptumAPI):
     requests_mock.post(f"{BASE_URL}/api/document/v2.0", content=b"%PDF-1.4 fake bytes")
 

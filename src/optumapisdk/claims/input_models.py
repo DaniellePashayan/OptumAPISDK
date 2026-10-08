@@ -224,7 +224,7 @@ class DocumentMetaDataRequest(OptumBaseModel):
     fromDt: str = Field(..., description="Start date, MM/dd/yyyy HH:mm:ss (required)")
     sourceCreatedDtFromDt: Optional[str] = None
     sourceCreatedDtToDt: Optional[str] = None
-    getPage: int = Field(..., description="Page number, '0' for first page (required)")
+    getPage: Optional[int] = Field(0, description="Page number, '0' for first page (required)")
     tin: str = Field(..., description="Tax identification number (required)")
     categories: Optional[DocumentMetaDataCategories] = None
     patientAccountNumber: Optional[str] = None

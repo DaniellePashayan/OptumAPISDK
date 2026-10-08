@@ -49,7 +49,13 @@ class Documents:
         response = self.client.request("GET", url, headers=headers)
         return response.json()
 
-    def post_document_metadata(self, body: DocumentMetaDataRequest) -> dict:
+    def post_document_metadata(
+        self,
+        body: DocumentMetaDataRequest,
+        *,
+        auto_paginate: bool = True,
+        max_pages: Optional[int] = None,
+    ) -> dict:
         """POST /api/document/metadata/v2.0.
         
         Request Information:
@@ -89,12 +95,68 @@ class Documents:
         Refer to contentType in the metadata response for the document download format, example: application/pdf.
         
         For more information, see: https://apimarketplace.uhcprovider.com/#/documentation/claims/post-claim-documentmetadata-v-2
+
+        Pagination behavior:
+        * By default (`auto_paginate=True`), this method automatically requests
+          all pages and returns a single response with a combined `documents` list.
+        * Set `auto_paginate=False` to keep single-page behavior.
+        * Use `max_pages` to cap page traversal when auto-pagination is enabled.
         """
         url = "/api/document/metadata/v2.0"
-        response = self.client.request(
-            "POST", url, json=body.model_dump(exclude_none=True)
-        )
-        return response.json()
+        payload = body.model_dump(exclude_none=True)
+
+        if not auto_paginate:
+            response = self.client.request("POST", url, json=payload)
+            all_documents = response.json().get("response", {}).get("documentList", [])
+            return {"documentList": all_documents}
+
+        current_page = int(payload.get("getPage", 0))
+        pages_fetched = 0
+        all_documents: list[dict[str, Any]] = []
+        merged_response: Optional[dict[str, Any]] = None
+
+        while True:
+            payload["getPage"] = current_page
+            response = self.client.request("POST", url, json=payload)
+            page_data = response.json()
+            print(f"Fetched page {current_page} with {len(page_data.get('response', {}).get('documentList', []))} documents")
+
+            # Defensive fallback in case the API ever returns a non-object payload.
+            if not isinstance(page_data, dict):
+                return {"documents": all_documents}
+
+            pages_fetched += 1
+
+            if merged_response is None:
+                merged_response = dict(page_data)
+            else:
+                # Keep metadata from the latest page while preserving top-level shape.
+                for key, value in page_data.items():
+                    if key != "documents":
+                        merged_response[key] = value
+
+            page_documents = page_data.get("response", {}).get('documentList', [])
+            if isinstance(page_documents, list):
+                all_documents.extend(page_documents)
+
+            has_more_raw = page_data.get("response", {}).get('pages', {}).get('hasMore', False)
+            if isinstance(has_more_raw, str):
+                has_more = has_more_raw.strip().lower() in {"true", "1", "yes", "y"}
+            else:
+                has_more = bool(has_more_raw)
+
+            if max_pages is not None and pages_fetched >= max_pages:
+                break
+
+            if not has_more:
+                break
+
+            current_page += 1
+
+        if merged_response is None:
+            return {"documents": []}
+
+        return {"documentList": all_documents}
 
     def post_document(self, body: DocumentDownloadRequest) -> bytes:
         """POST /api/document/v2.0 -- returns binary content of the document.
