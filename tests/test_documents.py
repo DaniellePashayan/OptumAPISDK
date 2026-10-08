@@ -93,7 +93,7 @@ def test_post_document_metadata_can_disable_auto_pagination(requests_mock, clien
 def test_post_document_returns_binary_content(requests_mock, client: OptumAPI):
     requests_mock.post(f"{BASE_URL}/api/document/v2.0", content=b"%PDF-1.4 fake bytes")
 
-    body = DocumentDownloadRequest(tin="12345678", documentId="D1", repoId="R1")
+    body = DocumentDownloadRequest(tin="12345678", documentId="D1", repoId="R1") # pyright: ignore[reportCallIssue]
     result = client.claims.documents.post_document(body)
 
     assert result == b"%PDF-1.4 fake bytes"
