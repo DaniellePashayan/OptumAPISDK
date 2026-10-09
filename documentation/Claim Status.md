@@ -61,9 +61,10 @@ claim_status = client.claims.claim_summary.get_summary_detail(
 ## Claim Details
 ### Claim Detail (by claim #)
 ```python
-claim_status = client.claims.claim_detail.get_detail(
-    claim_number = "<claim_number>"
+claim_status = client.claims.claim_details.get_detail(
+    claim_number = "<claim_number>",
     tin = "<tin>",
+    payer_id = "<payer_id>",
     include_summary = "<include_summary>" # optional, default = True
 )
 ```

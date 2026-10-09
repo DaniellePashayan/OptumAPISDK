@@ -9,7 +9,7 @@ class ClaimAction:
         self.client = client
         self.logger = logger or logging.getLogger(__name__)
 
-    def get_action(self, transactionId: str, tin: str) -> dict:
+    def get_action(self, transaction_id: str, tin: str) -> dict:
         """GET /api/claim/action/v2.0 -- list of actions allowed for a claim.
         
         This API provides a list of actions allowed for a claim
@@ -33,6 +33,6 @@ class ClaimAction:
         For more information, see: https://apimarketplace.uhcprovider.com/#/documentation/claims/get-claimaction-v-2
         """
         url = "/api/claim/action/v2.0"
-        headers: Dict[str, Any] = {"transactionId": transactionId, "tin": tin}
+        headers: Dict[str, Any] = {"transactionId": transaction_id, "tin": tin}
         response = self.client.request("GET", url, headers=headers)
         return response.json()
