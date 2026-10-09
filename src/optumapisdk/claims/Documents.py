@@ -122,7 +122,6 @@ class Documents:
             payload["getPage"] = current_page
             response = self.client.request("POST", url, json=payload)
             page_data = response.json()
-            print(f"Fetched page {current_page} with {len(page_data.get('response', {}).get('documentList', []))} documents")
 
             # Defensive fallback in case the API ever returns a non-object payload.
             if not isinstance(page_data, dict):
