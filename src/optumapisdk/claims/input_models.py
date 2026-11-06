@@ -192,19 +192,41 @@ class ReconUpdateRequest(OptumBaseModel):
 # ---------------------------------------------------------------------------
 # Pended Claims
 # ---------------------------------------------------------------------------
+# class CreatePendTicketRequest(OptumBaseModel):
+#     """Body for POST /api/claim/pend/v2.0."""
+
+#     address: Any = Field(..., description="Provider/patient address block (required)")
+#     transactionId: Optional[str] = None
+#     claim: Optional[str] = None
+#     medicarePending: Optional[bool] = None
+#     patientFn: Optional[str] = None
+#     hasAttachment: Optional[bool] = None
+#     attachmentUploaded: Optional[bool] = None
+#     dontKnowDollarAmt: Optional[bool] = None
+
+class CreatePendTicketAddress(OptumBaseModel):
+    city: Optional[str] = Field(None, description="City (optional)")
+    state: Optional[str] = Field(None, description="State (optional)")
+    street: Optional[str] = Field(None, description="Street (optional)")
+    zip: Optional[str] = Field(None, description="ZIP code (optional)")
+
+class CreatePendTicketOperator(OptumBaseModel):
+    emailId: Optional[str] = Field(None, description="Operator email ID (required)")
+    operatorFn: Optional[str] = Field(None, description="Operator first name (required)")
+    operatorLn: Optional[str] = Field(None, description="Operator last name (required)")
+    phoneNumber: Optional[str] = Field(None, description="Operator phone number (required)")
+
 class CreatePendTicketRequest(OptumBaseModel):
     """Body for POST /api/claim/pend/v2.0."""
-
-    address: Any = Field(..., description="Provider/patient address block (required)")
-    transactionId: Optional[str] = None
-    claim: Optional[str] = None
-    medicarePending: Optional[bool] = None
-    patientFn: Optional[str] = None
-    hasAttachment: Optional[bool] = None
-    attachmentUploaded: Optional[bool] = None
-    dontKnowDollarAmt: Optional[bool] = None
-
-
+    tin: str = Field(..., description="Facility/Tax Identification Number used in the request")
+    transactionId: Optional[str] = Field(None, description="Transaction ID received in the response body of Claim Details API calls")
+    operator: CreatePendTicketOperator = Field(..., description="Operator details (optional)")
+    provComments: str = Field(..., description="Provider comments (required)")
+    address: CreatePendTicketAddress = Field(..., description="Address details")
+    medicarePending: str = Field(..., description="Medicare pending flag for INDEV tickets (T or F)")
+    patientFn: Optional[str] = Field(None, description="Patient first name")
+    claimNumber: Optional[str] = Field(None, description="Claim number")
+    
 class UpdatePendTicketRequest(OptumBaseModel):
     """Body for PUT /api/claim/pend/v2.0."""
 
