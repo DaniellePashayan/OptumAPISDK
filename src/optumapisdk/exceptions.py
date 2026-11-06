@@ -55,21 +55,17 @@ class APIError(Exception):
         response: Optional[Any] = None,
         *,
         method: Optional[str] = None,
-        url: Optional[str] = None,
-        request_headers: Optional[Mapping[str, Any]] = None,
+        url: Optional[str] = None
     ):
         self.status_code = status_code
         self.message = message
         self.response = response
         self.method = method
         self.url = url
-        self.request_headers = redact_headers(request_headers)
 
         parts = [f"[{status_code}] {message}"]
         if method or url:
             parts.append(f"request={method or '?'} {url or '?'}")
-        if self.request_headers:
-            parts.append(f"headers={self.request_headers}")
         if self.response:
             parts.append(f"response={self.response.text}")
 

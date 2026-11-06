@@ -160,8 +160,7 @@ class OptumAPI:
                 err_text,
                 response=resp,
                 method=method,
-                url=url,
-                request_headers=headers,
+                url=url
             )
 
         return resp

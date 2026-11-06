@@ -61,39 +61,6 @@ def test_request_raises_api_error_with_non_json_body(requests_mock, client: Optu
     assert "Internal Server Error" in exc_info.value.message
 
 
-def test_api_error_includes_safe_request_context(requests_mock, client: OptumAPI):
-    requests_mock.get(
-        f"{BASE_URL}/api/claim/detail/v2.0",
-        status_code=500,
-        json={"errors": [{"code": "E500", "message": "failure"}]},
-    )
-
-    with pytest.raises(APIError) as exc_info:
-        client.request("GET", "/api/claim/detail/v2.0", headers={"x-correlation-id": "abc-123"})
-
-    text = str(exc_info.value)
-    assert "request=GET" in text
-    assert "/api/claim/detail/v2.0" in text
-    assert "x-correlation-id" in text
-    assert "abc-123" in text
-
-
-def test_api_error_redacts_authorization_header(requests_mock, client: OptumAPI):
-    requests_mock.get(
-        f"{BASE_URL}/api/claim/detail/v2.0",
-        status_code=500,
-        json={"errors": [{"code": "E500", "message": "failure"}]},
-    )
-
-    with pytest.raises(APIError) as exc_info:
-        client.request("GET", "/api/claim/detail/v2.0")
-
-    text = str(exc_info.value)
-    assert "Authorization" in text
-    assert "***REDACTED***" in text
-    assert "Bearer test-token" not in text
-
-
 def test_build_url_joins_base_and_path(client: OptumAPI):
     assert client._build_url("/api/foo") == f"{BASE_URL}/api/foo"
     assert client._build_url("api/foo") == f"{BASE_URL}/api/foo"

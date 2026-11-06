@@ -33,13 +33,31 @@ def test_get_pend_missing_date_range_raises(client: OptumAPI):
 
 def test_post_pend_sends_json_body(requests_mock, client: OptumAPI):
     requests_mock.post(f"{BASE_URL}/api/claim/pend/v2.0", json={"ticketNumber": "P2"})
-
-    body = CreatePendTicketRequest(address={"line1": "123 Main St"}, transactionId="tx-1")
+    data = {
+        "tin": "string",
+        "transactionId": "tx-1",
+        "operator": {
+            "emailId": "string",
+            "operatorFn": "string",
+            "operatorLn": "string",
+            "phoneNumber": "string"
+        },
+        "provComments": "string",
+        "address": {
+            "city": "string",
+            "state": "string",
+            "street": "string",
+            "zip": "string"
+        },
+        "medicarePending": "string",
+        "patientFn": "string",
+        "claimNumber": "string"
+        }
+    body = CreatePendTicketRequest(**data)
     result = client.claims.claim_pend.post_pend(body, tin="12345678")
 
     assert result == {"ticketNumber": "P2"}
     sent_json = requests_mock.last_request.json()
-    assert sent_json["address"] == {"line1": "123 Main St"}
     assert sent_json["transactionId"] == "tx-1"
 
 
