@@ -80,8 +80,11 @@ class Attachments:
     def post_attachment(
         self,
         tin: str,
-        transactionId: str,
+        transactionId: Optional[str] = None,
+        claim_number: Optional[str] = None,
+        patient_first_name: Optional[str] = None,
         doc_type_code: str = "M1",
+        doc_type_description: Optional[str] = "Medical records",
         record_path_to_upload: Optional[str] = None,
         folder_to_upload: Optional[str] = None,
     ) -> dict:
@@ -115,19 +118,34 @@ class Attachments:
         per-file errors are captured and returned rather than raised, so a
         single bad file doesn't abort the whole batch.        
         """
+        # --- validate optional groups ---
+        if (claim_number or patient_first_name) and not (claim_number and patient_first_name):
+            raise ValueError("Both claim_number and patient_first_name must be provided together")
         
-        # validation checks
-        if not transactionId:
-            raise ValueError("transactionId is required")
+        # make sure both optional groups are not provided
+        if transactionId and claim_number and patient_first_name:
+            raise ValueError("Only transactionId or claim_number and patient_first_name should be provided")
         
+        # make sure both optional groups are not missing
+        if not transactionId and not (claim_number and patient_first_name):
+            raise ValueError("Either transactionId or claim_number and patient_first_name must be provided")
+        
+        # make sure theres no combination between groups
+        if transactionId and (claim_number or patient_first_name):
+            raise ValueError("transactionId cannot be provided with claim_number or patient_first_name")
+        
+        # --- record validations ---
         if not record_path_to_upload and not folder_to_upload:
             raise ValueError("Either record_path_to_upload or folder_to_upload must be provided")
 
         
         url = "/api/attachment/v2.0"
-        headers: Dict[str, Any] = {"tin": tin, "docTypeCode": doc_type_code}
+        headers: Dict[str, Any] = {"tin": tin, "docTypeCode": doc_type_code, "docTypeDesc": doc_type_description}
         if transactionId:
             headers["transactionId"] = transactionId
+        if claim_number and patient_first_name:
+            headers["claimNumber"] = claim_number
+            headers["patientFn"] = patient_first_name
 
         paths = []
         if record_path_to_upload:
